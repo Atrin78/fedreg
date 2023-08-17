@@ -1,0 +1,7 @@
+vision-transformer-pytorch
+torchsummary
+importlib
+loguru
+thop
+PIL
+h5py
