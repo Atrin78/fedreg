@@ -9,7 +9,7 @@ from loguru import logger
 from functools import partial
 import os
 torch.backends.cudnn.deterministic = True
-
+os.environ['CUDA_VISIBLE_DEVICES']='1'
 
 def allocate_memory():
     total, used = os.popen(
@@ -35,6 +35,8 @@ def main():
     np.random.seed(12+config["seed"])
     torch.manual_seed(123+config["seed"])
     torch.cuda.manual_seed(123+config["seed"])
+
+    
 
     Model = config["model"]
     inner_opt = config["inner_opt"]
