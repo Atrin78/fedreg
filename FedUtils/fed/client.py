@@ -1,5 +1,5 @@
 from FedUtils.models.utils import CusDataset
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, ConcatDataset
 import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
 
@@ -14,12 +14,17 @@ class Client(object):
         self.num_train_samples = len(train_data["x"])
         self.num_test_samples = [len(ed["x"]) for ed in eval_data]
         drop_last = False
+        self.gen_data = None
+        self.drop_last = drop_last
+        self.btachsize = batchsize
         if traincusdataset:  # load data use costomer's dataset
+            self.train_dataset = traincusdataset(train_data, transform=train_transform)
             self.train_data = DataLoader(traincusdataset(train_data, transform=train_transform), batch_size=batchsize, shuffle=True, drop_last=drop_last)
             self.train_data_fortest = DataLoader(evalcusdataset(train_data, transform=test_transform), batch_size=batchsize, shuffle=False,)
             num_workers = 0
             self.eval_data = [DataLoader(evalcusdataset(ed, transform=test_transform), batch_size=100, shuffle=False, num_workers=num_workers) for ed in eval_data]
         else:
+            self.train_dataset = CusDataset(train_data, transform=train_transform)
             self.train_data = DataLoader(CusDataset(train_data, transform=train_transform), batch_size=batchsize, shuffle=True, drop_last=drop_last)
             self.train_data_fortest = DataLoader(CusDataset(train_data, transform=test_transform), batch_size=batchsize, shuffle=False)
             self.eval_data = [DataLoader(CusDataset(ed, transform=test_transform), batch_size=100, shuffle=False) for ed in eval_data]
@@ -40,7 +45,12 @@ class Client(object):
 
     def solve_inner(self, num_epochs=1, step_func=None):
         bytes_w = self.model.size
-        soln, comp, weight = self.model.solve_inner(self.train_data, num_epochs=num_epochs, step_func=step_func)
+        if self.gen_data is None:
+            training = self.train_dataset
+        else: 
+            training = ConcatDataset([self.train_dataset, self.gen_data])
+        train_dataloader = DataLoader(training, batch_size=self.batchsize, shuffle=True, drop_last=self.drop_last)
+        soln, comp, weight = self.model.solve_inner(train_dataloader, num_epochs=num_epochs, step_func=step_func)
         bytes_r = self.model.size
         return (self.num_train_samples*weight, soln), (bytes_w, comp, bytes_r)
 

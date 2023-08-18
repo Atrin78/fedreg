@@ -8,6 +8,16 @@ from typing import Tuple, Optional, List, Dict
 from torch import nn, optim
 from torch.optim import SGD
 import torch.nn.functional as func
+from functools import partial
+from torch.utils.data import TensorDataset
+
+device = torch.device('cuda:' + str(1) if torch.cuda.is_available() else 'cpu')
+class_num=2
+synthesize_label='cond'
+iters_admm=5
+iters_img=30
+param_gamma=0.001 
+param_admm_rho=0.2
 
 
 def step_func(model, data):
@@ -36,7 +46,7 @@ def labels_to_one_hot(labels, num_class, device):
     return labels_one_hot
 
     
-def generate_admm(gen_loader, src_model, device, class_num, class_count, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, add_bn_normalization=True, mode='train'):
+def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, add_bn_normalization=True, mode='train'):
 
     src_model.eval()
     LAMB = torch.zeros_like(src_model.head.weight.data).to(device)
@@ -59,7 +69,7 @@ def generate_admm(gen_loader, src_model, device, class_num, class_count, synthes
         if gen_dataset == None:
             gen_dataset = images_s
             if synthesize_label == 'cond':
-                gen_labels = torch.tensor(np.random.choice(len(class_count), len(labels_real), p=class_count/sum(class_count)))
+                gen_labels = torch.tensor(np.random.choice(class_num, len(labels_real)))
             elif synthesize_label == 'pred' or mode == 'test':
                 gen_labels = labels_s
             else:
@@ -70,7 +80,7 @@ def generate_admm(gen_loader, src_model, device, class_num, class_count, synthes
         else:
             gen_dataset = torch.cat((gen_dataset, images_s), 0)
             if synthesize_label == 'cond':
-                lab = torch.tensor(np.random.choice(len(class_count), len(labels_real), p=class_count / sum(class_count)))
+                lab = torch.tensor(np.random.choice(class_num, len(labels_real)))
                 gen_labels = torch.cat((gen_labels, lab), 0)
             elif synthesize_label == 'pred' or mode == 'test':
                 gen_labels = torch.cat((gen_labels, labels_s), 0)
@@ -231,11 +241,17 @@ class FedImpress(Server):
             cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
                                                   download=True, transform=transform_cifar)
             gen_loader = torch.utils.data.DataLoader(cifar, batch_size=public_batch, shuffle=True)
-            gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, class_count, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho)
+            gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho)
+            gen_dataset = torch.tensor(gen_dataset)
+            gen_labels = torch.tensor(gen_labels)
+            vir_dataset = TensorDataset(gen_dataset, gen_labels)
+
+            # gen_data = torch.utils.data.DataLoader(vir_dataset, batch_size=self.batch_size, shuffle=True)
 
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
                 c.set_public()
+                c.gen_data = vir_dataset 
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
