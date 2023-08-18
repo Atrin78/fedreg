@@ -8,7 +8,7 @@ import torchvision
 
 transform_fun = transforms.Compose(
             [
-             torchvision.transforms.Resize((32, 32, 3))
+             torchvision.transforms.Resize((32, 32))
              ])
 
 config = {
