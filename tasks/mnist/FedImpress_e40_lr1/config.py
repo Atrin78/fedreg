@@ -1,4 +1,4 @@
-from FedUtils.models.mnist.cnn import Model
+from FedUtils.models.mnist.cnn2 import Model
 import torch
 from functools import partial
 from FedUtils.fed.fedimpress import FedImpress
