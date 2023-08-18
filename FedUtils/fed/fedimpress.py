@@ -242,7 +242,7 @@ class FedImpress(Server):
              ])
             cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
                                                   download=True, transform=transform_cifar)
-            gen_loader = torch.utils.data.DataLoader(cifar, batch_size=public_batch, shuffle=True)
+            gen_loader = torch.utils.data.DataLoader(cifar, batch_size=self.batch_size, shuffle=True)
             gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho)
             gen_dataset = torch.tensor(gen_dataset)
             gen_labels = torch.tensor(gen_labels)
