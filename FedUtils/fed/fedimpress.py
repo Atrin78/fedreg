@@ -10,6 +10,7 @@ from torch.optim import SGD
 import torch.nn.functional as func
 from functools import partial
 from torch.utils.data import TensorDataset
+import torchvision.transforms as transforms
 
 device = torch.device('cuda:' + str(1) if torch.cuda.is_available() else 'cpu')
 class_num=2
