@@ -1,7 +1,7 @@
 from FedUtils.models.mnist.cnn import Model
 import torch
 from functools import partial
-from FedUtils.fed.fedavg import FedAvg
+from FedUtils.fed.fedimpress import FedImpress
 
 config = {
 
