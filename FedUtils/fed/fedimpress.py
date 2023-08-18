@@ -91,8 +91,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
 
 #    if args.noise_init:
 #        print('here we are rand')
-#        gen_dataset = torch.from_numpy(np.random.normal(0, 1
-                                                        , (args.data_size, 3, 256, 256))).type(torch.FloatTensor)
+#        gen_dataset = torch.from_numpy(np.random.normal(0, 1, (args.data_size, 3, 256, 256))).type(torch.FloatTensor)
 #        gen_labels = torch.randint(low=0, high=2, size=(args.data_size,))
         # print(gen_dataset[0])
         # gen_dataset = torch.from_numpy(np.random.normal(0, 1
