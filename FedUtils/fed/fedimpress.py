@@ -14,7 +14,7 @@ import torchvision.transforms as transforms
 import torchvision
 
 
-device = torch.device('cuda:' + str(1) if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=2
 synthesize_label='cond'
 iters_admm=5
