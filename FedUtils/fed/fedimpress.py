@@ -11,6 +11,8 @@ import torch.nn.functional as func
 from functools import partial
 from torch.utils.data import TensorDataset
 import torchvision.transforms as transforms
+import torchvision
+
 
 device = torch.device('cuda:' + str(1) if torch.cuda.is_available() else 'cpu')
 class_num=2
