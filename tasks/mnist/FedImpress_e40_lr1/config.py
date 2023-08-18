@@ -2,6 +2,14 @@ from FedUtils.models.mnist.cnn2 import Model
 import torch
 from functools import partial
 from FedUtils.fed.fedimpress import FedImpress
+import torchvision.transforms as transforms
+import torchvision
+
+
+transform_fun = transforms.Compose(
+            [
+             torchvision.transforms.Resize((32, 32, 3))
+             ])
 
 config = {
 
@@ -22,8 +30,8 @@ config = {
     "use_fed": 1,
     "log_path": "tasks/mnist/FedImpress_e40_lr1/train.log",
 
-    "train_transform": None,
-    "test_transform": None,
+    "train_transform": transform_fun,
+    "test_transform": transform_fun,
     "eval_train": True,
 
 
