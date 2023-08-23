@@ -8,9 +8,9 @@ import torchvision
 
 transform_fun = transforms.Compose(
             [
- #            transforms.ToTensor(),
- #            torchvision.transforms.Resize((32, 32)),
- #            transforms.Lambda(lambda x: torch.stack([torch.unsqueeze(x, -1),torch.unsqueeze(x, -1),torch.unsqueeze(x, -1)],2))
+             torchvision.transforms.Resize((32, 32)),
+             transforms.ToTensor(),
+             transforms.Lambda(lambda x: torch.stack([torch.unsqueeze(x, -1),torch.unsqueeze(x, -1),torch.unsqueeze(x, -1)],2))
              ])
 
 config = {
