@@ -39,7 +39,7 @@ class CusDataset(TensorDataset):
                 ret = ret.transpose(1, 2, 0)
             else:
                 ret = ret
-            print(ret.shape)
+            ret = ret.reshape((28, 28))
             ret = Image.fromarray(ret)
             ret = self.transform(ret)
 
