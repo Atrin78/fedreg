@@ -257,7 +257,7 @@ class FedImpress(Server):
 
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
-                c.set_public()
+    #            c.set_public()
                 c.gen_data = vir_dataset 
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
