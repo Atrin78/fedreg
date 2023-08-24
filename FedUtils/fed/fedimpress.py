@@ -114,6 +114,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
         print(f'admm iter: {i}/{iters_admm}')
 
         # step1: update imgs
+        LAMB = LAMB.clone().detach().to(device)
         for batch_idx, (images_s, labels_s) in enumerate(gen_loader):
             # if batch_idx == 10:
             #     break
