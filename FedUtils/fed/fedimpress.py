@@ -24,6 +24,7 @@ param_admm_rho=0.2
 add_bn_normalization = True
 lr_img = 1000
 momentum_img = 0.9
+data_size=10
 
 def step_func(model, data):
     lr = model.learning_rate
@@ -244,6 +245,7 @@ class FedImpress(Server):
              ])
             cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
                                                   download=True, transform=transform_cifar)
+            cifar = torch.utils.data.Subset(cifar, list(range(data_size)))
             gen_loader = torch.utils.data.DataLoader(cifar, batch_size=self.batch_size, shuffle=True)
             gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size)
             gen_dataset = torch.tensor(gen_dataset)
