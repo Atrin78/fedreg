@@ -49,7 +49,7 @@ class Client(object):
             training = self.train_dataset
         else: 
      #       training = ConcatDataset([self.train_dataset, self.gen_data])
-            training = self.gen_data
+            training = self.train_dataset
         train_dataloader = DataLoader(training, batch_size=self.batchsize, shuffle=True, drop_last=self.drop_last)
         soln, comp, weight = self.model.solve_inner(train_dataloader, num_epochs=num_epochs, step_func=step_func)
         bytes_r = self.model.size
