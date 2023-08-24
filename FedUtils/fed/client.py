@@ -16,7 +16,7 @@ class Client(object):
         drop_last = False
         self.gen_data = None
         self.drop_last = drop_last
-        self.btachsize = batchsize
+        self.batchsize = batchsize
         if traincusdataset:  # load data use costomer's dataset
             self.train_dataset = traincusdataset(train_data, transform=train_transform)
             self.train_data = DataLoader(traincusdataset(train_data, transform=train_transform), batch_size=batchsize, shuffle=True, drop_last=drop_last)
