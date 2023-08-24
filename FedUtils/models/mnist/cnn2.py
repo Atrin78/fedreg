@@ -34,8 +34,8 @@ class Model(nn.Module):
         self.pt_eta = pt_eta
 
         self.flop = Flops(self, torch.tensor([[0.0 for _ in range(self.num_inp)]]))
-        if torch.cuda.device_count() > 0:
-            self = self.cuda()
+   #     if torch.cuda.device_count() > 0:
+   #         self = self.cuda()
    #         self.net = self.whole.cuda()
    #        self.head = self.head.cuda()
 
