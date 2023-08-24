@@ -79,7 +79,7 @@ class Model(nn.Module):
         out = self.net(data)
     #    pred = self.head(out)
     #    return pred, out
-        return out
+        return out, out
 
 
     def train_onestep(self, data):
