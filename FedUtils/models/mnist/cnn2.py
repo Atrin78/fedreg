@@ -34,10 +34,10 @@ class Model(nn.Module):
         self.pt_eta = pt_eta
 
         self.flop = Flops(self, torch.tensor([[0.0 for _ in range(self.num_inp)]]))
-   #     if torch.cuda.device_count() > 0:
+        if torch.cuda.device_count() > 0:
    #         self = self.cuda()
-   #         self.net = self.whole.cuda()
-   #        self.head = self.head.cuda()
+            self.net = self.net.cuda()
+            self.head = self.head.cuda()
 
     def set_param(self, state_dict):
         self.load_state_dict(state_dict)

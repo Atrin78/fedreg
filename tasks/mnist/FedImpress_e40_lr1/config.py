@@ -19,7 +19,7 @@ config = {
     "model": partial(Model, learning_rate=1e-1),
     "inner_opt": None,
     "optimizer": FedImpress,
-    "model_param": (2,),
+    "model_param": (10,),
     "inp_size": (784,),
     "train_path": "data/mnist_10000/data/train/",
     "test_path": ["data/mnist_10000/data/valid/", "data/mnist_10000/data/test/"],
