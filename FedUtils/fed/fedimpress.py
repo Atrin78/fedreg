@@ -21,7 +21,9 @@ iters_admm=5
 iters_img=30
 param_gamma=0.001 
 param_admm_rho=0.2
-
+add_bn_normalization = True
+lr_img = 1
+momentum_img = 0.9
 
 def step_func(model, data):
     lr = model.learning_rate
@@ -119,15 +121,15 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
 
     #        images_s = images_s.to(device)
     #        labels_s = labels_s.to(device)
-            images_s = gen_dataset[batch_idx*args.batch:(batch_idx+1)*args.batch].clone().detach().to(device)
-            labels_s = gen_labels[batch_idx*args.batch:(batch_idx+1)*args.batch].clone().detach().to(device)
+            images_s = gen_dataset[batch_idx*batch_size:(batch_idx+1)*batch_size].clone().detach().to(device)
+            labels_s = gen_labels[batch_idx*batch_size:(batch_idx+1)*batch_size].clone().detach().to(device)
 
             # convert labels to one-hot
             plabel_onehot = labels_to_one_hot(labels_s, class_num, device)
 
             # init src img
             images_s.requires_grad_()
-            optimizer_s = SGD([images_s], args.lr_img, momentum=args.momentum_img)
+            optimizer_s = SGD([images_s], lr_img, momentum=momentum_img)
             first_run = True
             
             for iter_i in range(iters_img):
@@ -164,7 +166,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
 
 
             # update src imgs
-            gen_dataset[batch_idx*args.batch:(batch_idx+1)*args.batch] = images_s
+            gen_dataset[batch_idx*batch_size:(batch_idx+1)*batch_size] = images_s
        #     for img, path in zip(images_s.detach_().cpu(), paths):
        #         torch.save(img.clone(), path)
 
@@ -175,8 +177,8 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
             #     break
        #     images_s = images_s.to(device)
        #     labels_s = labels_s.to(device)
-            images_s = gen_dataset[batch_idx*args.batch:(batch_idx+1)*args.batch].clone().detach().to(device)
-            labels_s = gen_labels[batch_idx*args.batch:(batch_idx+1)*args.batch].clone().detach().to(device)
+            images_s = gen_dataset[batch_idx*batch_size:(batch_idx+1)*batch_size].clone().detach().to(device)
+            labels_s = gen_labels[batch_idx*batch_size:(batch_idx+1)*batch_size].clone().detach().to(device)
 
             # convert labels to one-hot
             plabel_onehot = labels_to_one_hot(labels_s, class_num, device)
@@ -190,7 +192,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
 
         gc.collect()
         
-    if args.add_bn_normalization:
+    if add_bn_normalization:
         for hook in loss_r_feature_layers:
             hook.close()
 
@@ -243,7 +245,7 @@ class FedImpress(Server):
             cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
                                                   download=True, transform=transform_cifar)
             gen_loader = torch.utils.data.DataLoader(cifar, batch_size=self.batch_size, shuffle=True)
-            gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho)
+            gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size)
             gen_dataset = torch.tensor(gen_dataset)
             gen_labels = torch.tensor(gen_labels)
             vir_dataset = TensorDataset(gen_dataset, gen_labels)
