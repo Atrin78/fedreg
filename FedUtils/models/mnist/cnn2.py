@@ -13,7 +13,7 @@ class Model(nn.Module):
     def __init__(self, num_classes, optimizer=None, learning_rate=None, seed=1, p_iters=10, ps_eta=0.1, pt_eta=0.001):
         super(Model, self).__init__()
         self.num_classes = num_classes
-        self.num_inp = 2352
+        self.num_inp = 784
         torch.manual_seed(123+seed)
 
         self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
