@@ -106,10 +106,12 @@ class Model(nn.Module):
             func = self.train_onestep
         else:
             func = step_func(self, data)
-        for x, y in data[0]:
-            c = func([x, y])
-            comp += c
-            steps += 1.0
+
+        for _ in range(num_epochs):
+            for x, y in data:
+                c = func([x, y])
+                comp += c
+                steps += 1.0
         soln = self.get_param()
         return soln, comp, weight
 
