@@ -3,6 +3,7 @@ import torch
 from functools import partial
 from FedUtils.fed.fedavg import FedAvg
 import torchvision.transforms as transforms
+import torchvision
 
 transform_fun = transforms.Compose(
             [
