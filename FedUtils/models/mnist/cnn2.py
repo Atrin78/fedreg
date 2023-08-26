@@ -2,7 +2,6 @@ from torch import nn
 from FedUtils.models.utils import Flops, FSGM
 import torch
 import sys
-import numpy as np
 
 
 class Reshape(nn.Module):
@@ -116,7 +115,7 @@ class Model(nn.Module):
                 for train_iter in train_iters:
                     try:
                         x, y = next(train_iter)
-                        print(np.max(x))
+                        print(torch.max(x))
                         c = func([x, y])
                         comp += c
                         steps += 1.0
