@@ -6,19 +6,19 @@ import sys
 
 class Reshape(nn.Module):
     def forward(self, x):
-        return x.reshape(-1, 576)
+        return x.reshape(-1, 1024)
 
 
 class Model(nn.Module):
     def __init__(self, num_classes, optimizer=None, learning_rate=None, seed=1, p_iters=10, ps_eta=0.1, pt_eta=0.001):
         super(Model, self).__init__()
         self.num_classes = num_classes
-        self.num_inp = 784
+        self.num_inp = 3072
         torch.manual_seed(123+seed)
 
-        self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
-                                 nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(576, 256), nn.ReLU(), nn.Linear(256, self.num_classes)])
-  #      self.head = nn.Linear(256, self.num_classes)
+        self.net = nn.Sequential(*[nn.Conv2d(3, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
+                                 nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(1024, 256), nn.ReLU()])
+        self.head = nn.Linear(256, self.num_classes)
   #      self.whole = nn.Sequential(*[self.net, self.head])
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
@@ -37,7 +37,7 @@ class Model(nn.Module):
         if torch.cuda.device_count() > 0:
    #         self = self.cuda()
             self.net = self.net.cuda()
-   #         self.head = self.head.cuda()
+            self.head = self.head.cuda()
 
     def set_param(self, state_dict):
         self.load_state_dict(state_dict)
@@ -77,14 +77,14 @@ class Model(nn.Module):
     def forward(self, data):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
-        data = data.reshape(-1, 1, 28, 28)
+        data = data.reshape(-1, 3, 32, 32)
    #     x = data
    #     for layer in self.whole:
    #         pred = x
    #         x = layer(x)
         out = self.net(data)
-  #      pred = self.head(out)
-        return out, out
+        pred = self.head(out)
+        return pred, out
 
     def train_onestep(self, data):
         self.train()
@@ -108,10 +108,24 @@ class Model(nn.Module):
             func = step_func(self, data)
 
         for _ in range(num_epochs):
-            for x, y in data:
-                c = func([x, y])
-                comp += c
-                steps += 1.0
+            train_iters = []
+            for train_loader in data:
+                train_iters.append(iter(train_loader))
+            for step in range(len(train_iters[0])):
+                for train_iter in train_iters:
+                    try:
+                        x, y = next(train_iter)
+               #         print(torch.max(x))
+                        c = func([x, y])
+                        comp += c
+                        steps += 1.0
+                    except:
+                        pass
+
+         #   for x, y in data:
+         #       c = func([x, y])
+         #       comp += c
+         #       steps += 1.0
         soln = self.get_param()
         return soln, comp, weight
 
