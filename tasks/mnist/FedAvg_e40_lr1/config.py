@@ -1,4 +1,4 @@
-from FedUtils.models.mnist.cnn import Model
+from FedUtils.models.mnist.cnn2 import Model
 import torch
 from functools import partial
 from FedUtils.fed.fedavg import FedAvg
@@ -31,8 +31,8 @@ config = {
     "use_fed": 1,
     "log_path": "tasks/mnist/FedAvg_e40_lr1/train.log",
 
-    "train_transform": transform_fun,
-    "test_transform": transform_fun,
+    "train_transform": None,
+    "test_transform": None,
     "eval_train": True,
 
 
