@@ -106,26 +106,10 @@ class Model(nn.Module):
             func = self.train_onestep
         else:
             func = step_func(self, data)
-
-        for _ in range(num_epochs):
-            train_iters = []
-            for train_loader in data:
-                train_iters.append(iter(train_loader))
-            for step in range(len(train_iters[0])):
-                for train_iter in train_iters:
-                    try:
-                        x, y = next(train_iter)
-               #         print(torch.max(x))
-                        c = func([x, y])
-                        comp += c
-                        steps += 1.0
-                    except Exception as e:
-                        print(e)
-
-    #        for x, y in data:
-    #            c = func([x, y])
-    #            comp += c
-    #            steps += 1.0
+        for x, y in data[0]:
+            c = func([x, y])
+            comp += c
+            steps += 1.0
         soln = self.get_param()
         return soln, comp, weight
 
