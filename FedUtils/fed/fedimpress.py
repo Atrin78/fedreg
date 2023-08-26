@@ -25,6 +25,7 @@ add_bn_normalization = True
 lr_img = 10
 momentum_img = 0.9
 data_size=10
+warmup = 10
 
 def step_func(model, data):
     lr = model.learning_rate
@@ -258,7 +259,8 @@ class FedImpress(Server):
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
     #            c.set_public()
-                c.gen_data = vir_dataset 
+                if r>= warmup:
+                    c.gen_data = vir_dataset 
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
