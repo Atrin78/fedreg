@@ -114,6 +114,7 @@ class Model(nn.Module):
             for step in range(len(train_iters[0])):
                 for train_iter in train_iters:
                     try:
+                        print(x)
                         x, y = next(train_iter)
                         c = func([x, y])
                         comp += c
