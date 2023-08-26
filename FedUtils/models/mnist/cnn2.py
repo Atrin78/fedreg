@@ -37,7 +37,7 @@ class Model(nn.Module):
         if torch.cuda.device_count() > 0:
    #         self = self.cuda()
             self.net = self.net.cuda()
-            self.head = self.head.cuda()
+   #         self.head = self.head.cuda()
 
     def set_param(self, state_dict):
         self.load_state_dict(state_dict)
