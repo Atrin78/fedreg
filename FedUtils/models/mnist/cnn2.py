@@ -113,10 +113,9 @@ class Model(nn.Module):
                 train_iters.append(iter(train_loader))
             for step in range(len(train_iters[0])):
                 for train_iter in train_iters:
-                    print(train_iter)
                     try:
-                        print(x)
                         x, y = next(train_iter)
+                        print(x)
                         c = func([x, y])
                         comp += c
                         steps += 1.0
