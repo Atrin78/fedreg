@@ -2,6 +2,7 @@ from FedUtils.models.mnist.cnn2 import Model
 import torch
 from functools import partial
 from FedUtils.fed.fedavg import FedAvg
+import torchvision.transforms as transforms
 
 transform_fun = transforms.Compose(
             [
