@@ -2,6 +2,7 @@ from torch import nn
 from FedUtils.models.utils import Flops, FSGM
 import torch
 import sys
+import numpy as np
 
 
 class Reshape(nn.Module):
