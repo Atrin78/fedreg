@@ -74,7 +74,7 @@ class Model(nn.Module):
             data = data.to(next(self.parameters()).device)
         data = data.reshape(-1, 1, 28, 28)
         out = self.net(data)
-        return out
+        return out,out
 
     def train_onestep(self, data):
         self.train()
