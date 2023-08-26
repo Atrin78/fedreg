@@ -115,7 +115,7 @@ class Model(nn.Module):
                 for train_iter in train_iters:
                     try:
                         x, y = next(train_iter)
-                        print(x)
+                        print(np.max(x))
                         c = func([x, y])
                         comp += c
                         steps += 1.0
