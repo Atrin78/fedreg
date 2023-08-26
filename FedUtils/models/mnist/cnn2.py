@@ -84,7 +84,7 @@ class Model(nn.Module):
    #         x = layer(x)
         out = self.net(data)
         pred = self.head(out)
-        return pred
+        return pred, out
 
     def train_onestep(self, data):
         self.train()
