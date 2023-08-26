@@ -45,13 +45,18 @@ class Client(object):
 
     def solve_inner(self, num_epochs=1, step_func=None):
         bytes_w = self.model.size
+   #     if self.gen_data is None:
+   #         training = self.train_dataset
+   #     else: 
+   #         training = ConcatDataset([self.train_dataset, self.gen_data])
+   #         training = self.gen_data
+        train_dataloader = DataLoader(self.train_dataset, batch_size=self.batchsize, shuffle=True, drop_last=self.drop_last)
         if self.gen_data is None:
-            training = self.train_dataset
-        else: 
-     #       training = ConcatDataset([self.train_dataset, self.gen_data])
-            training = self.gen_data
-        train_dataloader = DataLoader(training, batch_size=self.batchsize, shuffle=True, drop_last=self.drop_last)
-        soln, comp, weight = self.model.solve_inner(train_dataloader, num_epochs=num_epochs, step_func=step_func)
+            data_loaders = [train_dataloader]
+        else:
+            gen_dataloader = DataLoader(self.gen_data, batch_size=self.batchsize, shuffle=True, drop_last=self.drop_last)
+            data_loaders = [train_dataloader, gen_dataloader]
+        soln, comp, weight = self.model.solve_inner(data_loaders, num_epochs=num_epochs, step_func=step_func)
         bytes_r = self.model.size
         return (self.num_train_samples*weight, soln), (bytes_w, comp, bytes_r)
 
