@@ -119,8 +119,8 @@ class Model(nn.Module):
                         c = func([x, y])
                         comp += c
                         steps += 1.0
-                    except:
-                        pass
+                    except Exception as e:
+                        print(e)
 
     #        for x, y in data:
     #            c = func([x, y])
