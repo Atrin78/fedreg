@@ -32,7 +32,7 @@ def step_func(model, data):
     parameters = list(model.parameters())
     flop = model.flop
 
-    def func(d):
+    def func(d, w):
         nonlocal flop, lr
         model.train()
         model.zero_grad()
@@ -41,7 +41,7 @@ def step_func(model, data):
         loss = model.loss(pred, y).mean()
         grad = torch.autograd.grad(loss, parameters)
         for p, g in zip(parameters, grad):
-            p.data.add_(-lr*g)
+            p.data.add_(-w*lr*g)
         return flop*len(x)
     return func
 

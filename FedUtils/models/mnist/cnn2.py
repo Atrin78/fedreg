@@ -109,14 +109,15 @@ class Model(nn.Module):
 
         for _ in range(num_epochs):
             train_iters = []
+            train_w = [1.0, 2.0]
             for train_loader in data:
                 train_iters.append(iter(train_loader))
             for step in range(len(train_iters[0])):
-                for train_iter in train_iters:
+                for i, train_iter in enumerate(train_iters):
                     try:
                         x, y = next(train_iter)
                #         print(torch.max(x))
-                        c = func([x, y])
+                        c = func([x, y], train_w[i])
                         comp += c
                         steps += 1.0
                     except:
