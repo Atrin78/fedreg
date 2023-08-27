@@ -16,7 +16,7 @@ class Model(nn.Module):
         self.num_inp = 3072
         torch.manual_seed(123+seed)
 
-        self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
+        self.net = nn.Sequential(*[nn.Conv2d(6, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
                                  nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(1024, 256), nn.ReLU()])
         self.head = nn.Linear(256, self.num_classes)
   #      self.whole = nn.Sequential(*[self.net, self.head])
@@ -77,7 +77,7 @@ class Model(nn.Module):
     def forward(self, data):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
-        data = data.reshape(-1, 1, 32, 32)
+        data = data.reshape(-1, 6, 32, 32)
    #     x = data
    #     for layer in self.whole:
    #         pred = x
