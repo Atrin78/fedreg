@@ -243,6 +243,7 @@ class FedImpress(Server):
 
             transform_cifar = transforms.Compose(
             [
+             torchvision.transforms.functional.rgb_to_grayscale,
              transforms.ToTensor()
              ])
             if r >= warmup:
