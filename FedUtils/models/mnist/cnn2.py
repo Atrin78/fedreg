@@ -109,7 +109,7 @@ class Model(nn.Module):
 
         for _ in range(num_epochs):
             train_iters = []
-            train_w = [1.0, 2.0]
+            train_w = [2.0, 1.0]
             for train_loader in data:
                 train_iters.append(iter(train_loader))
             for step in range(len(train_iters[0])):
