@@ -6,7 +6,7 @@ import sys
 
 class Reshape(nn.Module):
     def forward(self, x):
-        return x.reshape(-1, 256)
+        return x.reshape(-1, 1024)
 
 
 class Model(nn.Module):
@@ -16,8 +16,10 @@ class Model(nn.Module):
         self.num_inp = 256
         torch.manual_seed(123+seed)
 
-        self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
+    #    self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
                                  nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(256, 256), nn.ReLU()])
+        self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5,padding="same"), nn.ReLU(), nn.Conv2d(32, 32, 5,padding="same"), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5, padding="same"),
+                                 nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(1024, 256), nn.ReLU()])
         self.head = nn.Linear(256, self.num_classes)
   #      self.whole = nn.Sequential(*[self.net, self.head])
         self.size = sys.getsizeof(self.state_dict())
