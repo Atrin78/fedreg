@@ -25,7 +25,7 @@ add_bn_normalization = True
 lr_img = 10
 momentum_img = 0.9
 data_size=10
-warmup = 20
+warmup = 5
 
 def step_func(model, data):
     lr = model.learning_rate
