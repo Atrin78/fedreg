@@ -47,15 +47,15 @@ class Model(nn.Module):
     def get_param(self):
         return self.state_dict()
 
-    def get_parameters(self) -> List[Dict]:
-        """A parameter list which decides optimization hyper-parameters,
-            such as the relative learning rate of each layer
-        """
-        params = [
-            {"params": self.net.parameters(), "lr_mult": 0.1},
-            {"params": self.head.parameters(), "lr_mult": 1.},
-        ]
-        return params
+ #   def get_parameters(self) -> List[Dict]:
+ #       """A parameter list which decides optimization hyper-parameters,
+ #           such as the relative learning rate of each layer
+ #       """
+ #       params = [
+ #           {"params": self.net.parameters(), "lr_mult": 0.1},
+ #           {"params": self.head.parameters(), "lr_mult": 1.},
+ #       ]
+ #       return params
 
     def predict(self, x):
         self.eval()
