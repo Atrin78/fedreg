@@ -46,6 +46,16 @@ class Model(nn.Module):
     def get_param(self):
         return self.state_dict()
 
+    def get_parameters(self) -> List[Dict]:
+        """A parameter list which decides optimization hyper-parameters,
+            such as the relative learning rate of each layer
+        """
+        params = [
+            {"params": self.net.parameters(), "lr_mult": 0.1},
+            {"params": self.head.parameters(), "lr_mult": 1.},
+        ]
+        return params
+
     def predict(self, x):
         self.eval()
         with torch.no_grad():
@@ -109,7 +119,7 @@ class Model(nn.Module):
 
         for _ in range(num_epochs):
             train_iters = []
-            train_w = [1.0, 0.1]
+            train_w = [1.0, 0.25]
             if len(data)==1:
                 train_w = [1.0]
             for train_loader in data:
