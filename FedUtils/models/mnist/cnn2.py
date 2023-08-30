@@ -131,7 +131,7 @@ class Model(nn.Module):
                 for i, train_iter in enumerate(train_iters):
                     try:
                         x, y = next(train_iter)
-                        w = torch.ones(y.shape[0])
+                        w = torch.ones((y.shape[0],))
                #         print(torch.max(x))
                         if xt is None:
                             xt, yt = x, y
