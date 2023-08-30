@@ -124,7 +124,6 @@ class Model(nn.Module):
             train_w = [1.0, 0.25]
             if len(data)==1:
                 train_w = [1.0]
-            print(data)
             for train_loader in data:
                 train_iters.append(iter(train_loader))
             for step in range(len(train_iters[0])):
@@ -148,8 +147,7 @@ class Model(nn.Module):
               #          comp += c
               #          steps += 1.0
                     except Exception as e:
-                        print(e)
-                print(wt.shape)
+                        pass
                 c = func([xt, yt], wt)
                 comp += c
                 steps += 1.0
