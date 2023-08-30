@@ -143,8 +143,8 @@ class Model(nn.Module):
               #          c = func([x, y], train_w[i])
               #          comp += c
               #          steps += 1.0
-                    except:
-                        pass
+                    except Exception as e:
+                        print(e)
                 print(wt.shape)
                 wt = wt.to(torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu'))
                 c = func([x, y], wt)
