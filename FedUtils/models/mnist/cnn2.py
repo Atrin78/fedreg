@@ -145,6 +145,7 @@ class Model(nn.Module):
               #          steps += 1.0
                     except:
                         pass
+                wt = wt.to(torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu'))
                 c = func([x, y], wt)
                 comp += c
                 steps += 1.0
