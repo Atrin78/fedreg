@@ -9,6 +9,7 @@ from loguru import logger
 from functools import partial
 import os
 torch.backends.cudnn.deterministic = True
+os.environ['CUDA_VISIBLE_DEVICES']='1'
 
 def allocate_memory():
     total, used = os.popen(
