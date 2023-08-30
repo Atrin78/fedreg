@@ -110,6 +110,7 @@ class Model(nn.Module):
         return self.flop*len(x)
 
     def solve_inner(self, data, num_epochs=1, step_func=None):
+        device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
         comp = 0.0
         weight = 1.0
         steps = 0
@@ -132,7 +133,9 @@ class Model(nn.Module):
                 for i, train_iter in enumerate(train_iters):
                     try:
                         x, y = next(train_iter)
-                        w = torch.ones((y.shape[0],))
+                        w = torch.ones((y.shape[0],)).to(device)
+                        x = x.to(device)
+                        y = y.to(device)
                #         print(torch.max(x))
                         if xt is None:
                             xt, yt = x, y
@@ -147,7 +150,6 @@ class Model(nn.Module):
                     except Exception as e:
                         print(e)
                 print(wt.shape)
-                wt = wt.to(torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu'))
                 c = func([x, y], wt)
                 comp += c
                 steps += 1.0
