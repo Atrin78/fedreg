@@ -150,7 +150,7 @@ class Model(nn.Module):
                     except Exception as e:
                         print(e)
                 print(wt.shape)
-                c = func([x, y], wt)
+                c = func([xt, yt], wt)
                 comp += c
                 steps += 1.0
 
