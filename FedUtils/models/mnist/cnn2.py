@@ -83,6 +83,8 @@ class Model(nn.Module):
         assert len(gt.shape) == len(pred.shape)
         loss = -gt*torch.log(pred+1e-12)
         loss = loss.sum(1)
+        print(gt.shape)
+        print(loss.shape)
         return loss
 
     def forward(self, data):
@@ -126,15 +128,29 @@ class Model(nn.Module):
             for train_loader in data:
                 train_iters.append(iter(train_loader))
             for step in range(len(train_iters[0])):
+                xt, yt = None, None
+                wt = None
                 for i, train_iter in enumerate(train_iters):
                     try:
                         x, y = next(train_iter)
+                        w = torch.ones(y.shape[0])
                #         print(torch.max(x))
-                        c = func([x, y], train_w[i])
-                        comp += c
-                        steps += 1.0
+                        if xt is None:
+                            xt, yt = x, y
+                            wt = w * train_w[i]
+                        else:
+                            xt = torch.cat((xt, x), 0)
+                            yt = torch.cat((yt, y), 0)
+                            wt = torch.cat((wt, w * train_w[i]), 0)
+              #          c = func([x, y], train_w[i])
+              #          comp += c
+              #          steps += 1.0
                     except:
                         pass
+                c = func([x, y], wt)
+                comp += c
+                steps += 1.0
+
 
          #   for x, y in data:
          #       c = func([x, y])

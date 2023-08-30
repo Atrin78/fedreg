@@ -38,7 +38,8 @@ def step_func(model, data):
         model.zero_grad()
         x, y = d
         pred, _ = model.forward(x)
-        loss = model.loss(pred, y).mean()
+        loss = torch.mul(model.loss(pred, y), w)
+        loss = loss.mean()
         grad = torch.autograd.grad(loss, parameters)
         for p, g in zip(parameters, grad):
             p.data.add_(-w*lr*g)
