@@ -83,8 +83,6 @@ class Model(nn.Module):
         assert len(gt.shape) == len(pred.shape)
         loss = -gt*torch.log(pred+1e-12)
         loss = loss.sum(1)
-        print(gt.shape)
-        print(loss.shape)
         return loss
 
     def forward(self, data):
