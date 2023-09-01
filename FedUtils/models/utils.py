@@ -13,7 +13,8 @@ def FSGM(model, inp, label, iters, eta):
     inp.requires_grad = True
     minv, maxv = float(inp.min().detach().cpu().numpy()), float(inp.max().detach().cpu().numpy())
     for _ in range(iters):
-        loss = model.loss(model.forward(inp), label).mean()
+        pred, kk = model.forward(inp)
+        loss = model.loss(pred, label).mean()
         dp = torch.sign(torch.autograd.grad(loss, inp)[0])
         inp.data.add_(eta*dp.detach()).clamp(minv, maxv)
     return inp
