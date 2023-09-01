@@ -41,8 +41,10 @@ def step_func(model, data):
         loss = torch.mul(model.loss(pred, y), w)
         loss = loss.mean()
         grad = torch.autograd.grad(loss, parameters)
+        total_norm = 0
         for p, g in zip(parameters, grad):
             p.data.add_(-lr*g)
+            print(g)
         return flop*len(x)
     return func
 
