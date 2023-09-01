@@ -1,6 +1,7 @@
 from torch import nn
 import numpy as np
 from .client import Client
+import torch
 
 
 class Server(object):
