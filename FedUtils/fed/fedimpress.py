@@ -44,7 +44,9 @@ def step_func(model, data):
         total_norm = 0
         for p, g in zip(parameters, grad):
             p.data.add_(-lr*g)
-            print(g)
+            total_norm += torch.norm(g)**2
+        print(w)
+        print(total_norm)
         return flop*len(x)
     return func
 
