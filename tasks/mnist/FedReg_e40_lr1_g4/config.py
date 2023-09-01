@@ -2,6 +2,9 @@ from FedUtils.models.mnist.cnn2 import Model
 from functools import partial
 from FedUtils.fed.fedreg import FedReg
 from torch.optim import SGD
+import torchvision.transforms as transforms
+import torchvision
+
 
 transform_fun = transforms.Compose(
             [
