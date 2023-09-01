@@ -27,7 +27,7 @@ config = {
     "num_rounds": 100,
     "eval_every": 1,
     "drop_percent": 0.0,
-    "num_epochs": 40,
+    "num_epochs": 10,
     "batch_size": 10,
     "use_fed": 1,
     "log_path": "tasks/mnist/FedImpress_e40_lr1/train.log",

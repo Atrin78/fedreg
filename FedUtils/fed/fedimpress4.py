@@ -17,14 +17,14 @@ import torchvision
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
 synthesize_label='cond'
-iters_admm=10
+iters_admm=5
 iters_img=30
 param_gamma=0.001 
 param_admm_rho=0.2
 add_bn_normalization = True
 lr_img = 10
 momentum_img = 0.9
-data_size= 10
+data_size= 20
 warmup = 1
 
 def step_func(model, data):
