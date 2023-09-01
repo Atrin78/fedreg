@@ -54,7 +54,7 @@ class Client(object):
         if self.gen_data is None:
             data_loaders = [train_dataloader]
         else:
-            gen_dataloader = DataLoader(self.gen_data, batch_size=self.batchsize, shuffle=True, drop_last=self.drop_last)
+            gen_dataloader = DataLoader(self.gen_data, batch_size=self.batchsize*5, shuffle=True, drop_last=self.drop_last)
             data_loaders = [train_dataloader, gen_dataloader]
         soln, comp, weight = self.model.solve_inner(data_loaders, num_epochs=num_epochs, step_func=step_func)
         bytes_r = self.model.size
