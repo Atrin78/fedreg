@@ -67,7 +67,7 @@ class Server(object):
         state_dict = self._aggregate(wstate_dicts)
         total=0
         for key in state_dict:
-            diff = old[key]-state_dict[key]
+            diff = old[key].detach()-state_dict[key].detach()
             total+= torch.norm(diff)**2
         print(total)
         return self.set_param(state_dict)
