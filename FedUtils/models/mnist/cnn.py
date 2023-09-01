@@ -74,7 +74,7 @@ class Model(nn.Module):
             data = data.to(next(self.parameters()).device)
         data = data.reshape(-1, 1, 28, 28)
         out = self.net(data)
-        return out,out
+        return out
 
     def train_onestep(self, data):
         self.train()
@@ -89,6 +89,7 @@ class Model(nn.Module):
         return self.flop*len(x)
 
     def solve_inner(self, data, num_epochs=1, step_func=None):
+        data = data[0]
         comp = 0.0
         weight = 1.0
         steps = 0
@@ -98,20 +99,6 @@ class Model(nn.Module):
             func = step_func(self, data)
 
         for _ in range(num_epochs):
-      #      train_iters = []
-      #      for train_loader in data:
-      #          train_iters.append(iter(train_loader))
-      #      for step in range(len(train_iters[0])):
-      #          for train_iter in train_iters:
-      #              try:
-      #                  x, y = next(train_iter)
-      #         #         print(torch.max(x))
-      #                  c = func([x, y])
-      #                  comp += c
-      #                  steps += 1.0
-      #              except:
-      #                  pass
-
             for x, y in data:
                 c = func([x, y])
                 comp += c
