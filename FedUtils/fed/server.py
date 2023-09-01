@@ -62,7 +62,13 @@ class Server(object):
         return state_dict
 
     def aggregate(self, wstate_dicts):
+        old = self.model.get_param()
         state_dict = self._aggregate(wstate_dicts)
+        total=0
+        for key in state_dict:
+            diff = old[key]-state_dict[key]
+            total+= torch.norm(diff)**2
+        print(total)
         return self.set_param(state_dict)
 
     def select_clients(self, seed, num_clients=20):
