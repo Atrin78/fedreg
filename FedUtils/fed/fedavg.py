@@ -15,7 +15,7 @@ def step_func(model, data):
         model.train()
         model.zero_grad()
         x, y = d
-        pred,_ = model.forward(x)
+        pred = model.forward(x)
         loss = model.loss(pred, y).mean()
         grad = torch.autograd.grad(loss, parameters)
         for p, g in zip(parameters, grad):
