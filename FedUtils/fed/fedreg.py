@@ -125,7 +125,7 @@ class FedReg(Server):
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
 
             self.latest_model = self.aggregate(csolns)
-            print(self.model.get_param('net.0.weight')[0])
+            print(self.model.get_param()['net.0.weight'][0])
 
         logger.info("-- Log At Round {} --".format(r))
         stats = self.test()
