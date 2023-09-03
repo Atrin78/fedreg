@@ -11,13 +11,13 @@ transform_fun = transforms.Compose(
             [
              torchvision.transforms.Resize((28, 28)),
              transforms.ToTensor(),
-             transforms.Lambda(lambda x: torch.stack([torch.unsqueeze(x, -1),torch.unsqueeze(x, -1),torch.unsqueeze(x, -1)],2))
+             transforms.Lambda(lambda x: torch.stack([torch.unsqueeze(x, -1),torch.unsqueeze(x, -1),torch.unsqueeze(x, -1)],2)/3.0)
              ])
 
 config = {
 
     "seed": 1,
-    "model": partial(Model, learning_rate=0.1/3, p_iters=10, ps_eta=2e-1, pt_eta=2e-3),
+    "model": partial(Model, learning_rate=1e-1, p_iters=10, ps_eta=2e-1, pt_eta=2e-3),
     "inner_opt": None,
     "optimizer": FedReg,
     "model_param": (10,),
