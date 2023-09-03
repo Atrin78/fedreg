@@ -4,6 +4,7 @@ from FedUtils.fed.fedreg import FedReg
 from torch.optim import SGD
 import torchvision.transforms as transforms
 import torchvision
+import torch
 
 
 transform_fun = transforms.Compose(
