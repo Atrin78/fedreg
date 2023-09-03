@@ -31,8 +31,8 @@ config = {
     "batch_size": 10,
     "use_fed": 1,
     "log_path": "tasks/mnist/FedReg_e40_lr1_g4/train.log",
-    "train_transform": None,
-    "test_transform": None,
+    "train_transform": transform_fun,
+    "test_transform": transform_fun,
     "eval_train": True,
     "gamma": 0.4,
 
