@@ -3,6 +3,11 @@ from FedUtils.models.utils import Flops, FSGM
 import torch
 import sys
 
+def init_weights(m):
+    if isinstance(m, nn.Linear):
+        torch.nn.init.xavier_uniform(m.weight)
+        m.bias.data.fill_(0.01)
+
 
 class Reshape(nn.Module):
     def forward(self, x):
@@ -20,6 +25,8 @@ class Model(nn.Module):
                                  nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(576, 256), nn.ReLU(), nn.Linear(256, self.num_classes)])
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
+        net.apply(init_weights)
+
 
         if optimizer is not None:
             self.optimizer = optimizer(self.parameters())
