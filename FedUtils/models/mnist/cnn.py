@@ -25,7 +25,7 @@ class Model(nn.Module):
                                  nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(576, 256), nn.ReLU(), nn.Linear(256, self.num_classes)])
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
-        net.apply(init_weights)
+        self.net.apply(init_weights)
 
 
         if optimizer is not None:
