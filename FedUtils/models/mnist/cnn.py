@@ -5,7 +5,7 @@ import sys
 
 def init_weights(m):
     if isinstance(m, nn.Linear):
-        torch.nn.init.normal(m.weight)
+        torch.nn.init.xavier_normal(m.weight)
         m.bias.data.fill_(0.01)
 
 
