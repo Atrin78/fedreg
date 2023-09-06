@@ -5,7 +5,7 @@ import sys
 
 def init_weights(m):
     if isinstance(m, nn.Linear):
-        torch.nn.init.xavier_normal_(m.weight)
+        torch.nn.init.xavier_normal(m.weight)
         m.bias.data.fill_(0.01)
 
 
@@ -22,15 +22,12 @@ class Model(nn.Module):
         torch.manual_seed(123+seed)
 
         self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
-                                 nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(576, 256), nn.ReLU()])
-        self.last = nn.Linear(256, self.num_classes)
+                                 nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(576, 256), nn.ReLU(), nn.Linear(256, self.num_classes)])
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
-        self.net.apply(init_weights)
-        mm=4
+        mm=1
         for i in range(mm):
-            torch.nn.init.xavier_normal(self.last.weight)
-        self.last.bias.data.fill_(0.01)
+            self.net.apply(init_weights)
 
 
         if optimizer is not None:
@@ -46,8 +43,6 @@ class Model(nn.Module):
         self.flop = Flops(self, torch.tensor([[0.0 for _ in range(self.num_inp)]]))
         if torch.cuda.device_count() > 0:
             self.net = self.net.cuda()
-            self.last = self.last.cuda()
-
 
     def set_param(self, state_dict):
         self.load_state_dict(state_dict)
@@ -88,7 +83,6 @@ class Model(nn.Module):
             data = data.to(next(self.parameters()).device)
         data = data.reshape(-1, 1, 28, 28)
         out = self.net(data)
-        out = self.last(out)
         return out
 
     def train_onestep(self, data):
