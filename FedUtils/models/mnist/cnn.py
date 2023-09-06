@@ -5,7 +5,7 @@ import sys
 
 def init_weights(m):
     if isinstance(m, nn.Linear):
-        torch.nn.init.sparse_(m.weight, sparsity=0.1)
+        torch.nn.init.xavier_normal_(m.weight, sparsity=0.1)
         m.bias.data.fill_(0.01)
 
 
@@ -21,11 +21,14 @@ class Model(nn.Module):
         self.num_inp = 784
         torch.manual_seed(123+seed)
 
-        self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
+        self.first = nn.Conv2d(1, 32, 5)
+        self.net = nn.Sequential(*[nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
                                  nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(576, 256), nn.ReLU(), nn.Linear(256, self.num_classes)])
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
         self.net.apply(init_weights)
+        torch.nn.init.xavier_uniform_(self.first.weight)
+        torch.nn.init.xavier_uniform_(self.first.bias)
 
 
         if optimizer is not None:
@@ -40,6 +43,7 @@ class Model(nn.Module):
 
         self.flop = Flops(self, torch.tensor([[0.0 for _ in range(self.num_inp)]]))
         if torch.cuda.device_count() > 0:
+            self.first = self.first.cuda()
             self.net = self.net.cuda()
 
     def set_param(self, state_dict):
