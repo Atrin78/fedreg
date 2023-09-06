@@ -43,7 +43,7 @@ class CusDataset(TensorDataset):
             ret = ret.reshape((28, 28))
             ret = Image.fromarray(ret)
             ret = self.transform(ret)
-            print(ret[:20, :20, :])
+            print(ret[:10, :10, :])
 
         return [ret, torch.tensor(self.data["y"][item])]
 
