@@ -15,10 +15,12 @@ def step_func(model, data):
         model.train()
         model.zero_grad()
         x, y = d
+        print('x')
         print(x[:, :, :3, :3])
         pred = model.forward(x)
         loss = model.loss(pred, y).mean()
         grad = torch.autograd.grad(loss, parameters)
+        print('g')
         print(grad[0][0])
         for p, g in zip(parameters, grad):
             p.data.add_(-lr*g)
