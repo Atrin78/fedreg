@@ -29,7 +29,7 @@ config = {
     "drop_percent": 0.0,
     "num_epochs": 40,
     "batch_size": 10,
-    "use_fed": 0,
+    "use_fed": 1,
     "log_path": "tasks/mnist/FedAvg_e40_lr1/train.log",
 
     "train_transform": transform_fun,
