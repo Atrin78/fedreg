@@ -5,7 +5,7 @@ import sys
 
 def init_weights(m):
     if isinstance(m, nn.Linear):
-        torch.nn.init.xavier_normal_(m.weight, sparsity=0.1)
+        torch.nn.init.xavier_normal_(m.weight)
         m.bias.data.fill_(0.01)
 
 
@@ -84,6 +84,7 @@ class Model(nn.Module):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
         data = data.reshape(-1, 1, 28, 28)
+        data = self.first(data)
         out = self.net(data)
         return out
 
