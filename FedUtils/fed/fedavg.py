@@ -46,7 +46,7 @@ class FedAvg(Server):
             np.random.seed(r)
             active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
             print('active')
-            print(active_clients)
+            print([c.id for c in active_clients])
             csolns = {}
             w = 0
 
