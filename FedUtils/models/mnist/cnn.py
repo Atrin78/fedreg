@@ -28,7 +28,7 @@ class Model(nn.Module):
         self.softmax = nn.Softmax(-1)
         self.net.apply(init_weights)
         torch.nn.init.xavier_uniform_(self.first.weight)
-        torch.nn.init.xavier_uniform_(self.first.bias)
+        self.first.bias.data.fill_(0.01)
 
 
         if optimizer is not None:
