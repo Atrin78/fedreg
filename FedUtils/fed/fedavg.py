@@ -16,13 +16,11 @@ def step_func(model, data):
         model.zero_grad()
         x, y = d
         print('x')
-        #print(x[:2, :3, :3, :3])
-        print(x.shape)
         pred = model.forward(x)
         loss = model.loss(pred, y).mean()
         grad = torch.autograd.grad(loss, parameters)
-        print('g')
-        print(grad[0][0])
+    #    print('g')
+    #    print(grad[0][0])
         for p, g in zip(parameters, grad):
             p.data.add_(-lr*g)
         return flop*len(x)
