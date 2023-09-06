@@ -45,6 +45,8 @@ class FedAvg(Server):
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
             active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
+            print('active')
+            print(active_clients)
             csolns = {}
             w = 0
 

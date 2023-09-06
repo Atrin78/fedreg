@@ -5,7 +5,7 @@ import sys
 
 def init_weights(m):
     if isinstance(m, nn.Linear):
-        torch.nn.init.normal_(m.weight)
+        torch.nn.init.xavier_normal_(m.weight)
         m.bias.data.fill_(0.01)
 
 
@@ -27,7 +27,9 @@ class Model(nn.Module):
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
         self.net.apply(init_weights)
-        torch.nn.init.trunc_normal_(self.first.weight, a=-2, b=2)
+        mm = 1
+        for i in range(mm):
+            torch.nn.init.xavier_normal_(self.first.weight)
         self.first.bias.data.fill_(0.01)
 
 
