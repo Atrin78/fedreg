@@ -27,7 +27,7 @@ class Model(nn.Module):
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
         self.net.apply(init_weights)
-        mm=2
+        mm=3
         for i in range(mm):
             torch.nn.init.xavier_normal(self.last.weight)
         self.last.bias.data.fill_(0.01)
