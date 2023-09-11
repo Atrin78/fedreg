@@ -92,6 +92,7 @@ class Model(nn.Module):
      #   print(loss[0][0][:10,:10])
      #   print(loss.max())
      #   print(loss.shape)
+        print(loss)
         print(loss.max())
         loss = torch.sum(loss, [-1, -2, -3])
         return loss
