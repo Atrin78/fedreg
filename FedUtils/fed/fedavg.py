@@ -26,6 +26,27 @@ def step_func(model, data):
     return func
 
 
+def step_func2(model, data):
+    lr = model.learning_rate
+    parameters = list(model.parameters())
+    flop = model.flop
+
+    def func(d):
+        nonlocal flop, lr
+        model.train()
+        model.zero_grad()
+        x, y = d
+        pred = model.AE(x)
+        loss = model.MSE(pred, x+(0.1**0.5)*torch.randn(x.shape)).mean()
+        grad = torch.autograd.grad(loss, parameters)
+    #    print('g')
+    #    print(grad[0][0])
+        for p, g in zip(parameters, grad):
+            p.data.add_(-lr*g)
+        return flop*len(x)
+    return func
+
+
 class FedAvg(Server):
     step = 0
 
@@ -54,7 +75,10 @@ class FedAvg(Server):
 
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
-                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
+                if r <= warmup:
+                    soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func2)  # stats has (byte w, comp, byte r)
+                else:
+                    soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
                 if len(csolns) == 0:
