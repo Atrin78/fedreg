@@ -45,7 +45,7 @@ def step_func2(model, data):
         print(loss)
         grad = torch.autograd.grad(loss, parameters)
         print('g')
-  #      print(grad[-3:])
+        print(grad[-3:])
   #      print(parameters[-3:])
         for p, g in zip(parameters, grad):
             p.data.add_(-lr*g)
