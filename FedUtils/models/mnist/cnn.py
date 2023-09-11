@@ -86,16 +86,12 @@ class Model(nn.Module):
         return loss
 
     def MSE(self, pred, gt):
-        print(pred.max())
-        print(gt.max())
         if gt.device != pred.device:
             gt = gt.to(pred.device)
         loss = (pred - gt)**2
      #   print(loss[0][0][:10,:10])
      #   print(loss.max())
      #   print(loss.shape)
-        print(loss)
-        print(loss.max())
         loss = torch.sum(loss, [-1, -2, -3])
         return loss
 
