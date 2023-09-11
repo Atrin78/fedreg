@@ -111,6 +111,8 @@ class Model(nn.Module):
         out = self.net(data)
      #   out = self.head(out)
         out = self.decoder(out)
+        print('oo')
+        ptint(out)
         return out
 
     def train_onestep(self, data):
