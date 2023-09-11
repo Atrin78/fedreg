@@ -112,7 +112,7 @@ class Model(nn.Module):
      #   out = self.head(out)
         out = self.decoder(out)
         print('oo')
-        ptint(out)
+        print(out)
         return out
 
     def train_onestep(self, data):
