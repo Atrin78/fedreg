@@ -88,12 +88,12 @@ class Model(nn.Module):
     def MSE(self, pred, gt):
         if gt.device != pred.device:
             gt = gt.to(pred.device)
-        loss = nn.MSELoss()(pred, gt)
-     #   loss = (pred - gt)**2
+     #   loss = nn.MSELoss()(pred, gt)
+        loss = (pred - gt)**2
      #   print(loss[0][0][:10,:10])
      #   print(loss.max())
      #   print(loss.shape)
-     #   loss = loss.sum([-1, -2, -3])
+        loss = loss.sum([-1, -2, -3])
         return loss
 
 
