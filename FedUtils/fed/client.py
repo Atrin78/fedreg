@@ -3,6 +3,7 @@ from torch.utils.data import DataLoader, ConcatDataset
 import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
 from PIL import Image
+import numpy as np
 
 
 class Client(object):
@@ -61,7 +62,7 @@ class Client(object):
             x, y = d
             out = self.model.AE(x)[0].cpu().detach().numpy()*255
             out = out.reshape((32, 32))
-            print(out.shape)
+            print(np.max(out))
             im = Image.fromarray(out.astype('uint8'))
             im.save(str(self.id)+'.jpeg')
             break
