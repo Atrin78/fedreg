@@ -84,6 +84,7 @@ class FedAvg(Server):
             print([c.id for c in active_clients])
             csolns = {}
             w = 0
+      
 
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
