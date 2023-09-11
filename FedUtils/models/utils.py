@@ -40,6 +40,7 @@ class CusDataset(TensorDataset):
                 ret = ret.transpose(1, 2, 0)
             else:
                 ret = ret
+            print(np.max(ret))
             ret = ret.reshape((28, 28))
             ret = Image.fromarray(ret)
             ret = self.transform(ret)/255.0
