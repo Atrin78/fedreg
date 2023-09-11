@@ -86,6 +86,8 @@ class Model(nn.Module):
         return loss
 
     def MSE(self, pred, gt):
+        print(pred.max())
+        print(gt.max())
         if gt.device != pred.device:
             gt = gt.to(pred.device)
         loss = (pred - gt)**2
