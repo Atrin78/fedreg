@@ -30,9 +30,9 @@ class Model(nn.Module):
         self.decoder = nn.Sequential(*[nn.Linear(256, 1024), ReverseReshape(), nn.ConvTranspose2d(64, 32, 5, padding=2), nn.Upsample(scale_factor=2), nn.ReLU(), nn.ConvTranspose2d(32, 32, 5, padding=2), nn.Upsample(scale_factor=2), nn.ReLU(), nn.ConvTranspose2d(32, 1, 5, padding=2), nn.Upsample(scale_factor=2), nn.Sigmoid()])
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
-        mm=1
-        for i in range(mm):
-            self.net.apply(init_weights)
+      #  mm=1
+      #  for i in range(mm):
+      #      self.net.apply(init_weights)
 
 
         if optimizer is not None:
