@@ -170,7 +170,7 @@ class Model(nn.Module):
         self.eval()
         for d in data:
             x, y = d
-            print('hey)
+            print('hey')
             print(x.max())
             with torch.no_grad():
                 pred = self.AE(x)
