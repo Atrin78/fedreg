@@ -59,8 +59,9 @@ class Client(object):
             data_loaders = [train_dataloader, gen_dataloader]
         for d in iter(train_dataloader):
             x, y = d
-            out = self.model.AE(x)[0].cpu().detach().numpy()
-            im = Image.fromarray(out)
+            out = self.model.AE(x)[0].cpu().detach().numpy()*255
+            print(out.shape)
+            im = Image.fromarray(out.astype('uint8'))
             im.save(str(self.id))
             break
         soln, comp, weight = self.model.solve_inner(data_loaders, num_epochs=num_epochs, step_func=step_func)
