@@ -56,9 +56,15 @@ class FedAvg(Server):
         for r in range(self.num_rounds):
             if r % self.eval_every == 0:
                 logger.info("-- Log At Round {} --".format(r))
-                stats = self.test()
+                if r<= warmup:
+                    stats = self.testAE()
+                else:
+                    stats = self.test()
                 if self.eval_train:
-                    stats_train = self.train_error_and_loss()
+                    if r<=warmup:
+                        stats_train = self.train_error_and_lossAE()
+                    else:
+                        stats_train = self.train_error_and_loss()
                 else:
                     stats_train = stats
                 logger.info("-- TEST RESULTS --")
