@@ -86,6 +86,8 @@ class Model(nn.Module):
         return loss
 
     def MSE(self, pred, gt):
+        if gt.device != pred.device:
+            gt = gt.to(pred.device)
         loss = (pred - gt)**2
         loss = torch.sum(loss, [-1, -2, -3])
         return loss
