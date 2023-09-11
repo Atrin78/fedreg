@@ -43,6 +43,7 @@ class CusDataset(TensorDataset):
             print(np.max(ret))
             ret = ret.reshape((28, 28))
             ret = Image.fromarray(ret, 'L')
+            print(ret.getextrema())
             ret = self.transform(ret)/255.0
             print('ret')
             print(ret.max())
