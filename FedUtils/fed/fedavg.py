@@ -40,8 +40,8 @@ def step_func2(model, data):
         pred = model.AE(x)
         loss = model.MSE(pred, x+(0.1**0.5)*torch.randn(x.shape)).mean()
         grad = torch.autograd.grad(loss, parameters)
-    #    print('g')
-    #    print(grad[0][0])
+        print('g')
+        print(grad[-1][0])
         for p, g in zip(parameters, grad):
             p.data.add_(-lr*g)
         return flop*len(x)
