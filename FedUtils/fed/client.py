@@ -60,7 +60,7 @@ class Client(object):
         for d in iter(train_dataloader):
             x, y = d
             out = self.model.AE(x)[0].cpu().detach().numpy()*255
-            out = out.reshape((32, 32, 1))
+            out = out.reshape((32, 32))
             print(out.shape)
             im = Image.fromarray(out.astype('uint8'))
             im.save(str(self.id))
