@@ -8,7 +8,7 @@ warmup=10
 
 def step_func(model, data):
     lr = model.learning_rate
-    parameters = list(model.parameters())
+    parameters = list(model.net.parameters()) + list(model.head.parameters())
     flop = model.flop
 
     def func(d):
@@ -18,7 +18,7 @@ def step_func(model, data):
         x, y = d
         pred = model.forward(x)
         loss = model.loss(pred, y).mean()
-        grad = torch.autograd.grad(loss, parameters, allow_unused=True)
+        grad = torch.autograd.grad(loss, parameters)
     #    print('g')
     #    print(grad[0][0])
         for p, g in zip(parameters, grad):
@@ -29,7 +29,7 @@ def step_func(model, data):
 
 def step_func2(model, data):
     lr = model.learning_rate
-    parameters = list(model.parameters())
+    parameters = list(model.net.parameters()) + list(model.decoder.parameters())
     flop = model.flop
 
     def func(d):
@@ -39,7 +39,7 @@ def step_func2(model, data):
         x, y = d
         pred = model.AE(x)
         loss = model.MSE(pred, x+(0.1**0.5)*torch.randn(x.shape)).mean()
-        grad = torch.autograd.grad(loss, parameters, allow_unused=True)
+        grad = torch.autograd.grad(loss, parameters)
     #    print('g')
     #    print(grad[0][0])
         for p, g in zip(parameters, grad):
