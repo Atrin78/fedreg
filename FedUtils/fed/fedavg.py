@@ -39,7 +39,9 @@ def step_func2(model, data):
         x, y = d
         print(x.shape)
         pred = model.AE(x)
-        loss = model.MSE(pred, x+(0.1**0.5)*torch.randn(x.shape)).mean()
+        loss = model.MSE(pred, x+(0.1**0.5)*torch.randn(x.shape))
+        print(loss.shape)
+        loss = loss.mean()
         print(loss)
         grad = torch.autograd.grad(loss, parameters)
         print('g')
