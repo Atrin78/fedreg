@@ -39,8 +39,8 @@ def step_func2(model, data):
         x, y = d
         print(x.shape)
         pred = model.AE(x)
-        
-        loss = model.MSE(pred, torch.clip(x+(0.01**0.5)*torch.randn(x.shape), 0, 1))
+        noisy_x = x+(0.01**0.5)*torch.randn(noisy_x.shape)
+        loss = model.MSE(pred, torch.clip(noisy_x.clamp(0.0, 1.0), 0, 1))
         print(loss.shape)
         loss = loss.mean()
         print(loss)
