@@ -59,7 +59,7 @@ class Client(object):
             data_loaders = [train_dataloader, gen_dataloader]
         for d in iter(train_dataloader):
             x, y = d
-            out = self.model.AE(x)[0].numpy()
+            out = self.model.AE(x)[0].cpu().numpy()
             im = Image.fromarray(out)
             im.save(str(self.id))
             break
