@@ -96,6 +96,7 @@ class Model(nn.Module):
             data = data.to(next(self.parameters()).device)
         data = data.reshape(-1, 1, 32, 32)
         out = self.net(data)
+        out = self.head(out)
         return out
 
     def AE(self, data):
@@ -103,7 +104,7 @@ class Model(nn.Module):
             data = data.to(next(self.parameters()).device)
         data = data.reshape(-1, 3, 32, 32)
         out = self.net(data)
-        out = self.head(out)
+     #   out = self.head(out)
         out = self.decoder(out)
         return out
 
