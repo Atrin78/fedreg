@@ -37,6 +37,7 @@ def step_func2(model, data):
         model.train()
         model.zero_grad()
         x, y = d
+        print(x.shape)
         pred = model.AE(x)
         loss = model.MSE(pred, x+(0.1**0.5)*torch.randn(x.shape)).mean()
         print(loss)
