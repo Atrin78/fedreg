@@ -89,6 +89,7 @@ class Model(nn.Module):
         if gt.device != pred.device:
             gt = gt.to(pred.device)
         loss = (pred - gt)**2
+        print(loss[0][0][:10,:10])
         print(torch.max(loss))
         print(loss.shape)
         loss = torch.sum(loss, [-1, -2, -3])
