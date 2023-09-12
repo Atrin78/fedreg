@@ -60,7 +60,8 @@ class Client(object):
             data_loaders = [train_dataloader, gen_dataloader]
         for d in iter(train_dataloader):
             x, y = d
-            out = self.model.AE(x)[0].cpu().detach().numpy()*255
+         #   out = self.model.AE(x)[0].cpu().detach().numpy()*255
+            out = x
             out = out.reshape((32, 32))
             print(np.max(out))
             im = Image.fromarray(out.astype('uint8'))
