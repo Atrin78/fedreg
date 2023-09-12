@@ -61,8 +61,8 @@ class Client(object):
         for d in iter(train_dataloader):
             x, y = d
          #   out = self.model.AE(x)[0].cpu().detach().numpy()*255
-            out = x
-            out = out.reshape((32, 32))
+            out = x.cpu().detach().numpy()*255
+            out = out.reshape((-1, 32, 32))[0]
             print(np.max(out))
             im = Image.fromarray(out.astype('uint8'))
             im.save(str(self.id)+'.jpeg')
