@@ -33,7 +33,7 @@ class CusDataset(TensorDataset):
         if self.transform is None:
             ret = torch.tensor(self.data['x'][item])
         else:
-            ret = np.array(self.data["x"][item]).astype("uint8")
+            ret = np.array(self.data["x"][item]).astype("float32")
             if ret.shape[-1] == 3:
                 ret = ret
             elif ret.shape[0] == 3:
