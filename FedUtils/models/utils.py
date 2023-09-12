@@ -33,13 +33,14 @@ class CusDataset(TensorDataset):
         if self.transform is None:
             ret = torch.tensor(self.data['x'][item])
         else:
-            ret = np.array(self.data["x"][item]).astype("float32")
+            ret = np.array(self.data["x"][item]).astype("uint8")
             if ret.shape[-1] == 3:
                 ret = ret
             elif ret.shape[0] == 3:
                 ret = ret.transpose(1, 2, 0)
             else:
                 ret = ret
+            print(ret.shape)
             ret = ret.reshape((28, 28))
             ret = Image.fromarray(ret)
             ret.save('ret.jpeg')
