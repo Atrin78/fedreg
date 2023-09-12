@@ -42,6 +42,7 @@ class CusDataset(TensorDataset):
                 ret = ret
             ret = ret.reshape((28, 28))
             ret = Image.fromarray(ret)
+            ret.savefig('ret.jpeg')
             ret = self.transform(ret)
 
 
