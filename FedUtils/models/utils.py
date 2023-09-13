@@ -46,9 +46,12 @@ class CusDataset(TensorDataset):
             else:
                 ret = ret
             ret = ret.reshape((28, 28))
-            ret = Image.fromarray(ret)
-            ret.save('ret.png')
+         #   ret = Image.fromarray(ret)
+        #    ret.save('ret.png')
+            plt.imsave('ret.png', ret, cmap='gray')
             ret = self.transform(ret)
+            plt.imsave('ret2.png', ret.cpu().detach().numpy(), cmap='gray')
+
 
 
         return [ret, torch.tensor(self.data["y"][item])]

@@ -32,8 +32,8 @@ config = {
     "use_fed": 1,
     "log_path": "tasks/mnist/FedAvg_e40_lr1/train.log",
 
-    "train_transform": None,
-    "test_transform": None,
+    "train_transform": transform_fun,
+    "test_transform": transform_fun,
     "eval_train": True,
 
 
