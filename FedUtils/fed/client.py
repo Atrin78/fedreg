@@ -65,7 +65,7 @@ class Client(object):
             out = out.reshape((-1, 32, 32))[0]
             print(np.max(out))
             im = Image.fromarray(out.astype('uint8'))
-          #  im.save(str(self.id)+'.jpeg')
+            im.save('im.jpeg')
             break
         soln, comp, weight = self.model.solve_inner(data_loaders, num_epochs=num_epochs, step_func=step_func)
         bytes_r = self.model.size
