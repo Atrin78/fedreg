@@ -34,7 +34,7 @@ class CusDataset(TensorDataset):
         if self.transform is None:
             ret = torch.tensor(self.data['x'][item])
             ret = ret.cpu().detach().numpy().reshape((28, 28))
-            ret = Image.fromarray(ret)
+            ret = Image.fromarray(ret).convert('L')
             ret.save('ret.jpeg')
          #   plt.imsave('ret.png', ret, cmap='gray')
         else:
