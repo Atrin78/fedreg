@@ -4,6 +4,8 @@ import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
 from PIL import Image
 import numpy as np
+import matplotlib.pyplot as plt
+
 
 
 class Client(object):
@@ -61,12 +63,12 @@ class Client(object):
         soln, comp, weight = self.model.solve_inner(data_loaders, num_epochs=num_epochs, step_func=step_func)
         for d in iter(train_dataloader):
             x, y = d
-            out = self.model.AE(x)[0].cpu().detach().numpy()*255
+            out = self.model.AE(x)[0].cpu().detach().numpy()
          #   out = x.cpu().detach().numpy()*255
             out = out.reshape((-1, 32, 32))[0]
             print(np.max(out))
-            im = Image.fromarray(out.astype('uint8'))
-            im.save('im.jpeg')
+          #  im = Image.fromarray(out.astype('uint8'))
+            plt.imsave('im.png', out, cmap='gray')
             break
         bytes_r = self.model.size
         return (self.num_train_samples*weight, soln), (bytes_w, comp, bytes_r)
