@@ -27,7 +27,7 @@ class Model(nn.Module):
         self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
                                  nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(1024, 256), nn.ReLU()])
         self.head = nn.Linear(256, self.num_classes)
-        self.decoder = nn.Sequential(*[nn.Linear(256, 1024), ReverseReshape(), nn.ConvTranspose2d(64, 32, 5, padding=2), nn.Upsample(scale_factor=2), nn.ReLU(), nn.ConvTranspose2d(32, 32, 5, padding=2), nn.Upsample(scale_factor=2), nn.ReLU(), nn.ConvTranspose2d(32, 1, 5, padding=2), nn.Upsample(scale_factor=2), nn.Sigmoid()])
+        self.decoder = nn.Sequential(*[nn.Linear(256, 1024), ReverseReshape(), nn.ConvTranspose2d(64, 32, 5, padding=2), nn.Upsample(scale_factor=2), nn.ReLU(), nn.ConvTranspose2d(32, 32, 5, padding=2), nn.Upsample(scale_factor=2), nn.ReLU(), nn.ConvTranspose2d(32, 1, 5, padding=2), nn.Upsample(scale_factor=2), nn.ReLU()])
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
       #  mm=1
