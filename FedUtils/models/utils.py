@@ -7,6 +7,7 @@ import torch
 from loguru import logger
 from PIL import Image
 import h5py
+import matplotlib.pyplot as plt
 
 
 def FSGM(model, inp, label, iters, eta):
@@ -32,6 +33,8 @@ class CusDataset(TensorDataset):
     def __getitem__(self, item):
         if self.transform is None:
             ret = torch.tensor(self.data['x'][item])
+            ret = ret.cpu().detach().numpy().reshape((28, 28))
+            plt.imsave('ret.png', ret, cmap='gray')
         else:
             ret = np.array(self.data["x"][item])
             if ret.shape[-1] == 3:
