@@ -68,7 +68,8 @@ class Client(object):
             out = out.reshape((-1, 32, 32))[0]
             print(np.max(out))
           #  im = Image.fromarray(out.astype('uint8'))
-            plt.imsave('im.png', out, cmap='gray')
+            plt.imsave('im.png', x.cpu().detach()[0], cmap='gray')
+            plt.imsave('im2.png', out, cmap='gray')
             break
         bytes_r = self.model.size
         return (self.num_train_samples*weight, soln), (bytes_w, comp, bytes_r)
