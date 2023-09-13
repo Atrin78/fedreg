@@ -42,7 +42,7 @@ def step_func2(model, data):
         pred = model.AE(noisy_x)
         loss = model.MSE(pred, x)
         loss = loss.mean()
-  #      print(loss)
+        print(loss)
         grad = torch.autograd.grad(loss, parameters)
   #      print('g')
   #      print(grad[-3:])
