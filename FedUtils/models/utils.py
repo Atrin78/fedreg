@@ -35,7 +35,7 @@ class CusDataset(TensorDataset):
             ret = torch.tensor(self.data['x'][item])
             ret = ret.cpu().detach().numpy().reshape((28, 28))
             ret = Image.fromarray(ret)
-            ret.save(ret.png)
+            ret.save('ret.png')
          #   plt.imsave('ret.png', ret, cmap='gray')
         else:
             ret = np.array(self.data["x"][item])
