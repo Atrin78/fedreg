@@ -53,6 +53,7 @@ class CusDataset(TensorDataset):
             print(np.max(ret))
             ret = ret.reshape((28, 28, 1))
             ret = self.transform(ret)
+            ret = (ret-ret.min())/(ret.max()-ret.min())
             print(ret.max())
             plt.imsave('ret2.png', ret[0].cpu().detach().numpy(), cmap='gray')
 
