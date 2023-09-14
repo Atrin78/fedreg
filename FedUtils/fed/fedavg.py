@@ -49,7 +49,8 @@ def step_func2(model, data):
   #      print(grad[-3:])
   #      print(parameters[-3:])
         for p, g in zip(parameters, grad):
-            print(g)
+            if g is None:
+                pass
             p.data.add_(-lr*g)
         return flop*len(x)
     return func
