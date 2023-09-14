@@ -172,7 +172,7 @@ class Model(nn.Module):
             x, y = d
             with torch.no_grad():
                 pred = self.AE(x)
-            loss += self.MSE(pred, x).sum()
+            loss += self.MSE(pred, x).mean()
          #   pred_max = pred.argmax(-1).float()
           #  assert len(pred_max.shape) == len(y.shape)
           #  if pred_max.device != y.device:
