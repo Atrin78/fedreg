@@ -30,7 +30,7 @@ def step_func(model, data):
 
 def step_func2(model, data):
     lr = model.learning_rate
-    parameters = list(model.parameters())
+    parameters = list(model.net.parameters()) + list(model.decoder.parameters())
     flop = model.flop
 
     def func(d):
@@ -44,13 +44,11 @@ def step_func2(model, data):
         loss = model.MSE(pred, x)
         loss = loss.mean()
         print(loss)
-        grad = torch.autograd.grad(loss, parameters, allow_unused=True)
+        grad = torch.autograd.grad(loss, parameters)
   #      print('g')
   #      print(grad[-3:])
   #      print(parameters[-3:])
         for p, g in zip(parameters, grad):
-            if g is None:
-                pass
             p.data.add_(-lr*g)
         return flop*len(x)
     return func
