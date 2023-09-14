@@ -30,7 +30,7 @@ def step_func(model, data):
 
 def step_func2(model, data):
     lr = model.learning_rate
-    parameters = list(model.net.parameters()) + list(model.decoder.parameters())
+    parameters = list(model.parameters())
     flop = model.flop
 
     def func(d):
