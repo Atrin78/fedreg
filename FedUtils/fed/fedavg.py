@@ -5,7 +5,7 @@ from FedUtils.models.utils import decode_stat
 import torch
 
 
-warmup=30
+warmup=10
 
 def step_func(model, data):
     lr = model.learning_rate
