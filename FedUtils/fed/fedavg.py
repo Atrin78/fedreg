@@ -62,7 +62,7 @@ class FedAvg(Server):
         for r in range(self.num_rounds):
             if r % self.eval_every == 0:
                 logger.info("-- Log At Round {} --".format(r))
-                if r<= warmup:
+                if r< warmup:
                     stats = self.testAE()
                 else:
                     stats = self.test()
@@ -89,7 +89,7 @@ class FedAvg(Server):
 
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
-                if r <= warmup:
+                if r < warmup:
                     soln, stats = c.solve_inner(num_epochs=self.num_epochs*2, step_func=step_func2)  # stats has (byte w, comp, byte r)
                 else:
                     soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
