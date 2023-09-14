@@ -10,6 +10,7 @@ transform_fun = transforms.Compose(
              transforms.ToTensor(),
              transforms.Lambda(lambda x: torch.squeeze(x, -1)),
              torchvision.transforms.Resize(32),
+             torchvision.transforms.RandomRotation((-30, 30)),
        #      transforms.Lambda(lambda x: torch.stack([torch.squeeze(x, 1),torch.squeeze(x, 1),torch.squeeze(x, 1)],1)/3.0)
        #      transforms.Lambda(lambda x: torch.stack([torch.unsqueeze(x, -1),torch.unsqueeze(torch.zeros_like(x), -1),torch.unsqueeze(torch.zeros_like(x), -1)],2))
              ])

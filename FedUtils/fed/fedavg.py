@@ -38,7 +38,7 @@ def step_func2(model, data):
         model.train()
         model.zero_grad()
         x, y = d
-        noisy_x = x+(0.01**0.5)*torch.randn(x.shape)
+        noisy_x = x+(0.04**0.5)*torch.randn(x.shape)
         noisy_x = noisy_x.clamp(0.0, 1.0)
         pred = model.AE(noisy_x)
         loss = model.MSE(pred, x)
