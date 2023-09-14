@@ -44,7 +44,7 @@ def step_func2(model, data):
         loss = model.MSE(pred, x)
         loss = loss.mean()
         print(loss)
-        grad = torch.autograd.grad(loss, parameters)
+        grad = torch.autograd.grad(loss, parameters, allow_unused=True)
   #      print('g')
   #      print(grad[-3:])
   #      print(parameters[-3:])
