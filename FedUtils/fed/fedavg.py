@@ -29,7 +29,7 @@ def step_func(model, data):
 
 
 def step_func2(model, data):
-    lr = model.learning_rate
+    lr = model.learning_rate*20
     parameters = list(model.net.parameters()) + list(model.decoder.parameters())
     flop = model.flop
 
@@ -90,7 +90,7 @@ class FedAvg(Server):
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
                 if r <= warmup:
-                    soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func2)  # stats has (byte w, comp, byte r)
+                    soln, stats = c.solve_inner(num_epochs=self.num_epochs*2, step_func=step_func2)  # stats has (byte w, comp, byte r)
                 else:
                     soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
