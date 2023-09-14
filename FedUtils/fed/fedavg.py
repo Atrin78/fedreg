@@ -67,7 +67,7 @@ class FedAvg(Server):
                 else:
                     stats = self.test()
                 if self.eval_train:
-                    if r<=warmup:
+                    if r<warmup:
                         stats_train = self.train_error_and_lossAE()
                     else:
                         stats_train = self.train_error_and_loss()
