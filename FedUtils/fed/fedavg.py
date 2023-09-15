@@ -7,9 +7,11 @@ import torch
 
 warmup=10
 
+full = 30
+
 def step_func(model, data):
     lr = model.learning_rate
-    parameters = list(model.net.parameters()) + list(model.head.parameters())
+    parameters = list(model.bottleneck.parameters()) + list(model.head.parameters())
     flop = model.flop
 
     def func(d):
@@ -29,9 +31,32 @@ def step_func(model, data):
     return func
 
 
+def step_func3(model, data):
+    lr = model.learning_rate
+    parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
+    flop = model.flop
+
+    def func(d):
+        nonlocal flop, lr
+        model.train()
+        model.zero_grad()
+        x, y = d
+        
+        pred = model.forward(x)
+        loss = model.loss(pred, y).mean()
+        grad = torch.autograd.grad(loss, parameters)
+    #    print('g')
+    #    print(grad[0][0])
+        for p, g in zip(parameters, grad):
+            p.data.add_(-lr*g)
+        return flop*len(x)
+    return func
+
+
+
 def step_func2(model, data):
     lr = model.learning_rate*20
-    parameters = list(model.net.parameters()) + list(model.decoder.parameters())
+    parameters = list(model.net.parameters()) + list(model.bottleneck.parameters())  + list(model.decoder.parameters())
     flop = model.flop
 
     def func(d):
@@ -92,8 +117,10 @@ class FedAvg(Server):
                 c.set_param(self.model.get_param())
                 if r < warmup:
                     soln, stats = c.solve_inner(num_epochs=self.num_epochs*2, step_func=step_func2)  # stats has (byte w, comp, byte r)
-                else:
+                elif r < full:
                     soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
+                else:
+                    soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func3)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
                 if len(csolns) == 0:

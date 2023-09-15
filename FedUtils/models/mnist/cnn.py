@@ -26,7 +26,8 @@ class Model(nn.Module):
         torch.manual_seed(123+seed)
 
         self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
-                                 nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(1024, 256), nn.ReLU()])
+                                 nn.MaxPool2d(2), nn.ReLU(), Reshape()])
+        self.bottleneck = nn.Sequential(*[nn.Linear(1024, 256), nn.ReLU()])
         self.head = nn.Linear(256, self.num_classes)
         self.decoder = nn.Sequential(*[nn.Linear(256, 1024), ReverseReshape(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(64, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 1, 5, padding=2), nn.Sigmoid()])
         self.size = sys.getsizeof(self.state_dict())
@@ -51,6 +52,7 @@ class Model(nn.Module):
             self.net = self.net.cuda()
             self.head = self.head.cuda()
             self.decoder = self.decoder.cuda()
+            self.bottleneck = self.bottleneck.cuda()
 
     def set_param(self, state_dict):
         self.load_state_dict(state_dict)
@@ -103,6 +105,7 @@ class Model(nn.Module):
             data = data.to(next(self.parameters()).device)
         data = data.reshape(-1, 1, 32, 32)
         out = self.net(data)
+        out = self.bottleneck(out)
         out = self.head(out)
         return out
 
@@ -112,6 +115,7 @@ class Model(nn.Module):
         data = data.reshape(-1, 1, 32, 32)
         out = self.net(data)
      #   out = self.head(out)
+        out = self.bottleneck(out)
         out = self.decoder(out)
      #   print('oo')
      #   print(out)
