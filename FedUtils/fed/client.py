@@ -60,7 +60,7 @@ class Client(object):
         else:
             gen_dataloader = DataLoader(self.gen_data, batch_size=self.batchsize*5, shuffle=True, drop_last=self.drop_last)
             data_loaders = [train_dataloader, gen_dataloader]
-        soln, comp, weight = self.model.solve_inner(data_loaders, num_epochs=num_epochs, step_func=step_func)
+        
         for d in iter(train_dataloader):
             x, y = d
             out = self.model.AE(x)[0].cpu().detach().numpy()
@@ -71,6 +71,7 @@ class Client(object):
             plt.imsave('im.png', x.cpu().detach().numpy()[0].reshape((-1, 32, 32))[0], cmap='gray')
             plt.imsave('im2.png', out, cmap='gray')
             break
+        soln, comp, weight = self.model.solve_inner(data_loaders, num_epochs=num_epochs, step_func=step_func)
         bytes_r = self.model.size
         return (self.num_train_samples*weight, soln), (bytes_w, comp, bytes_r)
 
