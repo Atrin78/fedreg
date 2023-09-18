@@ -61,7 +61,8 @@ def step_func2(model, data):
     lr = model.learning_rate*100
 #    parameters = list(model.net.parameters()) + list(model.bottleneck.parameters())  + list(model.decoder.parameters())
    # parameters = model.parameters()
-    parameters = itertools.chain(*[model.net.parameters(), model.bottleneck.parameters(), model.decoder.parameters()])
+#    parameters = itertools.chain(*[model.net.parameters(), model.bottleneck.parameters(), model.decoder.parameters()])
+    parameters = [{'params':model.net.parameters()}, {'params':model.bottleneck.parameters()}, {'params':model.decoder.parameters()}]
     flop = model.flop
 
     def func(d):
@@ -80,6 +81,7 @@ def step_func2(model, data):
         print('g')
         print(grad[-3:])
   #      print(parameters[-3:])
+        parameters = itertools.chain(*[model.net.parameters(), model.bottleneck.parameters(), model.decoder.parameters()])
         for p, g in zip(parameters, grad):
             p.data.add_(-lr*g)
         return flop*len(x)
