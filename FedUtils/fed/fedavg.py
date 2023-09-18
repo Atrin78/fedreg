@@ -81,7 +81,7 @@ def step_func2(model, data):
         print('g')
         print(grad[-3:])
   #      print(parameters[-3:])
-        parameters = itertools.chain(*[model.net.parameters(), model.bottleneck.parameters(), model.decoder.parameters()])
+    #    parameters = itertools.chain(*[model.net.parameters(), model.bottleneck.parameters(), model.decoder.parameters()])
         for p, g in zip(parameters, grad):
             p.data.add_(-lr*g)
         return flop*len(x)
