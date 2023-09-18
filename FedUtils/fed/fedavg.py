@@ -65,7 +65,7 @@ def step_func2(model, data):
         model.train()
         model.zero_grad()
         x, y = d
-        x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-1, 1)), (-1, 784))
+   #     x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-1, 1)), (-1, 784))
         noisy_x = x+(0.1**0.5)*torch.randn(x.shape)
     #    noisy_x = noisy_x.clamp(0.0, 1.0)
         pred = model.AE(noisy_x)
