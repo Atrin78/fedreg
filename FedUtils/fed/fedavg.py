@@ -56,7 +56,7 @@ def step_func3(model, data):
 
 
 def step_func2(model, data):
-    lr = model.learning_rate*100
+    lr = model.learning_rate*20
     parameters = list(model.net.parameters()) + list(model.bottleneck.parameters())  + list(model.decoder.parameters())
     flop = model.flop
 
@@ -73,8 +73,8 @@ def step_func2(model, data):
         loss = loss.mean()
         print(loss)
         grad = torch.autograd.grad(loss, parameters)
-  #      print('g')
-  #      print(grad[-3:])
+        print('g')
+        print(grad[-3:])
   #      print(parameters[-3:])
         for p, g in zip(parameters, grad):
             p.data.add_(-lr*g)
