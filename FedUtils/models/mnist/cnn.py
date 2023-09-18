@@ -117,7 +117,8 @@ class Model(nn.Module):
      #   out = self.head(out)
         out = self.bottleneck(out)
         out = self.decoder(out)
-        out = out[:, :, 2:, :-2]
+        out = out[:, :, 2:-2, 2:-2]
+        out = torch.reshape(out, (-1, 784))
      #   print('oo')
      #   print(out)
         return out
