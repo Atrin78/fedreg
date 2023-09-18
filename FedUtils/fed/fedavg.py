@@ -9,11 +9,11 @@ import itertools
 
 warmup=10
 
-full = 0
+full = 20
 
 def step_func(model, data):
     lr = model.learning_rate
-    parameters = itertools.chain(*[model.net.parameters(), model.bottleneck.parameters(), model.head.parameters()])
+    parameters = list(model.bottleneck.parameters()) + list(model.head.parameters())
     flop = model.flop
 
     def func(d):
@@ -35,8 +35,8 @@ def step_func(model, data):
 
 def step_func3(model, data):
     lr = model.learning_rate
- #   parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
-    parameters = itertools.chain(*[model.net.parameters(), model.bottleneck.parameters(), model.head.parameters()])
+    parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
+  #  parameters = itertools.chain(*[model.net.parameters(), model.bottleneck.parameters(), model.head.parameters()])
     flop = model.flop
 
     def func(d):
@@ -77,8 +77,8 @@ def step_func2(model, data):
         loss = loss.mean()
         print(loss)
         grad = torch.autograd.grad(loss, parameters)
-        print('g')
-        print(grad[-3:])
+     #   print('g')
+     #   print(grad[-3:])
   #      print(parameters[-3:])
         for p, g in zip(parameters, grad):
             p.data.add_(-lr*g)
