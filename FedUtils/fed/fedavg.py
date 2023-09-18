@@ -68,7 +68,6 @@ def step_func2(model, data):
         nonlocal flop, lr
         model.train()
         model.zero_grad()
-        parameters = itertools.chain(*[model.net.parameters(), model.bottleneck.parameters(), model.decoder.parameters()])
         x, y = d
         x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-1, 1)), (-1, 784))
         noisy_x = x+(0.1**0.5)*torch.randn(x.shape)
@@ -81,7 +80,6 @@ def step_func2(model, data):
         print('g')
         print(grad[-3:])
   #      print(parameters[-3:])
-        parameters = itertools.chain(*[model.net.parameters(), model.bottleneck.parameters(), model.decoder.parameters()])
         for p, g in zip(parameters, grad):
             p.data.add_(-lr*g)
         return flop*len(x)
