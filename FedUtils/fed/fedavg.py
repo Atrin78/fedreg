@@ -59,10 +59,9 @@ def step_func3(model, data):
 
 def step_func2(model, data):
     lr = model.learning_rate*100
-#    parameters = list(model.net.parameters()) + list(model.bottleneck.parameters())  + list(model.decoder.parameters())
+    parameters = list(model.net.parameters()) + list(model.bottleneck.parameters())  + list(model.decoder.parameters())
    # parameters = model.parameters()
 #    parameters = itertools.chain(*[model.net.parameters(), model.bottleneck.parameters(), model.decoder.parameters()])
-    parameters = [{'params':model.net.parameters()}, {'params':model.bottleneck.parameters()}, {'params':model.decoder.parameters()}]
     flop = model.flop
 
     def func(d):
