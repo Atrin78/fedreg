@@ -43,6 +43,8 @@ def step_func3(model, data):
         model.zero_grad()
         x, y = d
         x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-1, 1)), (-1, 784))
+        print(x.max())
+        print(x.min())
         pred = model.forward(x)
         loss = model.loss(pred, y).mean()
         grad = torch.autograd.grad(loss, parameters)
