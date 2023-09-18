@@ -7,9 +7,9 @@ import torchvision
 import itertools
 
 
-warmup=10
+warmup=0
 
-full = 20
+full = 0
 
 def step_func(model, data):
     lr = model.learning_rate

@@ -25,9 +25,9 @@ class Model(nn.Module):
         self.num_inp = 784
         torch.manual_seed(123+seed)
 
-        self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5, padding=2), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
-                                 nn.MaxPool2d(2), nn.ReLU(), Reshape()])
-        self.bottleneck = nn.Sequential(*[nn.Linear(1024, 256), nn.ReLU()])
+        self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5, padding=2), nn.LeakyReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.LeakyReLU(), nn.Conv2d(32, 64, 5),
+                                 nn.MaxPool2d(2), nn.LeakyReLU(), Reshape()])
+        self.bottleneck = nn.Sequential(*[nn.Linear(1024, 256), nn.LeakyReLU()])
         self.head = nn.Linear(256, self.num_classes)
         self.decoder = nn.Sequential(*[nn.Linear(256, 1024), ReverseReshape(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(64, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 1, 5, padding=2)])
         self.size = sys.getsizeof(self.state_dict())
