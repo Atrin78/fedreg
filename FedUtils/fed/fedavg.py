@@ -57,7 +57,8 @@ def step_func3(model, data):
 
 def step_func2(model, data):
     lr = model.learning_rate*100
-    parameters = list(model.net.parameters()) + list(model.bottleneck.parameters())  + list(model.decoder.parameters())
+#    parameters = list(model.net.parameters()) + list(model.bottleneck.parameters())  + list(model.decoder.parameters())
+    parameters = model.parameters()
     flop = model.flop
 
     def func(d):
@@ -68,7 +69,7 @@ def step_func2(model, data):
         x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-1, 1)), (-1, 784))
         noisy_x = x+(0.1**0.5)*torch.randn(x.shape)
     #    noisy_x = noisy_x.clamp(0.0, 1.0)
-        pred = model.AE(x)
+        pred = model.AE(noisy_x)
         loss = model.MSE(pred, x)
         loss = loss.mean()
         print(loss)
