@@ -112,7 +112,7 @@ class Model(nn.Module):
     def AE(self, data):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
-        data = data.reshape(-1, 1, 32, 32)
+        data = data.reshape(-1, 1, 28, 28)
         out = self.net(data)
      #   out = self.head(out)
         out = self.bottleneck(out)
