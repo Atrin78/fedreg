@@ -3,6 +3,7 @@ from loguru import logger
 import numpy as np
 from FedUtils.models.utils import decode_stat
 import torch
+import torchvision
 
 
 warmup=0
