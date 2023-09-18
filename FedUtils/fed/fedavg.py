@@ -56,7 +56,7 @@ def step_func3(model, data):
 
 
 def step_func2(model, data):
-    lr = model.learning_rate*20
+    lr = model.learning_rate*100
     parameters = list(model.net.parameters()) + list(model.bottleneck.parameters())  + list(model.decoder.parameters())
     flop = model.flop
 
