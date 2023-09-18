@@ -6,7 +6,7 @@ import torch
 import torchvision
 
 
-warmup=0
+warmup=10
 
 full = 0
 
@@ -42,9 +42,7 @@ def step_func3(model, data):
         model.train()
         model.zero_grad()
         x, y = d
-        x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-1, 1)), (-1, 784))
-        print(x.max())
-        print(x.min())
+    #    x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-1, 1)), (-1, 784))
         pred = model.forward(x)
         loss = model.loss(pred, y).mean()
         grad = torch.autograd.grad(loss, parameters)
@@ -67,8 +65,9 @@ def step_func2(model, data):
         model.train()
         model.zero_grad()
         x, y = d
-        noisy_x = x+(0.04**0.5)*torch.randn(x.shape)
-        noisy_x = noisy_x.clamp(0.0, 1.0)
+        x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-30, 30)), (-1, 784))
+        noisy_x = x+(0.1**0.5)*torch.randn(x.shape)
+    #    noisy_x = noisy_x.clamp(0.0, 1.0)
         pred = model.AE(noisy_x)
         loss = model.MSE(pred, x)
         loss = loss.mean()

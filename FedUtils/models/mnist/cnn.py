@@ -117,6 +117,7 @@ class Model(nn.Module):
      #   out = self.head(out)
         out = self.bottleneck(out)
         out = self.decoder(out)
+        out = out[:, :, 2:, :-2]
      #   print('oo')
      #   print(out)
         return out
