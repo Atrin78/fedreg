@@ -103,8 +103,8 @@ class Model(nn.Module):
     def forward(self, data):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
-        data_min = torch.min(data, 1)[0].repeat((1, 784))
-        data_max = torch.max(data, 1)[0].repeat((1, 784))
+        data_min = torch.min(data, 1)[0].repeat((784, 1)).transpose()
+        data_max = torch.max(data, 1)[0].repeat((784, 1)).transpose()
         print(data_min.shape)
         print(data_min[:3, :3])
         data = data.reshape(-1, 1, 28, 28)
