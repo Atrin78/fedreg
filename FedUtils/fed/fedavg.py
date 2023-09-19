@@ -7,7 +7,7 @@ import torchvision
 import itertools
 
 
-warmup=10
+warmup=0
 
 full = 0
 

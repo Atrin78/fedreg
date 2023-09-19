@@ -103,6 +103,10 @@ class Model(nn.Module):
     def forward(self, data):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
+        data_min = torch.repeat(torch.min(data, 1), (1, 784))
+        data_max = torch.repeat(torch.max(data, 1), (1, 784))
+        print(data_min.shape)
+        print(data_min[:3, :3])
         data = data.reshape(-1, 1, 28, 28)
         out = self.net(data)
         out = self.bottleneck(out)
