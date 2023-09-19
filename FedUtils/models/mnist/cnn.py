@@ -129,6 +129,16 @@ class Model(nn.Module):
      #   print(out)
         return out
 
+    def multi(self, data):
+        if data.device != next(self.parameters()).device:
+            data = data.to(next(self.parameters()).device)
+        data = data.reshape(-1, 1, 32, 32)
+        out = self.net(data)
+        out = self.bottleneck(out)
+        rec = self.decoder(out)
+        logit = self.head(out)
+        return logit, rec
+
     def train_onestep(self, data):
         self.train()
         self.zero_grad()
