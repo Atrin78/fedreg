@@ -7,9 +7,9 @@ import torchvision
 import itertools
 
 
-warmup=10
+warmup=0
 
-full = 30
+full = 0
 
 def step_func(model, data):
     lr = model.learning_rate
@@ -35,7 +35,8 @@ def step_func(model, data):
 
 def step_func3(model, data):
     lr = model.learning_rate
-    parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
+#    parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
+    parameters = model.parameters()
   #  parameters = itertools.chain(*[model.net.parameters(), model.bottleneck.parameters(), model.head.parameters()])
     flop = model.flop
 
@@ -45,9 +46,14 @@ def step_func3(model, data):
         model.zero_grad()
         x, y = d
     #    x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-1, 1)), (-1, 784))
+        noisy_x = x+(0.04**0.5)*torch.randn(x.shape)
+        noisy_x = noisy_x.clamp(0.0, 1.0)
         pred = model.forward(x)
-        loss = model.loss(pred, y).mean()
-        grad = torch.autograd.grad(loss, parameters)
+        loss1 = model.loss(pred, y).mean()
+        pred = model.AE(noisy_x)
+        loss2 = model.MSE(pred, x)
+        loss2 = loss2.mean()
+        grad = torch.autograd.grad(loss1+loss2, parameters)
     #    print('g')
     #    print(grad[0][0])
         for p, g in zip(parameters, grad):
