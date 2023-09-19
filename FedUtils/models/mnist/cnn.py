@@ -105,8 +105,7 @@ class Model(nn.Module):
             data = data.to(next(self.parameters()).device)
         data_min = torch.transpose(torch.min(data, 1)[0].repeat((784, 1)),0, 1)
         data_max = torch.transpose(torch.max(data, 1)[0].repeat((784, 1)),0, 1)
-        print(data_min.shape)
-        print(data_min[:3, :3])
+        data = (data - data_min)/(data_mix-data_min)
         data = data.reshape(-1, 1, 28, 28)
         out = self.net(data)
         out = self.bottleneck(out)
@@ -116,6 +115,9 @@ class Model(nn.Module):
     def AE(self, data):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
+        data_min = torch.transpose(torch.min(data, 1)[0].repeat((784, 1)),0, 1)
+        data_max = torch.transpose(torch.max(data, 1)[0].repeat((784, 1)),0, 1)
+        data = (data - data_min)/(data_mix-data_min)
         data = data.reshape(-1, 1, 28, 28)
         out = self.net(data)
      #   out = self.head(out)
