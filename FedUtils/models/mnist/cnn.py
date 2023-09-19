@@ -104,7 +104,7 @@ class Model(nn.Module):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
         data_min = torch.min(data, 1).repeat((1, 784))
-        data_max = torch.max(data, 1).(1, 784))
+        data_max = torch.max(data, 1).repeat((1, 784))
         print(data_min.shape)
         print(data_min[:3, :3])
         data = data.reshape(-1, 1, 28, 28)
