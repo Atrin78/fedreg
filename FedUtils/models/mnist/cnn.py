@@ -27,9 +27,9 @@ class Model(nn.Module):
 
         self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5, padding=2), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
                                  nn.MaxPool2d(2), nn.ReLU(), Reshape()])
-        self.bottleneck = nn.Sequential(*[nn.Linear(1024, 256), nn.ReLU()])
-        self.head = nn.Linear(256, self.num_classes)
-        self.decoder = nn.Sequential(*[nn.Linear(256, 1024), ReverseReshape(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(64, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 1, 5, padding=2)])
+        self.bottleneck = nn.Sequential(*[nn.Linear(1024, 128), nn.ReLU()])
+        self.head = nn.Sequential(*[nn.Linear(128, 128), nn.ReLU(), nn.Linear(128, 128), nn.ReLU(), nn.Linear(128, self.num_classes)])
+        self.decoder = nn.Sequential(*[nn.Linear(256, 1024), ReverseReshape(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(64, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 1, 5, padding=2), nn.Sigmoid()])
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
       #  mm=1
@@ -184,7 +184,11 @@ class Model(nn.Module):
             x, y = d
             with torch.no_grad():
                 pred = self.AE(x)
-            loss += self.MSE(pred, x).mean()
+            data = x
+            data_min = torch.transpose(torch.min(data, 1)[0].repeat((784, 1)),0, 1)
+            data_max = torch.transpose(torch.max(data, 1)[0].repeat((784, 1)),0, 1)
+            data = (data - data_min)/(data_max-data_min)
+            loss += self.MSE(pred, data).mean()
          #   pred_max = pred.argmax(-1).float()
           #  assert len(pred_max.shape) == len(y.shape)
           #  if pred_max.device != y.device:

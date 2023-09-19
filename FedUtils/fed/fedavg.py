@@ -7,13 +7,13 @@ import torchvision
 import itertools
 
 
-warmup=0
+warmup=10
 
-full = 0
+full = 30
 
 def step_func(model, data):
     lr = model.learning_rate
-    parameters = list(model.bottleneck.parameters()) + list(model.head.parameters())
+    parameters = list(model.head.parameters())
     flop = model.flop
 
     def func(d):
