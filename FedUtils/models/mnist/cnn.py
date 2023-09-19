@@ -29,7 +29,7 @@ class Model(nn.Module):
                                  nn.MaxPool2d(2), nn.ReLU(), Reshape()])
         self.bottleneck = nn.Sequential(*[nn.Linear(1024, 128), nn.ReLU()])
         self.head = nn.Sequential(*[nn.Linear(128, 128), nn.ReLU(), nn.Linear(128, 128), nn.ReLU(), nn.Linear(128, self.num_classes)])
-        self.decoder = nn.Sequential(*[nn.Linear(256, 1024), ReverseReshape(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(64, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 1, 5, padding=2), nn.Sigmoid()])
+        self.decoder = nn.Sequential(*[nn.Linear(128, 1024), ReverseReshape(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(64, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 1, 5, padding=2), nn.Sigmoid()])
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
       #  mm=1
