@@ -188,7 +188,7 @@ class Model(nn.Module):
          #   data_min = torch.transpose(torch.min(data, 1)[0].repeat((784, 1)),0, 1)
          #   data_max = torch.transpose(torch.max(data, 1)[0].repeat((784, 1)),0, 1)
          #   data = (data - data_min)/(data_max-data_min)
-            loss += self.MSE(pred, data).mean()
+            loss += self.MSE(pred, x).mean()
          #   pred_max = pred.argmax(-1).float()
           #  assert len(pred_max.shape) == len(y.shape)
           #  if pred_max.device != y.device:
