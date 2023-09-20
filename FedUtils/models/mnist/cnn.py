@@ -49,7 +49,7 @@ class Model(nn.Module):
     def __init__(self, num_classes, optimizer=None, learning_rate=None, seed=1, p_iters=10, ps_eta=0.1, pt_eta=0.001):
         super(Model, self).__init__()
         self.num_classes = num_classes
-        self.num_inp = 1024
+        self.num_inp = 784
         torch.manual_seed(123+seed)
 
         self.decorr = FedDecorrLoss()
@@ -57,7 +57,7 @@ class Model(nn.Module):
         self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
                                  nn.MaxPool2d(2), nn.ReLU(), Reshape()])
         self.bottleneck = nn.Sequential(*[nn.Linear(1024, 128), nn.ReLU()])
-        self.head = nn.Sequential(*[nn.Linear(128, 128), nn.ReLU(), nn.Linear(128, 128), nn.ReLU(), nn.Linear(128, self.num_classes)])
+        self.head = nn.Sequential(*[nn.Linear(128, self.num_classes)])
         self.decoder = nn.Sequential(*[nn.Linear(128, 1024), ReverseReshape(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(64, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 1, 5, padding=2), nn.Sigmoid()])
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
@@ -135,7 +135,7 @@ class Model(nn.Module):
     #    data_min = torch.transpose(torch.min(data, 1)[0].repeat((784, 1)),0, 1)
     #    data_max = torch.transpose(torch.max(data, 1)[0].repeat((784, 1)),0, 1)
     #    data = (data - data_min)/(data_max-data_min)
-        data = data.reshape(-1, 1, 32, 32)
+        data = data.reshape(-1, 1, 28, 28)
         out = self.net(data)
         out = self.bottleneck(out)
         out = self.head(out)
@@ -147,7 +147,7 @@ class Model(nn.Module):
     #    data_min = torch.transpose(torch.min(data, 1)[0].repeat((784, 1)),0, 1)
     #    data_max = torch.transpose(torch.max(data, 1)[0].repeat((784, 1)),0, 1)
     #    data = (data - data_min)/(data_max-data_min)
-        data = data.reshape(-1, 1, 32, 32)
+        data = data.reshape(-1, 1, 28, 28)
         out = self.net(data)
         features = self.bottleneck(out)
         out = self.head(features)
