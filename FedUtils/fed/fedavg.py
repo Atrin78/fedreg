@@ -11,6 +11,29 @@ warmup=0
 
 full = 0
 
+def step_func4(model, data):
+    lr = model.learning_rate
+    parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
+    flop = model.flop
+
+    def func(d):
+        nonlocal flop, lr
+        model.train()
+        model.zero_grad()
+        x, y = d
+    #    x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-1, 1)), (-1, 784))
+        pred, features = model.forward_decorr(x)
+        loss1 = model.loss(pred, y).mean()
+        loss2 = model.decorr(features).mean()
+        loss=loss1+0.1*loss2
+        grad = torch.autograd.grad(loss, parameters)
+    #    print('g')
+    #    print(grad[0][0])
+        for p, g in zip(parameters, grad):
+            p.data.add_(-lr*g)
+        return flop*len(x)
+    return func
+
 def step_func(model, data):
     lr = model.learning_rate
     parameters = list(model.head.parameters())
@@ -129,7 +152,7 @@ class FedAvg(Server):
                 elif r < full:
                     soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
                 else:
-                    soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func3)  # stats has (byte w, comp, byte r)
+                    soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func4)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
                 if len(csolns) == 0:

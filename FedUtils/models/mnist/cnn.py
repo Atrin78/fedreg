@@ -18,12 +18,41 @@ class ReverseReshape(nn.Module):
     def forward(self, x):
         return x.reshape(-1, 64, 4, 4)
 
+class FedDecorrLoss(nn.Module):
+
+    def __init__(self):
+        super(FedDecorrLoss, self).__init__()
+        self.eps = 1e-8
+
+    def _off_diagonal(self, mat):
+        # return a flattened view of the off-diagonal elements of a square matrix
+        n, m = mat.shape
+        assert n == m
+        return mat.flatten()[:-1].view(n - 1, n + 1)[:, 1:].flatten()
+
+    def forward(self, x):
+        N, C = x.shape
+        if N == 1:
+            return 0.0
+
+        x = x - x.mean(dim=0, keepdim=True)
+        x = x / torch.sqrt(self.eps + x.var(dim=0, keepdim=True))
+
+        corr_mat = torch.matmul(x.t(), x)
+
+        loss = (self._off_diagonal(corr_mat).pow(2)).mean()
+        loss = loss / N
+
+        return loss
+
 class Model(nn.Module):
     def __init__(self, num_classes, optimizer=None, learning_rate=None, seed=1, p_iters=10, ps_eta=0.1, pt_eta=0.001):
         super(Model, self).__init__()
         self.num_classes = num_classes
         self.num_inp = 1024
         torch.manual_seed(123+seed)
+
+        self.decorr = FedDecorrLoss()
 
         self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
                                  nn.MaxPool2d(2), nn.ReLU(), Reshape()])
@@ -111,6 +140,19 @@ class Model(nn.Module):
         out = self.bottleneck(out)
         out = self.head(out)
         return out
+
+    def forward_decorr(self, data):
+        if data.device != next(self.parameters()).device:
+            data = data.to(next(self.parameters()).device)
+    #    data_min = torch.transpose(torch.min(data, 1)[0].repeat((784, 1)),0, 1)
+    #    data_max = torch.transpose(torch.max(data, 1)[0].repeat((784, 1)),0, 1)
+    #    data = (data - data_min)/(data_max-data_min)
+        data = data.reshape(-1, 1, 32, 32)
+        out = self.net(data)
+        features = self.bottleneck(out)
+        out = self.head(features)
+        return out, features
+
 
     def AE(self, data):
         if data.device != next(self.parameters()).device:
