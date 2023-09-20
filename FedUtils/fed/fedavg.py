@@ -24,7 +24,7 @@ def step_func4(model, data):
     #    x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-1, 1)), (-1, 784))
         pred, features = model.forward_decorr(x)
         loss1 = model.loss(pred, y).mean()
-        loss2 = model.decorr.forward(features).mean()
+        loss2 = model.decorr.forward(features)
         loss=loss1+0.1*loss2
         grad = torch.autograd.grad(loss, parameters)
     #    print('g')

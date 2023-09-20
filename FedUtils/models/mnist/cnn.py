@@ -43,7 +43,7 @@ class FedDecorrLoss(nn.Module):
         loss = (self._off_diagonal(corr_mat).pow(2)).mean()
         loss = loss / N
 
-        return loss
+        return loss.mean()
 
 class Model(nn.Module):
     def __init__(self, num_classes, optimizer=None, learning_rate=None, seed=1, p_iters=10, ps_eta=0.1, pt_eta=0.001):
