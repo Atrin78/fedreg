@@ -5,6 +5,7 @@ from FedUtils.models.utils import decode_stat
 import torch
 import torchvision
 import itertools
+import torchvision.transforms as transforms
 
 
 warmup=0
