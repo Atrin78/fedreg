@@ -26,7 +26,7 @@ def step_func4(model, data):
         pred, features = model.forward_decorr(x)
         loss1 = model.loss(pred, y).mean()
         loss2 = model.decorr.forward(features)
-        loss=loss1+0.2*loss2
+        loss=loss1+0.1*loss2
         grad = torch.autograd.grad(loss, parameters)
     #    print('g')
     #    print(grad[0][0])
@@ -36,7 +36,7 @@ def step_func4(model, data):
     return func
 
 def step_func5(model, data):
-    lr = model.learning_rate*0.2
+    lr = model.learning_rate*0.1
     parameters = list(model.net.parameters()) + list(model.bottleneck.parameters())
     flop = model.flop
 
@@ -175,7 +175,7 @@ class FedAvg(Server):
              torchvision.transforms.Resize(28),
              ])
             cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                                  download=True, transform=transform_cifar)
+                                                  download=True, transform=transform_cifar, shuffle=True)
             cifar = torch.utils.data.Subset(cifar, list(range(data_size)))
 
 
