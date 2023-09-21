@@ -211,7 +211,7 @@ class Model(nn.Module):
   #      soln = self.get_param()
   #      return soln, comp, weight
 
-def solve_inner(self, data, num_epochs=1, step_func=None):
+    def solve_inner(self, data, num_epochs=1, step_func=None):
         comp = 0.0
         weight = 1.0
         steps = 0
