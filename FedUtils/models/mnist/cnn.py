@@ -193,23 +193,55 @@ class Model(nn.Module):
 
         return self.flop*len(x)
 
-    def solve_inner(self, data, num_epochs=1, step_func=None):
-        data = data[0]
+  #  def solve_inner(self, data, num_epochs=1, step_func=None):
+  #      data = data[0]
+  #      comp = 0.0
+  #      weight = 1.0
+  #      steps = 0
+  #      if step_func is None:
+  #          func = self.train_onestep
+  #      else:
+  #          func = step_func(self, data)
+
+  #      for _ in range(num_epochs):
+  #          for x, y in data:
+  #              c = func([x, y])
+  #              comp += c
+  #              steps += 1.0
+  #      soln = self.get_param()
+  #      return soln, comp, weight
+
+def solve_inner(self, data, num_epochs=1, step_func=None):
         comp = 0.0
         weight = 1.0
         steps = 0
         if step_func is None:
             func = self.train_onestep
         else:
-            func = step_func(self, data)
+            func = [step_func[0](self, data[0]), step_func[1](self, data[1])]
 
         for _ in range(num_epochs):
-            for x, y in data:
-                c = func([x, y])
-                comp += c
-                steps += 1.0
+            train_iters = []
+         #   train_w = [1.0, 0.1]
+         #   if len(data)==1:
+         #       train_w = [1.0]
+            for train_loader in data:
+                train_iters.append(iter(train_loader))
+            for step in range(len(train_iters[0])):
+
+                for i, train_iter in enumerate(train_iters):
+                    try:
+                        x, y = next(train_iter)
+
+                        c = func[i]([x, y])
+                        comp += c
+                        steps += 1.0
+                    except Exception as e:
+                        pass
+
         soln = self.get_param()
         return soln, comp, weight
+
 
     def test(self, data):
         tot_correct = 0.0

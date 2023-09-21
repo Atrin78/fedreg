@@ -8,7 +8,7 @@ import itertools
 
 
 warmup=0
-
+data_size = 100
 full = 0
 
 def step_func4(model, data):
@@ -33,6 +33,29 @@ def step_func4(model, data):
             p.data.add_(-lr*g)
         return flop*len(x)
     return func
+
+def step_func5(model, data):
+    lr = model.learning_rate*0.1
+    parameters = list(model.net.parameters()) + list(model.bottleneck.parameters())
+    flop = model.flop
+
+    def func(d):
+        nonlocal flop, lr
+        model.train()
+        model.zero_grad()
+        x, y = d
+    #    x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-1, 1)), (-1, 784))
+        pred, features = model.forward_decorr(x)
+        loss = model.decorr.forward(features)
+        grad = torch.autograd.grad(loss, parameters)
+    #    print('g')
+    #    print(grad[0][0])
+        for p, g in zip(parameters, grad):
+            p.data.add_(-lr*g)
+        return flop*len(x)
+    return func
+
+
 
 def step_func(model, data):
     lr = model.learning_rate
@@ -143,7 +166,16 @@ class FedAvg(Server):
             print([c.id for c in active_clients])
             csolns = {}
             w = 0
-      
+
+            transform_cifar = transforms.Compose(
+            [
+             torchvision.transforms.functional.rgb_to_grayscale,
+         #    transforms.ToTensor()
+             ])
+            cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
+                                                  download=True, transform=transform_cifar)
+            cifar = torch.utils.data.Subset(cifar, list(range(data_size)))
+
 
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
@@ -152,7 +184,8 @@ class FedAvg(Server):
                 elif r < full:
                     soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
                 else:
-                    soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func4)  # stats has (byte w, comp, byte r)
+                    c.gen_data = cifar
+                    soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=(step_func4, step_func5))  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
                 if len(csolns) == 0:
