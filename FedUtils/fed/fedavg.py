@@ -172,6 +172,7 @@ class FedAvg(Server):
             [
              torchvision.transforms.functional.rgb_to_grayscale,
              transforms.ToTensor()
+             torchvision.transforms.Resize(28),
              ])
             cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
                                                   download=True, transform=transform_cifar)
