@@ -227,7 +227,7 @@ class Model(nn.Module):
          #       train_w = [1.0]
             for train_loader in data:
                 train_iters.append(iter(train_loader))
-            aux_x,_ = next(train_ters[1])
+            aux_x,_ = next(train_iters[1])
             for step in range(len(train_iters[0])):
                 
                 for i, train_iter in enumerate(train_iters[:1]):
