@@ -58,7 +58,7 @@ class Client(object):
         if self.gen_data is None:
             data_loaders = [train_dataloader]
         else:
-            gen_dataloader = DataLoader(self.gen_data, batch_size=self.batchsize*20, shuffle=True, drop_last=self.drop_last)
+            gen_dataloader = DataLoader(self.gen_data, batch_size=self.batchsize*10, shuffle=True, drop_last=self.drop_last)
             data_loaders = [train_dataloader, gen_dataloader]
         
         for d in iter(train_dataloader):
