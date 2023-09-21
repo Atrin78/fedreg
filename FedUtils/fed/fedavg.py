@@ -9,7 +9,7 @@ import torchvision.transforms as transforms
 
 
 warmup=0
-data_size = 100
+data_size = 20
 full = 0
 
 def step_func4(model, data):
