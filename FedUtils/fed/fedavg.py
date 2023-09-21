@@ -175,8 +175,8 @@ class FedAvg(Server):
              torchvision.transforms.Resize(28),
              ])
             cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                                  download=True, transform=transform_cifar, shuffle=True)
-            cifar = torch.utils.data.Subset(cifar, list(range(data_size)))
+                                                  download=True, transform=transform_cifar)
+            cifar = torch.utils.data.Subset(cifar, list(np.random.choice(len(cifar), data_size)))
 
 
             for idx, c in enumerate(active_clients):
