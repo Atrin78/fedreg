@@ -227,13 +227,14 @@ class Model(nn.Module):
          #       train_w = [1.0]
             for train_loader in data:
                 train_iters.append(iter(train_loader))
+            aux_x,_ = next(train_ters[1])
             for step in range(len(train_iters[0])):
-
-                for i, train_iter in enumerate(train_iters):
+                
+                for i, train_iter in enumerate(train_iters[:1]):
                     try:
                         x, y = next(train_iter)
 
-                        c = func[i]([x, y])
+                        c = func[i]([x, y, aux_x])
                         comp += c
                         steps += 1.0
                     except Exception as e:

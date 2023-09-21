@@ -9,7 +9,7 @@ import torchvision.transforms as transforms
 
 
 warmup=0
-data_size = 20
+data_size = 10
 full = 0
 
 def step_func4(model, data):
@@ -21,11 +21,12 @@ def step_func4(model, data):
         nonlocal flop, lr
         model.train()
         model.zero_grad()
-        x, y = d
+        x, y, aux_x = d
     #    x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-1, 1)), (-1, 784))
         pred, features = model.forward_decorr(x)
+        _, aux_features = model.forward_decorr(aux_x)
         loss1 = model.loss(pred, y).mean()
-        loss2 = model.decorr.forward(features)
+        loss2 = model.decorr.forward(torch.cat((features, aux_features), 0))
         loss=loss1+0.1*loss2
         grad = torch.autograd.grad(loss, parameters)
     #    print('g')
