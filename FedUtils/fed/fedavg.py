@@ -153,6 +153,7 @@ class FedAvg(Server):
                torch.cat((xx, x), 0)
         x_mean = torch.mean(xx)
         x_std = torch.std(xx)
+        print(x_mean.shape)
         CusDataset.x_mean = x_mean
         CusDataset.x_std = x_std
 
