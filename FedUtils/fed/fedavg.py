@@ -154,8 +154,8 @@ class FedAvg(Server):
         x_mean = torch.mean(xx)
         x_std = torch.std(xx)
         print(x_mean.shape)
-        CusDataset.x_mean = x_mean
-        CusDataset.x_std = x_std
+        CusDataset.x_mean = x_mean.item()
+        CusDataset.x_std = x_std.item()
 
         logger.info("Train with {} workers...".format(self.clients_per_round))
         for r in range(self.num_rounds):
@@ -196,8 +196,8 @@ class FedAvg(Server):
             cifar = torch.utils.data.Subset(cifar, list(np.random.choice(len(cifar), data_size)))
             cifar_data, cifar_y = next(iter(DataLoader(cifar, batch_size=len(cifar))))
             cifar_data = torch.reshape(cifar_data, (-1, 784))
-            cifar_mean = torch.mean(cifar_data)
-            cifar_std = torch.std(cifar_data)
+            cifar_mean = torch.mean(cifar_data).item()
+            cifar_std = torch.std(cifar_data).item()
             cifar_data = (cifar_data - cifar_mean) / (cifar_std + 0.00001)
             cifar = torch.utils.data.TensorDataset(cifar_data, cifar_std)
             print('hey')
