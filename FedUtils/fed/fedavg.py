@@ -28,7 +28,10 @@ def step_func4(model, data):
         _, aux_features = model.forward_decorr(aux_x)
         loss1 = model.loss(pred, y).mean()
         loss2 = model.decorr.forward(torch.cat((features, aux_features), 0))
-        loss=loss1+0.1*loss2
+        print('losses')
+        print(loss1)
+        print(loss2)
+        loss=loss1+0.0*loss2
         grad = torch.autograd.grad(loss, parameters)
     #    print('g')
     #    print(grad[0][0])
