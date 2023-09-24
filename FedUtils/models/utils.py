@@ -22,6 +22,8 @@ def FSGM(model, inp, label, iters, eta):
 
 
 class CusDataset(TensorDataset):
+    x_mean = None
+    x_std = None
     def __init__(self, data, transform=None):
         assert "x" in data
         assert "y" in data
@@ -33,6 +35,8 @@ class CusDataset(TensorDataset):
     def __getitem__(self, item):
         if self.transform is None:
             ret = torch.tensor(self.data['x'][item])
+            if x_mean is not None: 
+                print(x_mean.shape)
        #     ret = ret.cpu().detach().numpy().reshape((28, 28))
        #     ret = Image.fromarray(ret).convert('L')
        #     ret.save('ret.jpeg')

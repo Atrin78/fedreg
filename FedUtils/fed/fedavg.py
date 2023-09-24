@@ -6,7 +6,7 @@ import torch
 import torchvision
 import itertools
 import torchvision.transforms as transforms
-
+from FedUtils.models.utils import read_data, CusDataset, ImageDataset
 
 warmup=0
 data_size = 10
@@ -142,12 +142,18 @@ class FedAvg(Server):
 
     def train(self):
         indices, selected_clients = self.select_clients(0, num_clients=300)
-        active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
-        
+        active_clients = np.random.choice(selected_clients, round(300*(1.0-self.drop_percent)), replace=False)
+        xx = None
         for idx, c in enumerate(active_clients):
            x, _ = next(iter(c.train_data))
-           print(x.shape)
-           
+           if xx is None:
+               xx = x
+           else:
+               torch.cat((xx, x), 0)
+        x_mean = torch.mean(xx, 0)
+        x_std = torch.std(xx, 0)
+        CusDataset.x_mean = x_mean
+        CusDataset.x_std = x_std
 
         logger.info("Train with {} workers...".format(self.clients_per_round))
         for r in range(self.num_rounds):
