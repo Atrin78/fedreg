@@ -10,7 +10,7 @@ from FedUtils.models.utils import read_data, CusDataset, ImageDataset
 from torch.utils.data import DataLoader
 
 warmup=0
-data_size = 10
+data_size = 50
 full = 0
 
 def step_func4(model, data):
