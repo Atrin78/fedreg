@@ -27,7 +27,7 @@ def step_func4(model, data):
         pred, features = model.forward_decorr(x)
         _, aux_features = model.forward_decorr(aux_x)
         loss1 = model.loss(pred, y).mean()
-        loss2 = model.decorr.forward(torch.cat((features, aux_features), 0))
+        loss2 = model.decorr.forward(features)
         #print('losses')
         #print(loss1)
         #print(loss2)
