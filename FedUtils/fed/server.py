@@ -113,8 +113,6 @@ class Server(object):
         [m.set_param(self.get_param()) for m in clients]
         for c in clients:
             ct, cl, ns = c.train_error_and_loss()
-            print('loss')
-            print(cl)
             tot_correct.append(ct*1.0)
             num_samples.append(ns)
             losses.append(cl*1.0)
