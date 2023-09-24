@@ -205,13 +205,17 @@ class FedAvg(Server):
 
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
+                if idx==0:
+                    coef=1
+                else:
+                    coef=0
                 if r < warmup:
-                    soln, stats = c.solve_inner(num_epochs=self.num_epochs*2, step_func=step_func2)  # stats has (byte w, comp, byte r)
+                    soln, stats = c.solve_inner(num_epochs=self.num_epochs*2, step_func=step_func2, coef=coef)  # stats has (byte w, comp, byte r)
                 elif r < full:
-                    soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
+                    soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func, coef=coef)  # stats has (byte w, comp, byte r)
                 else:
                     c.gen_data = cifar
-                    soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=(step_func4, step_func5))  # stats has (byte w, comp, byte r)
+                    soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=(step_func4, step_func5), coef=coef)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
                 if len(csolns) == 0:

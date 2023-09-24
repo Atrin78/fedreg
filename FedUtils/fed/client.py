@@ -47,7 +47,7 @@ class Client(object):
         bytes_r = self.model.size
         return ((self.num_train_samples, grads), (bytes_w, comp, bytes_r))
 
-    def solve_inner(self, num_epochs=1, step_func=None):
+    def solve_inner(self, num_epochs=1, step_func=None, coef=1):
         bytes_w = self.model.size
    #     if self.gen_data is None:
    #         training = self.train_dataset
@@ -73,6 +73,7 @@ class Client(object):
             break
         soln, comp, weight = self.model.solve_inner(data_loaders, num_epochs=num_epochs, step_func=step_func)
         bytes_r = self.model.size
+        weight*=coef
         return (self.num_train_samples*weight, soln), (bytes_w, comp, bytes_r)
 
     def test(self):
