@@ -38,7 +38,7 @@ class CusDataset(TensorDataset):
 
             if CusDataset.x_mean is not None: 
                 print(CusDataset.x_mean[:10])
-                print(CusDataset.x_std[:10])
+                print(CusDataset.x_std.max())
                 ret = (ret - CusDataset.x_mean) / CusDataset.x_std
                 print(ret.min())
        #     ret = ret.cpu().detach().numpy().reshape((28, 28))
