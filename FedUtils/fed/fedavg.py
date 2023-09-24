@@ -153,7 +153,6 @@ class FedAvg(Server):
                torch.cat((xx, x), 0)
         x_mean = torch.mean(xx)
         x_std = torch.std(xx)
-        print(x_mean.item())
         CusDataset.x_mean = x_mean.item()
         CusDataset.x_std = x_std.item()
 
@@ -199,9 +198,8 @@ class FedAvg(Server):
             cifar_mean = torch.mean(cifar_data).item()
             cifar_std = torch.std(cifar_data).item()
             cifar_data = (cifar_data - cifar_mean) / (cifar_std + 0.00001)
-            cifar = torch.utils.data.TensorDataset(cifar_data, cifar_std)
-            print('hey')
-            print(cifar_data.min())
+            cifar = torch.utils.data.TensorDataset(cifar_data, cifar_y)
+
             
 
 
