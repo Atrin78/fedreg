@@ -35,8 +35,8 @@ class CusDataset(TensorDataset):
     def __getitem__(self, item):
         if self.transform is None:
             ret = torch.tensor(self.data['x'][item])
-            if x_mean is not None: 
-                print(x_mean.shape)
+            if CusDataset.x_mean is not None: 
+                print(CusDataset.x_mean.shape)
        #     ret = ret.cpu().detach().numpy().reshape((28, 28))
        #     ret = Image.fromarray(ret).convert('L')
        #     ret.save('ret.jpeg')
