@@ -37,9 +37,9 @@ class CusDataset(TensorDataset):
             ret = torch.tensor(self.data['x'][item])
 
             if CusDataset.x_mean is not None: 
-                print(CusDataset.x_mean[:10])
+                print(ret[:10])
                 print(CusDataset.x_std.max())
-                ret = (ret - CusDataset.x_mean) / CusDataset.x_std
+                ret = (ret - CusDataset.x_mean) / (CusDataset.x_std+0.0000001)
                 print(ret.min())
        #     ret = ret.cpu().detach().numpy().reshape((28, 28))
        #     ret = Image.fromarray(ret).convert('L')
