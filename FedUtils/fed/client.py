@@ -64,11 +64,11 @@ class Client(object):
         for d in iter(train_dataloader):
             x, y = d
           #  out = self.model.AE(x)[0].cpu().detach().numpy()
-         #   out = x.cpu().detach().numpy()*255
-         #   out = out.reshape((-1, 32, 32))[0]
+            out = x.cpu().detach().numpy()
+            out = out.reshape((-1, 32, 32))[0]
          #   print(np.max(out))
           #  im = Image.fromarray(out.astype('uint8'))
-         #   plt.imsave('im.png', x.cpu().detach().numpy()[0].reshape((-1, 32, 32))[0], cmap='gray')
+            plt.imsave('im.png', x.cpu().detach().numpy()[0].reshape((-1, 32, 32))[0], cmap='gray')
          #   plt.imsave('im2.png', out, cmap='gray')
             break
         soln, comp, weight = self.model.solve_inner(data_loaders, num_epochs=num_epochs, step_func=step_func)
