@@ -35,6 +35,7 @@ class CusDataset(TensorDataset):
     def __getitem__(self, item):
         if self.transform is None:
             ret = torch.tensor(self.data['x'][item])
+            print(ret.shape)
             if CusDataset.x_mean is not None: 
                 print(CusDataset.x_mean.repeat(ret.shape[0], 1).shape)
                 ret = (ret - CusDataset.x_mean.repeat(ret.shape[0], 1)) / CusDataset.x_std.repeat(ret.shape[0], 1)
