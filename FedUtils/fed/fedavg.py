@@ -192,6 +192,13 @@ class FedAvg(Server):
             cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
                                                   download=True, transform=transform_cifar)
             cifar = torch.utils.data.Subset(cifar, list(np.random.choice(len(cifar), data_size)))
+            cifar_data, cifar_y = next(iter(DataLoader(cifar, batch_size=len(cifar))))
+            cifar_mean = torch.mean(cifar_data, 0)
+            cifar_std = torch.std(cifar_data, 0)
+            cifar_data = (cifar_data - cifar_mean) / (cifar_std + 0.00001)
+            cifar = torch.utils.data.TensorDataset(cifar_data, cifar_std)
+            print(cifar_data.min())
+            
 
 
             for idx, c in enumerate(active_clients):
