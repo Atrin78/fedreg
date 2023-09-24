@@ -38,6 +38,8 @@ class CusDataset(TensorDataset):
 
             if CusDataset.x_mean is not None: 
                 ret = (ret - CusDataset.x_mean) / (CusDataset.x_std+0.00001)
+                print('what')
+                print(ret.min())
        #     ret = ret.cpu().detach().numpy().reshape((28, 28))
        #     ret = Image.fromarray(ret).convert('L')
        #     ret.save('ret.jpeg')

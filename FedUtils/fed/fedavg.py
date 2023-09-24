@@ -199,6 +199,7 @@ class FedAvg(Server):
             cifar_std = torch.std(cifar_data, 0).repeat(cifar_data.shape[0], 1)
             cifar_data = (cifar_data - cifar_mean) / (cifar_std + 0.00001)
             cifar = torch.utils.data.TensorDataset(cifar_data, cifar_std)
+            print('hey')
             print(cifar_data.min())
             
 
