@@ -222,7 +222,8 @@ class Model(nn.Module):
         if step_func is None:
             func = self.train_onestep
         else:
-            func = [step_func[0](self, data[0]), step_func[1](self, data[1])]
+           # func = [step_func[0](self, data[0]), step_func[1](self, data[1])]
+            func = step_func(self, data[0])
 
         for _ in range(num_epochs):
             train_iters = []
@@ -231,18 +232,20 @@ class Model(nn.Module):
          #       train_w = [1.0]
             for train_loader in data:
                 train_iters.append(iter(train_loader))
-            aux_x,_ = next(train_iters[1])
+         #   aux_x,_ = next(train_iters[1])
             for step in range(len(train_iters[0])):
                 
                 for i, train_iter in enumerate(train_iters[:1]):
                     try:
                         x, y = next(train_iter)
 
-                        c = func[i]([x, y, aux_x])
+                      #  c = func[i]([x, y, aux_x])
+                        c = func([x, y])
                         comp += c
                         steps += 1.0
                     except Exception as e:
-                        pass
+                        print(e)
+                        #pass
 
         soln = self.get_param()
         return soln, comp, weight

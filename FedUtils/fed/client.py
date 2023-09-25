@@ -61,16 +61,16 @@ class Client(object):
             gen_dataloader = DataLoader(self.gen_data, batch_size=self.batchsize, shuffle=True, drop_last=self.drop_last)
             data_loaders = [train_dataloader, gen_dataloader]
         
-        for d in iter(train_dataloader):
-            x, y = d
-          #  out = self.model.AE(x)[0].cpu().detach().numpy()
-            out = x.cpu().detach().numpy()
-            out = out.reshape((-1, 28, 28))[0]
-         #   print(np.max(out))
-          #  im = Image.fromarray(out.astype('uint8'))
-            plt.imsave('im.png', x.cpu().detach().numpy()[0].reshape((-1, 28, 28))[0], cmap='gray')
-         #   plt.imsave('im2.png', out, cmap='gray')
-            break
+   #     for d in iter(train_dataloader):
+   #         x, y = d
+   #       #  out = self.model.AE(x)[0].cpu().detach().numpy()
+   #         out = x.cpu().detach().numpy()
+   #         out = out.reshape((-1, 28, 28))[0]
+   #      #   print(np.max(out))
+   #       #  im = Image.fromarray(out.astype('uint8'))
+   #         plt.imsave('im.png', x.cpu().detach().numpy()[0].reshape((-1, 28, 28))[0], cmap='gray')
+   #      #   plt.imsave('im2.png', out, cmap='gray')
+   #         break
         soln, comp, weight = self.model.solve_inner(data_loaders, num_epochs=num_epochs, step_func=step_func)
         bytes_r = self.model.size
         weight*=coef
