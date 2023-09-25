@@ -88,6 +88,7 @@ class FedReg(Server):
     def train(self):
         logger.info("Train with {} workers...".format(self.clients_per_round))
         epochs = self.num_epochs
+        last_clients = None
         for r in range(self.num_rounds):
             self.round = r
 
@@ -98,10 +99,12 @@ class FedReg(Server):
                     stats_train = self.train_error_and_loss()
                 else:
                     stats_train = stats
+                
                 logger.info("-- TEST RESULTS --")
                 decode_stat(stats)
                 logger.info("-- TRAIN RESULTS --")
                 decode_stat(stats_train)
+                
 
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
@@ -125,7 +128,16 @@ class FedReg(Server):
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
 
             self.latest_model = self.aggregate(csolns)
-            print(self.model.get_param()['net.0.weight'][0])
+            if last_clients is not None:
+                stats_clients = self.train_error_and_loss_clients(last_clients)
+            logger.info("-- Last Client RESULTS --")
+            decode_stat(stats_clients)
+            last_clients = active_clients
+            stats_clients = self.train_error_and_loss_clients(active_clients)
+            logger.info("-- Active Client RESULTS --")
+            decode_stat(stats_clients)
+
+           # print(self.model.get_param()['net.0.weight'][0])
 
         logger.info("-- Log At Round {} --".format(r))
         stats = self.test()
