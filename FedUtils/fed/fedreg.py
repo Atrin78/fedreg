@@ -9,7 +9,7 @@ import copy
 
 def step_func(model, data, fed):
     lr = model.learning_rate
-    parameters = list(model.parameters())
+    parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
     flop = model.flop
     gamma = fed.gamma
     add_mask = fed.add_mask
