@@ -56,9 +56,9 @@ class Model(nn.Module):
 
         self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
                                  nn.MaxPool2d(2), nn.ReLU(), Reshape()])
-        self.bottleneck = nn.Sequential(*[nn.Linear(576, 32), nn.ReLU()])
-        self.head = nn.Sequential(*[nn.Linear(32, self.num_classes)])
-        self.decoder = nn.Sequential(*[nn.Linear(32, 1024), ReverseReshape(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(64, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 1, 5, padding=2), nn.Sigmoid()])
+        self.bottleneck = nn.Sequential(*[nn.Linear(576, 128), nn.ReLU()])
+        self.head = nn.Sequential(*[nn.Linear(128, self.num_classes)])
+        self.decoder = nn.Sequential(*[nn.Linear(128, 1024), ReverseReshape(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(64, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 1, 5, padding=2), nn.Sigmoid()])
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
       #  mm=1
