@@ -18,7 +18,7 @@ transform_fun = transforms.Compose(
 config = {
 
     "seed": 1,
-    "model": partial(Model, learning_rate=0.01),
+    "model": partial(Model, learning_rate=0.005),
     "inner_opt": None,
     "optimizer": FedAvg,
     "model_param": (10,),
