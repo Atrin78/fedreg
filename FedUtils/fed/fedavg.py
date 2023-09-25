@@ -10,7 +10,7 @@ from FedUtils.models.utils import read_data, CusDataset, ImageDataset
 from torch.utils.data import DataLoader
 
 warmup=0
-data_size = 5
+data_size = 20
 full = 0
 
 def step_func4(model, data):
@@ -27,11 +27,11 @@ def step_func4(model, data):
         pred, features = model.forward_decorr(x)
         _, aux_features = model.forward_decorr(aux_x)
         loss1 = model.loss(pred, y).mean()
-       # loss2 = model.decorr.forward(torch.cat((features, aux_features), 0))
-        loss2 = model.decorr.forward(features)
-        print('losses')
-        print(loss1)
-        print(loss2)
+        loss2 = model.decorr.forward(torch.cat((features, aux_features), 0))
+        #loss2 = model.decorr.forward(features)
+        #print('losses')
+        #print(loss1)
+        #print(loss2)
         loss=loss1+0.5*loss2
         grad = torch.autograd.grad(loss, parameters)
     #    print('g')
