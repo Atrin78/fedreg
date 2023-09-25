@@ -11,7 +11,7 @@ transform_fun = transforms.Compose(
             [
              torchvision.transforms.Resize((28, 28)),
              transforms.ToTensor(),
-             transforms.Lambda(lambda x: torch.stack([torch.unsqueeze(x, -1),torch.unsqueeze(x, -1),torch.unsqueeze(x, -1)],2)/3.0)
+             #transforms.Lambda(lambda x: torch.stack([torch.unsqueeze(x, -1),torch.unsqueeze(x, -1),torch.unsqueeze(x, -1)],2)/3.0)
              ])
 
 config = {
@@ -32,8 +32,8 @@ config = {
     "batch_size": 10,
     "use_fed": 1,
     "log_path": "tasks/mnist/FedReg_e40_lr1_g4/train.log",
-    "train_transform": transform_fun,
-    "test_transform": transform_fun,
+    "train_transform": None,
+    "test_transform": None,
     "eval_train": True,
     "gamma": 0.4,
 
