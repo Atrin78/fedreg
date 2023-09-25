@@ -7,17 +7,17 @@ from typing import Tuple, Optional, List, Dict
 
 class Reshape(nn.Module):
     def forward(self, x):
-        return x.reshape(-1, 1024)
+        return x.reshape(-1, 576)
 
 
 class Model(nn.Module):
     def __init__(self, num_classes, optimizer=None, learning_rate=None, seed=1, p_iters=10, ps_eta=0.1, pt_eta=0.001):
         super(Model, self).__init__()
         self.num_classes = num_classes
-        self.num_inp = 1024*3
+        self.num_inp = 784
         torch.manual_seed(123+seed)
 
-        self.net = nn.Sequential(*[nn.Conv2d(3, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5), nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(1024, 256), nn.ReLU()])
+        self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5), nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(1024, 256), nn.ReLU()])
     #    self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5,padding="same"), nn.ReLU(), nn.Conv2d(32, 32, 5,padding="same"), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5, padding="same"), nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(1024, 256), nn.ReLU()])
         self.head = nn.Linear(256, self.num_classes)
   #      self.whole = nn.Sequential(*[self.net, self.head])
@@ -60,7 +60,7 @@ class Model(nn.Module):
     def predict(self, x):
         self.eval()
         with torch.no_grad():
-            pred, _ = self.forward(x)
+            pred = self.forward(x)
             return self.softmax(pred)
 
     def generate_fake(self, x, y):
@@ -88,21 +88,21 @@ class Model(nn.Module):
     def forward(self, data):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
-        data = data.reshape(-1, 3, 32, 32)
+        data = data.reshape(-1, 1, 28, 28)
    #     x = data
    #     for layer in self.whole:
    #         pred = x
    #         x = layer(x)
         out = self.net(data)
         pred = self.head(out)
-        return pred, out
+        return pred
 
     def train_onestep(self, data):
         self.train()
         self.zero_grad()
         self.optimizer.zero_grad()
         x, y = data
-        pred, _ = self.forward(x)
+        pred = self.forward(x)
         loss = self.loss(pred, y).mean()
         loss.backward()
         self.optimizer.step()
@@ -142,11 +142,12 @@ class Model(nn.Module):
                #             xt = torch.cat((xt, x), 0)
                #             yt = torch.cat((yt, y), 0)
                #             wt = torch.cat((wt, w * train_w[i]), 0)
-                        c = func([x, y], train_w[i])
+                        c = func([x, y])
                         comp += c
                         steps += 1.0
                     except Exception as e:
-                        pass
+                        print(e)
+                        
              #   c = func([xt, yt], wt)
              #   comp += c
              #   steps += 1.0
@@ -166,7 +167,7 @@ class Model(nn.Module):
         for d in data:
             x, y = d
             with torch.no_grad():
-                pred, _ = self.forward(x)
+                pred = self.forward(x)
             loss += self.loss(pred, y).sum()
             pred_max = pred.argmax(-1).float()
             assert len(pred_max.shape) == len(y.shape)

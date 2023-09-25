@@ -1,4 +1,4 @@
-from FedUtils.models.mnist.cnn import Model
+from FedUtils.models.mnist.cnn2 import Model
 from functools import partial
 from FedUtils.fed.fedreg import FedReg
 from torch.optim import SGD
