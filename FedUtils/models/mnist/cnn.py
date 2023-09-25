@@ -38,13 +38,13 @@ class FedDecorrLoss(nn.Module):
         x = x - x.mean(dim=0, keepdim=True)
         x = x / (self.eps + x.std(dim=0, keepdim=True))
 
-        corr_mat = torch.matmul(x.t(), x)
+        corr_mat = torch.matmul(x.t(), x)/N
 
         print(N)
         print(corr_mat[:5, :5])
 
         loss = (self._off_diagonal(corr_mat).pow(2)).mean()
-        loss = loss / N
+        #loss = loss / N
 
 
         return loss.mean()
