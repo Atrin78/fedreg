@@ -32,7 +32,7 @@ def step_func4(model, data):
         #print('losses')
         #print(loss1)
         #print(loss2)
-        loss=loss1+0.2*loss2
+        loss=loss1+0.0*loss2
         grad = torch.autograd.grad(loss, parameters)
     #    print('g')
     #    print(grad[0][0])
