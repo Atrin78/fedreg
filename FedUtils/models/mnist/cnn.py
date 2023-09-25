@@ -40,6 +40,7 @@ class FedDecorrLoss(nn.Module):
 
         corr_mat = torch.matmul(x.t(), x)
 
+        print(N)
         print(corr_mat[:5, :5])
 
         loss = (self._off_diagonal(corr_mat).pow(2)).mean()
