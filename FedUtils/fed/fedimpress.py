@@ -167,7 +167,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
                 loss.backward()
                 optimizer_s.step()
 
-                print(loss)
+         #       print(loss)
 
                 # images_s.clamp(0.0, 1.0)
                 gc.collect()
@@ -270,6 +270,13 @@ class FedImpress(Server):
                 if r>= warmup:
                     c.gen_data = vir_dataset 
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
+
+                if last_clients is not None:
+                    print(c.id)
+                    stats_clients = self.local_train_error_and_loss_clients(c.model, last_clients)
+                    logger.info("-- Last Client RESULTS --")
+                    decode_stat(stats_clients)
+
                 soln = [1.0, soln[1]]
                 w += soln[0]
                 if len(csolns) == 0:
@@ -281,6 +288,14 @@ class FedImpress(Server):
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
 
             self.latest_model = self.aggregate(csolns)
+            if last_clients is not None:
+                stats_clients = self.train_error_and_loss_clients(last_clients)
+                logger.info("-- Last Client RESULTS --")
+                decode_stat(stats_clients)
+            last_clients = active_clients
+            stats_clients = self.train_error_and_loss_clients(active_clients)
+            logger.info("-- Active Client RESULTS --")
+            decode_stat(stats_clients)
 
         logger.info("-- Log At Round {} --".format(r))
         stats = self.test()
