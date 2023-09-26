@@ -134,6 +134,19 @@ class Server(object):
         groups = [c.group for c in clients]
         return ids, groups, num_samples, tot_correct, losses
 
+    def local_train_error_and_loss_clients(self, model, clients):
+        num_samples = []
+        tot_correct = []
+        losses = []
+        for c in clients:
+            ct, cl, ns = c.train_error_and_loss_model(model)
+            tot_correct.append(ct*1.0)
+            num_samples.append(ns)
+            losses.append(cl*1.0)
+        ids = [c.id for c in clients]
+        groups = [c.group for c in clients]
+        return ids, groups, num_samples, tot_correct, losses
+
 
     def testAE(self):
         num_samples = []

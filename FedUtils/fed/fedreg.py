@@ -91,6 +91,8 @@ class FedReg(Server):
         last_clients = None
         for r in range(self.num_rounds):
             self.round = r
+            print('this is round')
+            print(r)
 
             if r % self.eval_every == 0:
                 logger.info("-- Log At Round {} --".format(r))
@@ -126,6 +128,13 @@ class FedReg(Server):
                 del c
 
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
+
+            if last_clients is not None:
+                for idx, c in enumerate(active_clients):
+                    print(c.id)
+                    stats_clients = self.local_train_error_and_loss_clients(c.model, last_clients)
+                    logger.info("-- Last Client RESULTS --")
+                    decode_stat(stats_clients)
 
             self.latest_model = self.aggregate(csolns)
             if last_clients is not None:

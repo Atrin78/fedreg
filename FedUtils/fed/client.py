@@ -89,6 +89,10 @@ class Client(object):
         tot_correct, loss = self.model.test(self.train_data_fortest)
         return tot_correct, loss, self.train_samplenum
 
+    def train_error_and_loss_model(self, model):
+        tot_correct, loss = model.test(self.train_data_fortest)
+        return tot_correct, loss, self.train_samplenum
+
     def testAE(self):
         TC = []
         LS = []
