@@ -37,7 +37,7 @@ def step_func(model, data):
         model.train()
         model.zero_grad()
         x, y = d
-        pred, _ = model.forward(x)
+        pred = model.forward(x)
         loss = torch.mul(model.loss(pred, y), w)
         loss = loss.mean()
         grad = torch.autograd.grad(loss, parameters)
@@ -76,7 +76,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
     for batch_idx, (images_s, labels_real) in enumerate(gen_loader):
         print(batch_idx,len(images_s))
         images_s = images_s.to(device)
-        y_s,_ = src_model(images_s)
+        y_s,_ = src_model.forward_emb(images_s)
         labels_s = y_s.argmax(dim=1)
         if gen_dataset == None:
             gen_dataset = images_s
@@ -141,7 +141,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
             first_run = True
             
             for iter_i in range(iters_img):
-                y_s, f_s = src_model(images_s)
+                y_s, f_s = src_model.forward_emb(images_s)
                 loss = func.cross_entropy(y_s, labels_s)
                 p_s = func.softmax(y_s, dim=1)
                 grad_matrix = (p_s - plabel_onehot).t() @ f_s / p_s.size(0)
@@ -191,7 +191,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
             # convert labels to one-hot
             plabel_onehot = labels_to_one_hot(labels_s, class_num, device)
 
-            y_s, f_s = src_model(images_s)
+            y_s, f_s = src_model.forward_emb(images_s)
             p_s = func.softmax(y_s, dim=1)
             grad_matrix += (p_s - plabel_onehot).t() @ f_s
 

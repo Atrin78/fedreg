@@ -97,6 +97,18 @@ class Model(nn.Module):
         pred = self.head(out)
         return pred
 
+    def forward_emb(self, data):
+        if data.device != next(self.parameters()).device:
+            data = data.to(next(self.parameters()).device)
+        data = data.reshape(-1, 1, 28, 28)
+   #     x = data
+   #     for layer in self.whole:
+   #         pred = x
+   #         x = layer(x)
+        out = self.net(data)
+        pred = self.head(out)
+        return pred, out
+
     def train_onestep(self, data):
         self.train()
         self.zero_grad()
