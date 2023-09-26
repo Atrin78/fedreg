@@ -124,6 +124,7 @@ class FedReg(Server):
                     stats_clients = self.local_train_error_and_loss_clients(c.model, last_clients)
                     logger.info("-- Last Client RESULTS --")
                     decode_stat(stats_clients)
+                #if r > sum(stats_clients[4]):
 
                 soln = [1.0, soln[1]]
                 w += soln[0]
@@ -136,12 +137,12 @@ class FedReg(Server):
 
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
 
-            if last_clients is not None:
-                for idx, c in enumerate(active_clients):
-                    print(c.id)
-                    stats_clients = self.local_train_error_and_loss_clients(c.model, last_clients)
-                    logger.info("-- Last Client RESULTS --")
-                    decode_stat(stats_clients)
+            #if last_clients is not None:
+            #    for idx, c in enumerate(active_clients):
+            #        print(c.id)
+            #        stats_clients = self.local_train_error_and_loss_clients(c.model, last_clients)
+            #        logger.info("-- Last Client RESULTS --")
+            #        decode_stat(stats_clients)
             #        del c
 
             self.latest_model = self.aggregate(csolns)

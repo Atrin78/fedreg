@@ -248,8 +248,9 @@ class FedImpress(Server):
 
             transform_cifar = transforms.Compose(
             [
-     #        torchvision.transforms.functional.rgb_to_grayscale,
-             transforms.ToTensor()
+             torchvision.transforms.functional.rgb_to_grayscale,
+             transforms.ToTensor(),
+             torchvision.transforms.Resize(28),
              ])
             if r >= warmup:
                 cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
