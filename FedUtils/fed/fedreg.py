@@ -132,9 +132,10 @@ class FedReg(Server):
             if last_clients is not None:
                 for idx, c in enumerate(active_clients):
                     print(c.id)
-                    stats_clients = self.local_train_error_and_loss_clients(c.model, last_clients)
+                    stats_clients = self.local_train_error_and_loss_clients(self.model, last_clients)
                     logger.info("-- Last Client RESULTS --")
                     decode_stat(stats_clients)
+                    del c
 
             self.latest_model = self.aggregate(csolns)
             if last_clients is not None:
