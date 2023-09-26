@@ -227,6 +227,7 @@ class FedImpress(Server):
 
     def train(self):
         logger.info("Train with {} workers...".format(self.clients_per_round))
+        last_clients = None
         for r in range(self.num_rounds):
             if r % self.eval_every == 0:
                 logger.info("-- Log At Round {} --".format(r))
