@@ -141,6 +141,8 @@ class Model(nn.Module):
            #     xt, yt = None, None
            #     wt = None
                 for i, train_iter in enumerate(train_iters):
+                    if _ == num_epochs-1 and i==1:
+                        break
                     try:
                         x, y = next(train_iter)
                #         w = torch.ones((y.shape[0],)).to(device)
