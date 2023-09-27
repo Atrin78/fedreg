@@ -144,6 +144,8 @@ class Model(nn.Module):
                     if _ == num_epochs-1 and i==1:
                         break
                     try:
+                        print(step)
+                        print(i)
                         x, y = next(train_iter)
                #         w = torch.ones((y.shape[0],)).to(device)
                 #        x = x.to(device)
