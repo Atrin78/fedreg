@@ -25,7 +25,7 @@ add_bn_normalization = True
 lr_img = 10
 momentum_img = 0.9
 data_size= 50
-warmup = 1
+warmup = 10
 
 def step_func(model, data):
     lr = model.learning_rate
@@ -270,6 +270,14 @@ class FedImpress(Server):
     #            c.set_public()
                 if r>= warmup:
                     c.gen_data = vir_dataset 
+                glob_dataset = None
+                _, cs = self.select_clients(r+10, num_clients=5)
+                for cl in cs:
+                    if glob_dataset is None:
+                        glob_dataset = cl.train_dataset
+                    else:
+                        glob_dataset = torch.utils.data.ConcatDataset([glob_dataset, cl.train_dataset])
+                c.gen_data = glob_dataset
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
 
                 if last_clients is not None:

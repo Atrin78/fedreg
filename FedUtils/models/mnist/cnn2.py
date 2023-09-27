@@ -189,3 +189,19 @@ class Model(nn.Module):
                 pred_max = pred_max.detach().to(y.device)
             tot_correct += (pred_max == y).float().sum()
         return tot_correct, loss
+
+    def test_ind(self, data):
+        tot_correct = 0.0
+        loss = []
+        self.eval()
+        for d in data:
+            x, y = d
+            with torch.no_grad():
+                pred = self.forward(x)
+            loss.append(self.loss(pred, y))
+            pred_max = pred.argmax(-1).float()
+            assert len(pred_max.shape) == len(y.shape)
+            if pred_max.device != y.device:
+                pred_max = pred_max.detach().to(y.device)
+            tot_correct += (pred_max == y).float().sum()
+        return tot_correct, loss
