@@ -132,7 +132,7 @@ class Model(nn.Module):
 
         for _ in range(num_epochs):
             train_iters = []
-            train_w = [1.0, 0.25]
+            train_w = [1.0, 1.0]
             if len(data)==1:
                 train_w = [1.0]
             for train_loader in data:
@@ -156,7 +156,7 @@ class Model(nn.Module):
                #             xt = torch.cat((xt, x), 0)
                #             yt = torch.cat((yt, y), 0)
                #             wt = torch.cat((wt, w * train_w[i]), 0)
-                        c = func([x, y])
+                        c = func([x, y], train_w[i])
                         comp += c
                         steps += 1.0
                     except Exception as e:
