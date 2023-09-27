@@ -92,7 +92,7 @@ class Client(object):
     def train_error_and_loss_model(self, model):
         tot_correct, loss = model.test_ind(self.train_data_fortest)
         print(loss)
-        loss = sum([for torch.sum(l) in loss])
+        loss = sum([torch.sum(l) for l in loss])
         return tot_correct, loss, self.train_samplenum
 
     def testAE(self):
