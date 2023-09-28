@@ -56,19 +56,19 @@ class Client(object):
    #         training = ConcatDataset([self.train_dataset, self.gen_data])
    #         training = self.gen_data
         train_dataloader = DataLoader(self.train_dataset, batch_size=self.batchsize, shuffle=True, drop_last=self.drop_last)
-        if self.rotate:
-            x_rot = None
-            y_rot = None
-            for d in train_dataloader:
-                x, y = d
-                x = torch.reshape(torch.rot90(torch.reshape(x, (-1, 28, 28)), 1, [1, 2]), (-1, 784))
-                if x_rot is None:
-                    x_rot = x
-                    y_rot = y
-                else:
-                    x_rot = torch.cat((x_rot, x), 0)
-                    y_rot = torch.cat((y_rot, y), 0)
-            train_dataloader = DataLoader(TensorDataset(x_rot, y_rot), batch_size=self.batchsize, shuffle=True, drop_last=self.drop_last)
+        #if self.rotate:
+        #    x_rot = None
+        #    y_rot = None
+        #    for d in train_dataloader:
+        #        x, y = d
+        #        x = torch.reshape(torch.rot90(torch.reshape(x, (-1, 28, 28)), 1, [1, 2]), (-1, 784))
+        #        if x_rot is None:
+        #            x_rot = x
+        #            y_rot = y
+        #        else:
+        #            x_rot = torch.cat((x_rot, x), 0)
+        #            y_rot = torch.cat((y_rot, y), 0)
+        #    train_dataloader = DataLoader(TensorDataset(x_rot, y_rot), batch_size=self.batchsize, shuffle=True, drop_last=self.drop_last)
                     
         if self.gen_data is None:
             data_loaders = [train_dataloader]
