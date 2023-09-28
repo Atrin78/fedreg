@@ -270,8 +270,8 @@ class FedImpress(Server):
     #            c.set_public()
                 if idx==0:
                     c.rotate=True
-                if r>= warmup:
-                    c.gen_data = vir_dataset 
+                #if r>= warmup:
+                #    c.gen_data = vir_dataset 
                 glob_dataset = None
                 _, cs = self.select_clients(r+10, num_clients=5)
                 for cl in cs:
