@@ -61,7 +61,7 @@ class Client(object):
             y_rot = None
             for d in train_dataloader:
                 x, y = d
-                x = torch.reshape(torch.rot90(torch.reshape(x, (-1, 28, 28)), 1, [1, 2]), (-1, 784))
+                x = torch.reshape(torch.rot90(torch.reshape(x, (-1, 28, 28)), np.random.choice([1, 3, 4]), [1, 2]), (-1, 784))
                 if x_rot is None:
                     x_rot = x
                     y_rot = y
