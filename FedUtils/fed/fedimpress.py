@@ -279,7 +279,7 @@ class FedImpress(Server):
                         glob_dataset = cl.train_dataset
                     else:
                         glob_dataset = torch.utils.data.ConcatDataset([glob_dataset, cl.train_dataset])
-                c.gen_data = glob_dataset
+                #c.gen_data = glob_dataset
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
 
                 if last_clients is not None:
