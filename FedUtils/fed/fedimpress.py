@@ -268,8 +268,8 @@ class FedImpress(Server):
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
     #            c.set_public()
-                if idx==0:
-                    c.rotate=True
+                #if idx==0:
+                #    c.rotate=True
                 #if r>= warmup:
                 #    c.gen_data = vir_dataset 
                 #glob_dataset = None
