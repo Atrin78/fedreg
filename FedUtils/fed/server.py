@@ -122,6 +122,46 @@ class Server(object):
         groups = [c.group for c in clients]
         return ids, groups, num_samples, tot_correct, losses
 
+
+    def test_adapt(self, step_fun, num_epochs):
+        num_samples = []
+        tot_correct = []
+        clients = [x for x in self.clients if len(x[3][0]['x']) > 0]
+        clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
+        [m.set_param(self.get_param()) for m in clients]
+        [m.solve_inner(num_epochs=num_epochs, step_func=step_fun, coef=1) for m in clients]
+
+        for c in clients:
+            ct, ns = c.test()
+            tot_correct.append(ct)
+            num_samples.append(ns)
+        ids = [c.id for c in clients]
+        groups = [c.group for c in clients]
+        num_test = len(tot_correct[0])
+        tot_correct = [[a[i] for a in tot_correct] for i in range(num_test)]
+        num_samples = [[a[i] for a in num_samples] for i in range(num_test)]
+        return ids, groups, num_samples, tot_correct
+
+    def train_error_and_loss_adapt(self, step_fun, num_epochs):
+        num_samples = []
+        tot_correct = []
+        losses = []
+        clients = self.clients
+        clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
+        [m.set_param(self.get_param()) for m in clients]
+        [m.solve_inner(num_epochs=num_epochs, step_func=step_fun, coef=1) for m in clients]
+        for c in clients:
+            ct, cl, ns = c.train_error_and_loss()
+            tot_correct.append(ct*1.0)
+            num_samples.append(ns)
+            losses.append(cl*1.0)
+        ids = [c.id for c in clients]
+        groups = [c.group for c in clients]
+        return ids, groups, num_samples, tot_correct, losses
+
+
+
+
     def train_error_and_loss_clients(self, clients):
         num_samples = []
         tot_correct = []

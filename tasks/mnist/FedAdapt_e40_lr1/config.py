@@ -27,7 +27,7 @@ config = {
     "test_path": ["data/mnist_10000/data/valid/", "data/mnist_10000/data/test/"],
     "clients_per_round": 10,
     "num_rounds": 500,
-    "eval_every": 1,
+    "eval_every": 5,
     "drop_percent": 0.0,
     "num_epochs": 40,
     "batch_size": 10,

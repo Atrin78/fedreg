@@ -37,7 +37,7 @@ class Client(object):
 
     def set_param(self, state_dict):
         st = {x: state_dict[x] for x in state_dict if x.split('.')[0]!='adapt'}
-        self.model.set_param(state_dict)
+        self.model.set_param(st)
         return True
 
     def get_param(self):

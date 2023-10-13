@@ -12,6 +12,7 @@ from torch.utils.data import DataLoader
 warmup=5
 data_size = 20
 full = 0
+num_adapt=5
 
 def step_func4(model, data):
     lr = model.learning_rate
@@ -114,6 +115,33 @@ def step_func7(model, data):
         return flop*len(x)
     return func
 
+def step_func8(model, data):
+    lr = model.learning_rate
+    parameters = list(model.adapt.parameters())
+    flop = model.flop
+
+    def func(d):
+        nonlocal flop, lr
+        model.train()
+        model.zero_grad()
+        x, y = d
+    #    x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-1, 1)), (-1, 784))
+        pred = model.forward_adapt(x)
+        loss1 = model.loss(pred, y).mean()
+        #loss2 = model.decorr.forward(features)
+        #print('losses')
+        #print(loss1)
+        #print(loss2)
+        loss=loss1
+        grad = torch.autograd.grad(loss, parameters)
+    #    print('g')
+    #    print(grad[0][0])
+        for p, g in zip(parameters, grad):
+            p.data.add_(-lr*g)
+        return flop*len(x)
+    return func
+
+
 def step_func(model, data):
     lr = model.learning_rate
     parameters = list(model.head.parameters())
@@ -215,9 +243,9 @@ class FedAdapt(Server):
             if r % self.eval_every == 0:
                 logger.info("-- Log At Round {} --".format(r))
                 
-                stats = self.test()
+                stats = self.test_adapt(step_func8, num_adapt)
                 if self.eval_train:
-                    stats_train = self.train_error_and_loss()
+                    stats_train = self.train_error_and_loss_adapt(step_func8, num_adapt)
                 else:
                     stats_train = stats
                 logger.info("-- TEST RESULTS --")
@@ -246,10 +274,11 @@ class FedAdapt(Server):
                 if r < warmup:
                     soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func7, coef=coef)  # stats has (byte w, comp, byte r)
                 else:
+                    soln, stats = c.solve_inner(num_epochs=self.num_epochs//2, step_func=step_func8, coef=coef)  # stats has (byte w, comp, byte r)
                     soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func6, coef=coef)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
-                _ = [print(soln[1][x]) for x in soln[1] if x.split('.')[0]=='adapt']
+                #_ = [print(soln[1][x]) for x in soln[1] if x.split('.')[0]=='adapt']
                 if len(csolns) == 0:
                     csolns = {x: soln[1][x].detach()*soln[0] for x in soln[1] if x.split('.')[0] != 'adapt'}
                 else:
