@@ -57,7 +57,7 @@ class Model(nn.Module):
         torch.manual_seed(123+seed)
 
         self.decorr = FedDecorrLoss()
-
+        self.adapt = nn.BatchNorm2d(1)
         self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
                                  nn.MaxPool2d(2), nn.ReLU(), Reshape()])
         self.bottleneck = nn.Sequential(*[nn.Linear(576, 128), nn.ReLU()])
@@ -82,6 +82,7 @@ class Model(nn.Module):
 
         self.flop = Flops(self, torch.tensor([[0.0 for _ in range(self.num_inp)]]))
         if torch.cuda.device_count() > 0:
+            self.adapt = self.adapt.cuda()
             self.net = self.net.cuda()
             self.head = self.head.cuda()
             self.decoder = self.decoder.cuda()
@@ -141,6 +142,19 @@ class Model(nn.Module):
     #    data = (data - data_min)/(data_max-data_min)
         data = data.reshape(-1, 1, 28, 28)
         out = self.net(data)
+        out = self.bottleneck(out)
+        out = self.head(out)
+        return out
+
+    def forward_adapt(self, data):
+        if data.device != next(self.parameters()).device:
+            data = data.to(next(self.parameters()).device)
+    #    data_min = torch.transpose(torch.min(data, 1)[0].repeat((784, 1)),0, 1)
+    #    data_max = torch.transpose(torch.max(data, 1)[0].repeat((784, 1)),0, 1)
+    #    data = (data - data_min)/(data_max-data_min)
+        data = data.reshape(-1, 1, 28, 28)
+        out = self.adapt(data)
+        out = self.net(out)
         out = self.bottleneck(out)
         out = self.head(out)
         return out
@@ -222,7 +236,7 @@ class Model(nn.Module):
         if step_func is None:
             func = self.train_onestep
         else:
-            func = [step_func[0](self, data[0]), step_func[1](self, data[1])]
+            func = step_func(self, data)
 
         for _ in range(num_epochs):
             train_iters = []
@@ -231,17 +245,18 @@ class Model(nn.Module):
          #       train_w = [1.0]
             for train_loader in data:
                 train_iters.append(iter(train_loader))
-            aux_x,_ = next(train_iters[1])
+         #   aux_x,_ = next(train_iters[1])
             for step in range(len(train_iters[0])):
                 
                 for i, train_iter in enumerate(train_iters[:1]):
                     try:
                         x, y = next(train_iter)
 
-                        c = func[i]([x, y, aux_x])
+                        c = func([x, y])
                         comp += c
                         steps += 1.0
                     except Exception as e:
+                        print(e)
                         pass
 
         soln = self.get_param()
