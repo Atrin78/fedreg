@@ -1,7 +1,7 @@
 from FedUtils.models.mnist.cnn import Model
 import torch
 from functools import partial
-from FedUtils.fed.fedaadapt import FedAdapt
+from FedUtils.fed.fedadapt import FedAdapt
 import torchvision.transforms as transforms
 import torchvision
 
