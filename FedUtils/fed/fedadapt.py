@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 warmup=5
 data_size = 20
 full = 0
-num_adapt=5
+num_adapt=40
 
 def step_func4(model, data):
     lr = model.learning_rate
@@ -274,7 +274,7 @@ class FedAdapt(Server):
                 if r < warmup:
                     soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func7, coef=coef)  # stats has (byte w, comp, byte r)
                 else:
-                    soln, stats = c.solve_inner(num_epochs=self.num_epochs//2, step_func=step_func8, coef=coef)  # stats has (byte w, comp, byte r)
+                    soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func8, coef=coef)  # stats has (byte w, comp, byte r)
                     soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func6, coef=coef)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
