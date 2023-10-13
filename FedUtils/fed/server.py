@@ -52,7 +52,7 @@ class Server(object):
 
     def _aggregate(self, wstate_dicts):
         old_params = self.get_param()
-        state_dict = {x: 0.0 for x in self.get_param()}
+        state_dict = {x: 0.0 for x in self.get_param() if x.split('.')[0]!='adapt'}
         wtotal = 0.0
         for w, st in wstate_dicts:
             wtotal += w
