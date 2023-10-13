@@ -249,12 +249,13 @@ class FedAdapt(Server):
                     soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func6, coef=coef)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
-                _ = [print(x) for x in soln[1] if x.split('.')[0]=='adapt']
+                _ = [print(soln[1][x]) for x in soln[1] if x.split('.')[0]=='adapt']
                 if len(csolns) == 0:
-                    csolns = {x: soln[1][x].detach()*soln[0] for x in soln[1]}
+                    csolns = {x: soln[1][x].detach()*soln[0] for x in soln[1] if x.split('.')[0] != 'adapt'}
                 else:
                     for x in csolns:
-                        csolns[x].data.add_(soln[1][x]*soln[0])
+                        if x.split('.')[0] != 'adapt':
+                            csolns[x].data.add_(soln[1][x]*soln[0])
                 del c
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
 
