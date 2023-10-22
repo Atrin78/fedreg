@@ -140,7 +140,6 @@ class Model(nn.Module):
 
     def set_param(self, state_dict):
         self.load_state_dict(state_dict, strict=False)
-        logger.info(f"inside clines {self.global_model}")
         if self.global_model != None:
             if torch.cuda.device_count() > 0:
                 self.global_model.cuda()
