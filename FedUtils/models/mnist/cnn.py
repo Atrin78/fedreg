@@ -140,7 +140,8 @@ class Model(nn.Module):
     def set_param(self, state_dict):
         self.load_state_dict(state_dict, strict=False)
         self.global_model = copy.deepcopy(self)
-        self.global_model.to(self.device)
+        if torch.cuda.device_count() > 0:
+            self.global_model.cuda()
         for params in self.global_model.parameters():
             params.requires_grad = False
         return True
