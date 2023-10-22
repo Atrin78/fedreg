@@ -8,6 +8,7 @@ import itertools
 import torchvision.transforms as transforms
 from FedUtils.models.utils import read_data, CusDataset, ImageDataset
 from torch.utils.data import DataLoader
+import copy
 
 
 def step_func(model ,data, global_model):
@@ -69,6 +70,7 @@ class FedNtd(Server):
 
 
             for idx, c in enumerate(active_clients):
+                c.global_model = copy.deepcopy(self.model)
                 c.set_param(self.model.get_param())
                 coef=1
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func, coef=coef)  # stats has (byte w, comp, byte r)
