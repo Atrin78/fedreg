@@ -298,10 +298,10 @@ class Model(nn.Module):
         if step_func is None:
             func = self.train_onestep
         else:
-            if self.global_model is not None:
-                func = step_func(self, data, self.global_model)
-            else:
+            if self.global_model == None:
                 func = step_func(self, data)
+            else:
+                func = step_func(self, data, self.global_model)
 
         for _ in range(num_epochs):
             train_iters = []
