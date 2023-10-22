@@ -4,6 +4,7 @@ import torch
 import sys
 import copy
 import torch.nn.functional as F
+from loguru import logger
 
 def init_weights(m):
     if isinstance(m, nn.Linear):
@@ -139,7 +140,8 @@ class Model(nn.Module):
 
     def set_param(self, state_dict):
         self.load_state_dict(state_dict, strict=False)
-        if self.global_model is not None:
+        logger.info(f"inside clines {self.global_model}")
+        if self.global_model != None:
             if torch.cuda.device_count() > 0:
                 self.global_model.cuda()
             for params in self.global_model.parameters():
