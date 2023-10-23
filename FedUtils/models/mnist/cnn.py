@@ -309,9 +309,9 @@ class Model(nn.Module):
             func = self.train_onestep
         else:
             if self.global_model_activate:
-                func = step_func(self, data)
-            else:
                 func = step_func(self, data, self.global_model)
+            else:
+                func = step_func(self, data)
 
         for _ in range(num_epochs):
             train_iters = []

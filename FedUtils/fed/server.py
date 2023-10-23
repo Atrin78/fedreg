@@ -98,7 +98,6 @@ class Server(object):
         clients = [x for x in self.clients if len(x[3][0]['x']) > 0]
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
         for m in clients:
-            m.global_model = copy.deepcopy(self.model)
             m.set_param(self.get_param())
 
         for c in clients:
@@ -119,7 +118,6 @@ class Server(object):
         clients = self.clients
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
         for m in clients:
-            m.global_model = copy.deepcopy(self.model)
             m.set_param(self.get_param())
         for c in clients:
             ct, cl, ns = c.train_error_and_loss()
@@ -137,7 +135,6 @@ class Server(object):
         clients = [x for x in self.clients if len(x[3][0]['x']) > 0]
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
         for m in clients:
-            m.global_model = copy.deepcopy(self.model)
             m.set_param(self.get_param())
         [m.solve_inner(num_epochs=num_epochs, step_func=step_fun, coef=1) for m in clients]
 
@@ -159,7 +156,6 @@ class Server(object):
         clients = self.clients
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
         for m in clients:
-            m.global_model = copy.deepcopy(self.model)
             m.set_param(self.get_param())
         [m.solve_inner(num_epochs=num_epochs, step_func=step_fun, coef=1) for m in clients]
         for c in clients:
@@ -179,7 +175,6 @@ class Server(object):
         tot_correct = []
         losses = []
         for m in clients:
-            m.global_model = copy.deepcopy(self.model)
             m.set_param(self.get_param())
         for c in clients:
             ct, cl, ns = c.train_error_and_loss()
@@ -210,7 +205,6 @@ class Server(object):
         clients = [x for x in self.clients if len(x[3][0]['x']) > 0]
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
         for m in clients:
-            m.global_model = copy.deepcopy(self.model)
             m.set_param(self.get_param())
 
         for c in clients:
@@ -231,7 +225,6 @@ class Server(object):
         clients = self.clients
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
         for m in clients:
-            m.global_model = copy.deepcopy(self.model)
             m.set_param(self.get_param())
         for c in clients:
             ct, cl, ns = c.train_error_and_lossAE()
