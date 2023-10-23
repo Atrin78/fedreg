@@ -7,23 +7,19 @@ import torch
 from loguru import logger
 from PIL import Image
 import h5py
-import matplotlib.pyplot as plt
 
 
 def FSGM(model, inp, label, iters, eta):
     inp.requires_grad = True
     minv, maxv = float(inp.min().detach().cpu().numpy()), float(inp.max().detach().cpu().numpy())
     for _ in range(iters):
-        pred = model.forward(inp)
-        loss = model.loss(pred, label).mean()
+        loss = model.loss(model.forward(inp), label).mean()
         dp = torch.sign(torch.autograd.grad(loss, inp)[0])
         inp.data.add_(eta*dp.detach()).clamp(minv, maxv)
     return inp
 
 
 class CusDataset(TensorDataset):
-    x_mean = None
-    x_std = None
     def __init__(self, data, transform=None):
         assert "x" in data
         assert "y" in data
@@ -35,35 +31,15 @@ class CusDataset(TensorDataset):
     def __getitem__(self, item):
         if self.transform is None:
             ret = torch.tensor(self.data['x'][item])
-
-            if CusDataset.x_mean is not None: 
-                ret = (ret - CusDataset.x_mean) / (CusDataset.x_std+0.00001)
-
-       #     ret = ret.cpu().detach().numpy().reshape((28, 28))
-       #     ret = Image.fromarray(ret).convert('L')
-       #     ret.save('ret.jpeg')
-         #   plt.imsave('ret.png', ret, cmap='gray')
         else:
-            ret = np.array(self.data["x"][item])
+            ret = np.array(self.data["x"][item]).astype("uint8")
             if ret.shape[-1] == 3:
                 ret = ret
             elif ret.shape[0] == 3:
                 ret = ret.transpose(1, 2, 0)
             else:
                 ret = ret
-        #    ret = ret.reshape((28, 28))
-         #   ret = Image.fromarray(ret)
-        #    ret.save('ret.png')
-        #    plt.imsave('ret.png', ret, cmap='gray')
-        #    print(ret.shape)
-        #    print(np.max(ret))
-            ret = ret.reshape((28, 28, 1))
-            ret = self.transform(ret).float()
-            ret = (ret-ret.min())/(ret.max()-ret.min())
-       #     print(ret.max())
-       #     plt.imsave('ret2.png', ret[0].cpu().detach().numpy(), cmap='gray')
-
-
+            ret = self.transform(Image.fromarray(ret))
 
         return [ret, torch.tensor(self.data["y"][item])]
 
