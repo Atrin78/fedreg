@@ -93,7 +93,6 @@ class Server(object):
         tot_correct = []
         clients = [x for x in self.clients if len(x[3][0]['x']) > 0]
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
-        c.global_model = copy.deepcopy(self.model)
         for m in clients:
             m.global_model = copy.deepcopy(self.model)
             m.set_param(self.get_param())
