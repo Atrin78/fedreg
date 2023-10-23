@@ -2,6 +2,7 @@ from torch import nn
 from FedUtils.models.utils import Flops, FSGM
 import torch
 import sys
+from FedUtils.models.losses import NTD_Loss
 
 
 class Reshape(nn.Module):
@@ -15,6 +16,7 @@ class Model(nn.Module):
         self.num_classes = num_classes
         self.num_inp = 784
         torch.manual_seed(123+seed)
+        self.ntd = NTD_Loss(num_classes=num_classes)
 
         self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
                                    nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(576, 256), nn.ReLU(), nn.Linear(256, self.num_classes)])
