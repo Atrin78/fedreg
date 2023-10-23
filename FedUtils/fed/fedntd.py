@@ -71,7 +71,7 @@ class FedNtd(Server):
 
 
             for idx, c in enumerate(active_clients):
-                c.set_global_model(copy.deepcopy(self.model))
+                c.model.set_global_model(copy.deepcopy(self.model))
                 c.set_param(self.model.get_param())
                 logger.info(f"global model {c.global_model}")
                 coef=1
