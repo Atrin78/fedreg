@@ -77,7 +77,7 @@ class FedNtd(Server):
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
                 coef=1
-                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=partial(step_func, copy.deepcopy(self.model)), coef=coef)  # stats has (byte w, comp, byte r)
+                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=partial(step_func, copy.deepcopy(self.model)))  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
                 if len(csolns) == 0:
