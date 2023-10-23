@@ -23,6 +23,7 @@ def step_func(model ,data, global_model):
         model.train()
         model.zero_grad()
         x, y = d
+        y = y.type(torch.LongTensor)
     #    x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-1, 1)), (-1, 784))
         pred = model.forward(x)
         with torch.no_grad():
