@@ -26,7 +26,7 @@ def step_func(model ,data, global_model):
     #    x = torch.reshape(torchvision.transforms.functional.rotate(torch.reshape(x, (-1, 28, 28)), np.random.uniform(-1, 1)), (-1, 784))
         pred = model.forward(x)
         with torch.no_grad():
-            global_pred = global_model(data)
+            global_pred = global_model.forward(data)
             
         # loss = self.criterion(logits, targets, dg_logits)
         loss = model.loss_NTD(pred, y, global_pred)
