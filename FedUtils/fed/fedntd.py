@@ -30,6 +30,7 @@ def step_func(model ,data, global_model):
             
         # loss = self.criterion(logits, targets, dg_logits)
         loss = model.loss_NTD(pred, y, global_pred)
+        logger.info("ntd loss: {}".format(loss))
 
         grad = torch.autograd.grad(loss, parameters)
         for p, g in zip(parameters, grad):

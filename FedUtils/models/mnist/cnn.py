@@ -192,7 +192,6 @@ class Model(nn.Module):
         if gt.device != pred.device:
             gt = gt.to(pred.device)
         loss = self.ntd(pred, gt, global_pred)
-        logger.info("ntd loss: {}".format(loss))
         return loss
 
     def MSE(self, pred, gt):
