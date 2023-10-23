@@ -43,11 +43,6 @@ def step_func(model ,data, global_model):
 class FedNtd(Server):
     step = 0
 
-    def maybe_active_clients_global_model(self):
-        clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in self.clients]
-        for c in clients:
-            c.set_global_model_activate()
-
     def train(self):
 
         logger.info("Train with {} workers...".format(self.clients_per_round))

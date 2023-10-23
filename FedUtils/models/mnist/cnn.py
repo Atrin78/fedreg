@@ -144,6 +144,7 @@ class Model(nn.Module):
         return True
     
     def set_global_model(self, global_model):
+        self.global_model_activate = True
         self.global_model = global_model
         if torch.cuda.device_count() > 0:
             self.global_model.cuda()
