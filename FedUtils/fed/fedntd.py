@@ -73,7 +73,6 @@ class FedNtd(Server):
             for idx, c in enumerate(active_clients):
                 c.model.set_global_model(copy.deepcopy(self.model))
                 c.set_param(self.model.get_param())
-                logger.info(f"global model {c.model.global_model}")
                 coef=1
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func, coef=coef)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
