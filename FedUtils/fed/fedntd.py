@@ -44,7 +44,7 @@ class FedNtd(Server):
     step = 0
 
     def maybe_active_clients_global_model(self):
-        clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
+        clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in self.clients]
         for c in clients:
             c.set_global_model_activate()
 
