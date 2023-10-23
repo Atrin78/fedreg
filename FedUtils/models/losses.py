@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+import torch.nn.functional as F
 
 
 def refine_as_not_true(logits, targets, num_classes):
