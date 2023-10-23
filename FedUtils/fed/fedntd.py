@@ -31,7 +31,6 @@ def step_func(model ,data, global_model):
             
         # loss = self.criterion(logits, targets, dg_logits)
         loss = model.loss_NTD(pred, y, global_pred)
-        logger.info("ntd loss: {}".format(loss))
 
         grad = torch.autograd.grad(loss, parameters)
         for p, g in zip(parameters, grad):
@@ -75,7 +74,6 @@ class FedNtd(Server):
             for idx, c in enumerate(active_clients):
                 c.model.set_global_model(copy.deepcopy(self.model))
                 c.set_param(self.model.get_param())
-                logger.info("I', hereee tooo")
                 coef=1
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func, coef=coef)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]

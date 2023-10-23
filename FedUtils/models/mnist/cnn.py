@@ -313,8 +313,6 @@ class Model(nn.Module):
             else:
                 func = step_func(self, data)
 
-        logger.info("I'm here")
-
 
         for _ in range(num_epochs):
             train_iters = []
