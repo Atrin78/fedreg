@@ -42,6 +42,11 @@ def step_func(model ,data, global_model):
 class FedNtd(Server):
     step = 0
 
+    def __init__(self, config, Model, datasets, train_transform=None, test_transform=None, traincusdataset=None, evalcusdataset=None, publicdataset=None):
+        super(Server, self).__init__(config, Model, datasets, train_transform=train_transform, test_transform=test_transform, traincusdataset=traincusdataset, evalcusdataset=evalcusdataset, publicdataset=publicdataset)
+        for c in self.cmodel:
+            c.global_model_activate = True
+
     def train(self):
 
         logger.info("Train with {} workers...".format(self.clients_per_round))
@@ -70,7 +75,7 @@ class FedNtd(Server):
 
 
             for idx, c in enumerate(active_clients):
-                c.global_model = copy.deepcopy(self.model)
+                c.set_global_model(copy.deepcopy(self.model))
                 c.set_param(self.model.get_param())
                 logger.info(f"global model {c.global_model}")
                 coef=1

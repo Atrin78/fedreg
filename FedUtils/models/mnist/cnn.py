@@ -115,6 +115,7 @@ class Model(nn.Module):
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
         self.global_model = None
+        self.global_model_activate = False
       #  mm=1
       #  for i in range(mm):
       #      self.net.apply(init_weights)
@@ -140,11 +141,14 @@ class Model(nn.Module):
 
     def set_param(self, state_dict):
         self.load_state_dict(state_dict, strict=False)
-        if self.global_model != None:
-            if torch.cuda.device_count() > 0:
-                self.global_model.cuda()
-            for params in self.global_model.parameters():
-                params.requires_grad = False
+        return True
+    
+    def set_global_model(self, global_model):
+        self.global_model = global_model
+        if torch.cuda.device_count() > 0:
+            self.global_model.cuda()
+        for params in self.global_model.parameters():
+            params.requires_grad = False
         return True
 
     def get_param(self):
@@ -299,7 +303,7 @@ class Model(nn.Module):
         if step_func is None:
             func = self.train_onestep
         else:
-            if self.global_model == None:
+            if self.global_model_activate:
                 func = step_func(self, data)
             else:
                 func = step_func(self, data, self.global_model)
