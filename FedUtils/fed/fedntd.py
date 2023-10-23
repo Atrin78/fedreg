@@ -9,6 +9,7 @@ import torchvision.transforms as transforms
 from FedUtils.models.utils import read_data, CusDataset, ImageDataset
 from torch.utils.data import DataLoader
 import copy
+from .client import Client
 
 
 def step_func(model ,data, global_model):
@@ -43,7 +44,8 @@ class FedNtd(Server):
     step = 0
 
     def maybe_active_clients_global_model(self):
-        for c in self.clients:
+        clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
+        for c in clients:
             c.set_global_model_activate()
 
     def train(self):
