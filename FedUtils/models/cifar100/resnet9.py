@@ -134,9 +134,6 @@ class Model(nn.Module):
 
         self.softmax = nn.Softmax(-1)
 
-        self.global_model = None
-        self.global_model_activate = False
-
         if optimizer is not None:
             self.optimizer = optimizer(self.parameters())
         else:
@@ -188,15 +185,6 @@ class Model(nn.Module):
             gt = gt.to(pred.device)
         loss = self.ntd(pred, gt, global_pred)
         return loss
-    
-    def set_global_model(self, global_model):
-        self.global_model_activate = True
-        self.global_model = global_model
-        if torch.cuda.device_count() > 0:
-            self.global_model.cuda()
-        for params in self.global_model.parameters():
-            params.requires_grad = False
-        return True
 
     def forward(self, data):
         if data.device != next(self.parameters()).device:
@@ -224,10 +212,7 @@ class Model(nn.Module):
         if step_func is None:
             func = self.train_onestep
         else:
-            if self.global_model_activate:
-                func = step_func(self, data, self.global_model)
-            else:
-                func = step_func(self, data)
+            func = step_func(self, data)
         for _ in range(num_epochs):
             for x, y in data:
                 c = func([x, y])

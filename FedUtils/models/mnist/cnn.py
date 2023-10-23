@@ -69,8 +69,6 @@ class Model(nn.Module):
         self.decoder = nn.Sequential(*[nn.Linear(128, 1024), ReverseReshape(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(64, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 1, 5, padding=2), nn.Sigmoid()])
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
-        self.global_model = None
-        self.global_model_activate = False
       #  mm=1
       #  for i in range(mm):
       #      self.net.apply(init_weights)
@@ -136,14 +134,6 @@ class Model(nn.Module):
         loss = self.ntd(pred, gt, global_pred)
         return loss
     
-    def set_global_model(self, global_model):
-        self.global_model_activate = True
-        self.global_model = global_model
-        if torch.cuda.device_count() > 0:
-            self.global_model.cuda()
-        for params in self.global_model.parameters():
-            params.requires_grad = False
-        return True
 
     def MSE(self, pred, gt):
         if gt.device != pred.device:
@@ -259,10 +249,7 @@ class Model(nn.Module):
         if step_func is None:
             func = self.train_onestep
         else:
-            if self.global_model_activate:
-                func = step_func(self, data, self.global_model)
-            else:
-                func = step_func(self, data)
+            func = step_func(self, data)
 
 
         for _ in range(num_epochs):
