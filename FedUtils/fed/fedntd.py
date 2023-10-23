@@ -10,9 +10,12 @@ from FedUtils.models.utils import read_data, CusDataset, ImageDataset
 from torch.utils.data import DataLoader
 import copy
 from .client import Client
+from functools import partial
 
 
-def step_func(model ,data, global_model):
+
+
+def step_func(global_model, model ,data):
     lr = model.learning_rate
     parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
     flop = model.flop
@@ -72,10 +75,9 @@ class FedNtd(Server):
 
 
             for idx, c in enumerate(active_clients):
-                c.model.set_global_model(copy.deepcopy(self.model))
                 c.set_param(self.model.get_param())
                 coef=1
-                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func, coef=coef)  # stats has (byte w, comp, byte r)
+                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=partial(step_func, copy.deepcopy(self.model)), coef=coef)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
                 if len(csolns) == 0:
