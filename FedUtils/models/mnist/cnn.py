@@ -327,15 +327,15 @@ class Model(nn.Module):
             for step in range(len(train_iters[0])):
                 
                 for i, train_iter in enumerate(train_iters[:1]):
-                    try:
-                        x, y = next(train_iter)
+                    # try:
+                    x, y = next(train_iter)
 
-                        c = func([x, y])
-                        comp += c
-                        steps += 1.0
-                    except Exception as e:
-                        print(e)
-                        pass
+                    c = func([x, y])
+                    comp += c
+                    steps += 1.0
+                    # except Exception as e:
+                    #     print(e)
+                    #     pass
 
         soln = self.get_param()
         return soln, comp, weight
