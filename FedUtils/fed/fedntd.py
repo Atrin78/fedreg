@@ -17,7 +17,7 @@ from functools import partial
 
 def step_func(global_model, model ,data):
     lr = model.learning_rate
-    parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
+    parameters = list(model.parameters())
     flop = model.flop
     global_model = global_model
 
