@@ -43,7 +43,7 @@ class FedNtd(Server):
     step = 0
 
     def maybe_active_clients_global_model(self):
-        for c in self.cmodel:
+        for c in self.clients:
             c.set_global_model_activate()
 
     def train(self):
