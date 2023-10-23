@@ -42,10 +42,9 @@ def step_func(model ,data, global_model):
 class FedNtd(Server):
     step = 0
 
-    def __init__(self, config, Model, datasets, train_transform=None, test_transform=None, traincusdataset=None, evalcusdataset=None, publicdataset=None):
-        super(Server, self).__init__(config, Model, datasets, train_transform=train_transform, test_transform=test_transform, traincusdataset=traincusdataset, evalcusdataset=evalcusdataset, publicdataset=publicdataset)
+    def maybe_active_clients_global_model(self):
         for c in self.cmodel:
-            c.global_model_activate = True
+            c.set_global_model_activate()
 
     def train(self):
 

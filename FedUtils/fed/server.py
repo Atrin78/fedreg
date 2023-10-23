@@ -35,6 +35,10 @@ class Server(object):
         self.evalcusdataset = evalcusdataset
         self.clients = self.__set_clients(datasets, Model)
         self.publicdataset = publicdataset
+        self.maybe_active_clients_global_model()
+
+    def maybe_active_clients_global_model(self):
+        return
 
     def __set_clients(self, dataset, Model):
         users, groups, train_data, test_data = dataset

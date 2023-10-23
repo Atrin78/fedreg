@@ -150,6 +150,10 @@ class Model(nn.Module):
         for params in self.global_model.parameters():
             params.requires_grad = False
         return True
+    
+    def set_global_model_activate(self):
+        self.global_model_activate = True
+        return True
 
     def get_param(self):
         return self.state_dict()
