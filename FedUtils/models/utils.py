@@ -89,7 +89,7 @@ class ImageDataset(TensorDataset):
 def Flops(model, inp):
     return profile(model, inputs=(inp,), verbose=False)[0]
 
-
+# Here is where data is devided among clients
 def read_data(train_data_path, test_data_path):
     if not isinstance(test_data_path, list):
         test_data_path = [test_data_path, ]

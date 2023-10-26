@@ -46,6 +46,10 @@ def main():
     else:  # load other data
         clients, groups, train_data, eval_data = read_data(config["train_path"], config["test_path"])
         Dataset = CusDataset
+    logger.info(f'clients: {clients}')
+    logger.info(f'groups: {groups}')
+    logger.info(f'train_data: {train_data} ')
+    logger.info(f'eval_data: {eval_data} ')
 
     if config["use_fed"]:
         Optimizer = config["optimizer"]
@@ -66,6 +70,7 @@ def main():
         train_data_total_fortest = DataLoader(Dataset(train_data_total, config["test_transform"]), batch_size=config["batch_size"], shuffle=False,)
         train_data_total = DataLoader(Dataset(train_data_total, config["train_transform"]), batch_size=config["batch_size"], shuffle=True, )
         eval_data_total = DataLoader(Dataset(eval_data_total, config["test_transform"]), batch_size=config["batch_size"], shuffle=False,)
+        logger.info(f'inner_opt: {inner_opt} ')
         model = Model(*config["model_param"], optimizer=inner_opt)
         for r in range(config["num_rounds"]):
             model.solve_inner(train_data_total)
