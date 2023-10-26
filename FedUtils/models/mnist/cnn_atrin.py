@@ -2,14 +2,47 @@ from torch import nn
 from FedUtils.models.utils import Flops, FSGM
 import torch
 import sys
-from FedUtils.models.losses import NTD_Loss
-from loguru import logger
+import torch.nn.functional as F
+
+def init_weights(m):
+    if isinstance(m, nn.Linear):
+        torch.nn.init.xavier_normal(m.weight)
+        m.bias.data.fill_(0.01)
 
 
 class Reshape(nn.Module):
     def forward(self, x):
         return x.reshape(-1, 576)
 
+class ReverseReshape(nn.Module):
+    def forward(self, x):
+        return x.reshape(-1, 64, 4, 4)
+
+class FedDecorrLoss(nn.Module):
+
+    def __init__(self):
+        super(FedDecorrLoss, self).__init__()
+        self.eps = 1e-8
+
+    def _off_diagonal(self, mat):
+        n, m = mat.shape
+        assert n == m
+        return mat.flatten()[:-1].view(n - 1, n + 1)[:, 1:].flatten()
+
+    def forward(self, x):
+        N, C = x.shape
+        if N == 1:
+            return 0.0
+
+        x = x - x.mean(dim=0, keepdim=True)
+        x = x / (self.eps + x.std(dim=0, keepdim=True))
+
+        corr_mat = torch.matmul(x.t(), x)/(N-1)
+
+        loss = (self._off_diagonal(corr_mat).pow(2)).mean()
+
+
+        return loss.mean()
 
 class Model(nn.Module):
     def __init__(self, num_classes, optimizer=None, learning_rate=None, seed=1, p_iters=10, ps_eta=0.1, pt_eta=0.001):
@@ -17,13 +50,17 @@ class Model(nn.Module):
         self.num_classes = num_classes
         self.num_inp = 784
         torch.manual_seed(123+seed)
-        self.ntd = NTD_Loss(num_classes=num_classes)
 
+        self.decorr = FedDecorrLoss()
+        self.adapt = nn.BatchNorm2d(1)
         self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
                                  nn.MaxPool2d(2), nn.ReLU(), Reshape()])
         self.bottleneck = nn.Sequential(*[nn.Linear(576, 128), nn.ReLU()])
-        self.head = nn.Sequential(*[nn.Linear(128, self.num_classes)])       
+        self.head = nn.Sequential(*[nn.Linear(128, self.num_classes)])
+        self.decoder = nn.Sequential(*[nn.Linear(128, 1024), ReverseReshape(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(64, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 1, 5, padding=2), nn.Sigmoid()])
+        self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
+
 
         if optimizer is not None:
             self.optimizer = optimizer(self.parameters())
@@ -37,12 +74,14 @@ class Model(nn.Module):
 
         self.flop = Flops(self, torch.tensor([[0.0 for _ in range(self.num_inp)]]))
         if torch.cuda.device_count() > 0:
+            self.adapt = self.adapt.cuda()
             self.net = self.net.cuda()
             self.head = self.head.cuda()
+            self.decoder = self.decoder.cuda()
             self.bottleneck = self.bottleneck.cuda()
 
     def set_param(self, state_dict):
-        self.load_state_dict(state_dict)
+        self.load_state_dict(state_dict, strict=False)
         return True
 
     def get_param(self):
@@ -52,9 +91,6 @@ class Model(nn.Module):
         self.eval()
         with torch.no_grad():
             return self.softmax(self.forward(x))
-        
-    def get_classifier(self):
-        return self.head.state_dict().values()
 
     def generate_fake(self, x, y):
         self.eval()
@@ -77,14 +113,13 @@ class Model(nn.Module):
         loss = -gt*torch.log(pred+1e-12)
         loss = loss.sum(1)
         return loss
-    
-    def loss_NTD(self, pred, gt, global_pred):
-        pred = self.softmax(pred)
-        global_pred = self.softmax(global_pred)
+
+    def MSE(self, pred, gt):
         if gt.device != pred.device:
             gt = gt.to(pred.device)
-        loss = self.ntd(pred, gt, global_pred)
+        loss = nn.MSELoss()(pred, gt)
         return loss
+
 
     def forward(self, data):
         if data.device != next(self.parameters()).device:
@@ -94,14 +129,48 @@ class Model(nn.Module):
         out = self.bottleneck(out)
         out = self.head(out)
         return out
-    
-    def forward_representation(self, data):
+
+    def forward_adapt(self, data):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
+
+        data = data.reshape(-1, 1, 28, 28)
+        out = self.adapt(data)
+        out = self.net(out)
+        out = self.bottleneck(out)
+        out = self.head(out)
+        return out
+
+    def forward_decorr(self, data):
+        if data.device != next(self.parameters()).device:
+            data = data.to(next(self.parameters()).device)
+
         data = data.reshape(-1, 1, 28, 28)
         out = self.net(data)
+        features = self.bottleneck(out)
+        out = self.head(features)
+        return out, features
+
+
+    def AE(self, data):
+        if data.device != next(self.parameters()).device:
+            data = data.to(next(self.parameters()).device)
+
+        data = data.reshape(-1, 1, 32, 32)
+        out = self.net(data)
         out = self.bottleneck(out)
+        out = self.decoder(out)
         return out
+
+    def multi(self, data):
+        if data.device != next(self.parameters()).device:
+            data = data.to(next(self.parameters()).device)
+        data = data.reshape(-1, 1, 32, 32)
+        out = self.net(data)
+        out = self.bottleneck(out)
+        rec = self.decoder(out)
+        logit = self.head(out)
+        return logit, rec
 
     def train_onestep(self, data):
         self.train()
@@ -114,6 +183,7 @@ class Model(nn.Module):
         self.optimizer.step()
 
         return self.flop*len(x)
+
 
     def solve_inner(self, data, num_epochs=1, step_func=None):
         comp = 0.0
@@ -140,8 +210,10 @@ class Model(nn.Module):
                     except Exception as e:
                         print(e)
                         pass
+
         soln = self.get_param()
         return soln, comp, weight
+
 
     def test(self, data):
         tot_correct = 0.0
@@ -158,13 +230,16 @@ class Model(nn.Module):
                 pred_max = pred_max.detach().to(y.device)
             tot_correct += (pred_max == y).float().sum()
         return tot_correct, loss
-    
-    def get_representation(self, data):
+
+
+    def testAE(self, data):
+        tot_correct = 0.0
+        loss = 0.0
         self.eval()
-        representations = []
         for d in data:
             x, y = d
-            logger.info(x.shape)
             with torch.no_grad():
-                representations.append(self.forward_representation(x).detach().tolist())
-        return representations
+                pred = self.AE(x)
+            loss += self.MSE(pred, x).mean()
+
+        return loss, loss

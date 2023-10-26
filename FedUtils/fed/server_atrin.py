@@ -2,9 +2,7 @@ from torch import nn
 import numpy as np
 from .client import Client
 import torch
-import copy
-from loguru import logger
-from FedUtils.models.utils import decode_stat
+
 
 class Server(object):
     def __init__(self, config, Model, datasets, train_transform=None, test_transform=None, traincusdataset=None, evalcusdataset=None, publicdataset=None):
@@ -36,18 +34,7 @@ class Server(object):
         self.traincusdataset = traincusdataset
         self.evalcusdataset = evalcusdataset
         self.clients = self.__set_clients(datasets, Model)
-        logger.info("Number of clients: {}".format(len(self.clients)))
-        self.F_in = []
-        self.F_out = []
-        self.classifier_epsilpon = 0
-        self.CKA = 0
         self.publicdataset = publicdataset
-        self.global_classifier = []
-        self.local_classifier = []
-        self.maybe_active_clients_global_model()
-
-    def maybe_active_clients_global_model(self):
-        return
 
     def __set_clients(self, dataset, Model):
         users, groups, train_data, test_data = dataset
@@ -106,8 +93,7 @@ class Server(object):
         tot_correct = []
         clients = [x for x in self.clients if len(x[3][0]['x']) > 0]
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
-        for m in clients:
-            m.set_param(self.get_param())
+        [m.set_param(self.get_param()) for m in clients]
 
         for c in clients:
             ct, ns = c.test()
@@ -119,102 +105,6 @@ class Server(object):
         tot_correct = [[a[i] for a in tot_correct] for i in range(num_test)]
         num_samples = [[a[i] for a in num_samples] for i in range(num_test)]
         return ids, groups, num_samples, tot_correct
-    
-    def local_acc(self,model):
-        num_samples = []
-        tot_correct = []
-        clients = [x for x in self.clients if len(x[3][0]['x']) > 0]
-        clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
-        logger.info("compute forgetting for client {}".format(len(clients)))
-
-        for m in clients:
-            m.set_param(model.get_param())
-
-        for c in clients:
-            ct, ns = c.test()
-            tot_correct.append(ct)
-            num_samples.append(ns)
-
-
-        ids = [c.id for c in clients]
-        groups = [c.group for c in clients]
-        num_test = len(tot_correct[0])
-        tot_correct = [[a[i] for a in tot_correct] for i in range(num_test)]
-        num_samples = [[a[i] for a in num_samples] for i in range(num_test)]
-        return ids, groups, num_samples, tot_correct
-
-    
-    def local_forgetting(self, client_id, stats, local_stats):
-        local_ids, local_groups, local_num_samples, local_tot_correct = local_stats
-        global_ids, global_groups, global_num_samples, global_tot_correct = stats
-        if len(stats) == 4:
-            local_ids, local_groups, local_num_samples, local_tot_correct = local_stats
-            global_ids, global_groups, global_num_samples, global_tot_correct = stats
-        elif len(stats) == 5:
-            local_ids, local_groups, local_num_samples, local_tot_correct, local_loss = local_stats
-            global_ids, global_groups, global_num_samples, global_tot_correct, gloal_loss = stats
-        else:
-            raise ValueError
-        if isinstance(local_num_samples[0], list):
-            assert len(local_num_samples) == len(local_tot_correct)
-            F_in_list = []
-            F_out_list = []
-            for i in range(len(local_tot_correct)):
-                F_in = 0
-                F_out = 0
-                num_out = 0
-                for j in range(len(local_tot_correct[i])):
-                    if local_ids[j] == client_id:
-                        F_in +=  (global_tot_correct[i][j] * 1.0 / global_num_samples[i][j]) - (local_tot_correct[i][j] * 1.0 / local_num_samples[i][j])
-                    else:
-                        F_out +=  (global_tot_correct[i][j] * 1.0 / global_num_samples[i][j]) - (local_tot_correct[i][j] * 1.0 / local_num_samples[i][j])
-                        num_out += 1
-            
-                F_in_list.append(F_in)
-                F_out_list.append(F_out)
-            self.F_in.append(F_in_list)
-            self.F_out.append(F_out_list)
-        else:
-            F_in = 0
-            F_out = 0
-            num_out = 0
-            for j in range(len(local_tot_correct)):
-                if local_ids[j] == client_id:
-                    F_in +=  (global_tot_correct[j] * 1.0 / global_num_samples[j]) - (local_tot_correct[j] * 1.0 / local_num_samples[j])
-                else:
-                    F_out +=  (global_tot_correct[j] * 1.0 / global_num_samples[j]) - (local_tot_correct[j] * 1.0 / local_num_samples[j])
-                    num_out += 1
-            self.F_in.append(F_in)
-            self.F_out.append(F_out)
-        return
-    
-    def compute_forgetting(self):
-        if self.F_out[0] is list:
-            for i in range(len(self.F_out)):
-                logger.info("Test_{} Out_forgetting: {}".format(i, sum(self.F_out[i]) / len(self.F_out[i])))
-                logger.info("Test_{} In_forgetting: {}".format(i,sum(self.F_in[i]) / len(self.F_in[i])))
-        else:
-            logger.info("Out_forgetting: {}".format(sum(self.F_out) / len(self.F_out)))
-            logger.info("In_forgetting: {}".format(sum(self.F_in) / len(self.F_in)))
-        return
-    
-    def compute_divergence(self):
-        up = 0
-        down = 0
-        for l in self.local_classifier:
-            up += torch.sum(l-self.global_classifier)**2
-            down += l-self.global_classifier
-        divergence = up/torch.sum(down)**2
-        logger.info("divergence: {}".format(divergence))
-        return
-    
-    def compute_cka(self):
-        if self.CKA[0] is list:
-            for i in range(len(self.CKA)):
-                logger.info("Test_{} cka: {}".format(i,torch.mean(self.CKA[i])))
-        else:
-            logger.info("cka: {}".format(torch.mean(self.CKA)))
-        return  
 
     def train_error_and_loss(self):
         num_samples = []
@@ -222,8 +112,7 @@ class Server(object):
         losses = []
         clients = self.clients
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
-        for m in clients:
-            m.set_param(self.get_param())
+        [m.set_param(self.get_param()) for m in clients]
         for c in clients:
             ct, cl, ns = c.train_error_and_loss()
             tot_correct.append(ct*1.0)
@@ -239,8 +128,7 @@ class Server(object):
         tot_correct = []
         clients = [x for x in self.clients if len(x[3][0]['x']) > 0]
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
-        for m in clients:
-            m.set_param(self.get_param())
+        [m.set_param(self.get_param()) for m in clients]
         [m.solve_inner(num_epochs=num_epochs, step_func=step_fun, coef=1) for m in clients]
 
         for c in clients:
@@ -260,8 +148,7 @@ class Server(object):
         losses = []
         clients = self.clients
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
-        for m in clients:
-            m.set_param(self.get_param())
+        [m.set_param(self.get_param()) for m in clients]
         [m.solve_inner(num_epochs=num_epochs, step_func=step_fun, coef=1) for m in clients]
         for c in clients:
             ct, cl, ns = c.train_error_and_loss()
@@ -279,8 +166,7 @@ class Server(object):
         num_samples = []
         tot_correct = []
         losses = []
-        for m in clients:
-            m.set_param(self.get_param())
+        [m.set_param(self.get_param()) for m in clients]
         for c in clients:
             ct, cl, ns = c.train_error_and_loss()
             tot_correct.append(ct*1.0)
@@ -309,8 +195,7 @@ class Server(object):
         tot_correct = []
         clients = [x for x in self.clients if len(x[3][0]['x']) > 0]
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
-        for m in clients:
-            m.set_param(self.get_param())
+        [m.set_param(self.get_param()) for m in clients]
 
         for c in clients:
             ct, ns = c.testAE()
@@ -329,8 +214,7 @@ class Server(object):
         losses = []
         clients = self.clients
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
-        for m in clients:
-            m.set_param(self.get_param())
+        [m.set_param(self.get_param()) for m in clients]
         for c in clients:
             ct, cl, ns = c.train_error_and_lossAE()
             tot_correct.append(ct*1.0)

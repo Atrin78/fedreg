@@ -8,6 +8,7 @@ import itertools
 import torchvision.transforms as transforms
 from FedUtils.models.utils import read_data, CusDataset, ImageDataset
 from torch.utils.data import DataLoader
+import copy
 
 
 def step_func(model, data):
@@ -56,17 +57,21 @@ class FedAvg(Server):
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
             active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
-            print('active')
-            print([c.id for c in active_clients])
+            logger.info([c.id for c in active_clients])
             csolns = {}
             w = 0
+            self.global_classifier = self.model.get_classifier()
+            self.local_classifier = []
+            self.F_in = []
+            self.F_out = []
+            self.CKA = []
 
 
 
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
                 coef=1
-                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func, coef=coef)  # stats has (byte w, comp, byte r)
+                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
                 if len(csolns) == 0:
@@ -75,9 +80,22 @@ class FedAvg(Server):
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
                 del c
+                if r % self.eval_every == 0:
+                    local_stats = self.local_acc(c.model)
+                    self.local_forgetting(c.id ,stats, local_stats)
+                    self.local_classifier.append(c.model.get_classifier())
+                    self.CKA.append(c.get_cka())
+            
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
 
             self.latest_model = self.aggregate(csolns)
+
+            if r % self.eval_every == 0:
+                self.compute_divergence()
+                self.compute_cka()
+                self.compute_forgetting()
+
+            
 
         logger.info("-- Log At Round {} --".format(r))
         stats = self.test()
