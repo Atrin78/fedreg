@@ -36,7 +36,6 @@ class Server(object):
         self.traincusdataset = traincusdataset
         self.evalcusdataset = evalcusdataset
         self.clients = self.__set_clients(datasets, Model)
-        logger.info("Number of clients: {}".format(len(self.clients)))
         self.F_in = []
         self.F_out = []
         self.classifier_epsilpon = 0
@@ -52,7 +51,7 @@ class Server(object):
     def __set_clients(self, dataset, Model):
         users, groups, train_data, test_data = dataset
         logger.info("Number of clients: {}".format(len(train_data)))
-        logger.info("Number of clients: {}".format(len(test_data)))
+        logger.info("Number of clients: {}".format(len(test_data[0])))
         if len(groups) == 0:
             groups = [None for _ in users]
         all_clients = [(u, g, train_data[u], [td[u] for td in test_data], Model, self.batch_size, self.train_transform, self.test_transform) for u, g in zip(users, groups)]
