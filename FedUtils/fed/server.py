@@ -56,7 +56,7 @@ class Server(object):
             for key in test_data[i].keys():
                 logger.info('hereeee')
                 logger.info("Number of clients: {}".format(test_data[i][key]['y']))
-                logger.info("Number of clients: {}".format(train_data[i][key]['y']))
+                logger.info("Number of clients: {}".format(train_data[key]['y']))
         if len(groups) == 0:
             groups = [None for _ in users]
         all_clients = [(u, g, train_data[u], [td[u] for td in test_data], Model, self.batch_size, self.train_transform, self.test_transform) for u, g in zip(users, groups)]
