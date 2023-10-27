@@ -81,7 +81,7 @@ class Client(object):
     def get_cka(self, global_model):
         cka = []
         for ed in self.eval_data:
-            cka.append(self.feature_space_linear_cka(self.model.get_representation(ed),global_model.get_representation(ed)))
+            cka.append(feature_space_linear_cka(self.model.get_representation(ed),global_model.get_representation(ed)))
 
         return cka
 
