@@ -200,6 +200,7 @@ class Server(object):
     def compute_divergence(self):
         up = 0
         down = 0
+        logger.info("global_classifier: {}".format(self.global_classifier))
         for l in self.local_classifier:
             up += torch.sum(l-self.global_classifier)**2
             down += l-self.global_classifier
