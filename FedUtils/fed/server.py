@@ -57,6 +57,8 @@ class Server(object):
         if len(groups) == 0:
             groups = [None for _ in users]
         all_clients = [(u, g, train_data[u], [td[u] for td in test_data], Model, self.batch_size, self.train_transform, self.test_transform) for u, g in zip(users, groups)]
+        for i in all_clients:
+            logger.info("check setting: {}".format(len(i[3][0]['x'])))
         return all_clients
 
     def set_param(self, state_dict):
@@ -107,6 +109,8 @@ class Server(object):
     def test(self):
         num_samples = []
         tot_correct = []
+        for i in self.clients:
+            logger.info("check test: {}".format(len(i[3][0]['x'])))
         clients = [x for x in self.clients if len(x[3][0]['x']) > 0]
         logger.info("test clients: {}".format(len(clients)))
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
