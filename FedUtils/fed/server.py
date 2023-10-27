@@ -124,7 +124,7 @@ class Server(object):
     def local_acc(self,model):
         num_samples = []
         tot_correct = []
-        clients = [x for x in self.clients if len(x[3][0]['x']) > 0]
+        clients = [x for x in self.clients if len(x[3][0]['x']) > -1]
         logger.info("clients: {}".format(len(clients)))
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
 
