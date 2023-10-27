@@ -88,7 +88,6 @@ class FedAvg(Server):
                 del c
             
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
-
             self.latest_model = self.aggregate(csolns)
 
             if r % self.eval_every == 0:
