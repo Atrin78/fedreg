@@ -24,6 +24,7 @@ class Model(nn.Module):
         self.bottleneck = nn.Sequential(*[nn.Linear(576, 128), nn.ReLU()])
         self.head = nn.Sequential(*[nn.Linear(128, self.num_classes)])       
         self.softmax = nn.Softmax(-1)
+        self.size = sys.getsizeof(self.state_dict())
 
         if optimizer is not None:
             self.optimizer = optimizer(self.parameters())
