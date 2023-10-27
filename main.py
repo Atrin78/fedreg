@@ -46,8 +46,6 @@ def main():
     else:  # load other data
         clients, groups, train_data, eval_data = read_data(config["train_path"], config["test_path"])
         Dataset = CusDataset
-    logger.info(f'train_data: {train_data.values().shape} ')
-    logger.info(f'eval_data: {eval_data.values().shape} ')
 
     if config["use_fed"]:
         Optimizer = config["optimizer"]
