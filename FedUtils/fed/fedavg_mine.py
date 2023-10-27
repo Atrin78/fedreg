@@ -44,14 +44,14 @@ class FedAvg(Server):
             if r % self.eval_every == 0:
                 logger.info("-- Log At Round {} --".format(r))
                 
-                stats = self.test()
-                logger.info(f'len stats: {len(stats)}')
+                global_stats = self.test()
+                logger.info(f'len stats: {len(global_stats)}')
                 if self.eval_train:
                     stats_train = self.train_error_and_loss()
                 else:
-                    stats_train = stats
+                    stats_train = global_stats
                 logger.info("-- TEST RESULTS --")
-                decode_stat(stats)
+                decode_stat(global_stats)
                 logger.info("-- TRAIN RESULTS --")
                 decode_stat(stats_train)
 
@@ -86,7 +86,7 @@ class FedAvg(Server):
                     local_stats = self.local_acc(c.model)
                     logger.info(f'len stats: {len(local_stats)}')
                     logger.info("compute forgetting for client {}".format(c.id))
-                    self.local_forgetting(c.id , stats, local_stats)
+                    self.local_forgetting(c.id , global_stats, local_stats)
                 del c
             
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
@@ -101,12 +101,12 @@ class FedAvg(Server):
             
 
         logger.info("-- Log At Round {} --".format(r))
-        stats = self.test()
+        global_stats = self.test()
         if self.eval_train:
             stats_train = self.train_error_and_loss()
         else:
-            stats_train = stats
+            stats_train = global_stats
         logger.info("-- TEST RESULTS --")
-        decode_stat(stats)
+        decode_stat(global_stats)
         logger.info("-- TRAIN RESULTS --")
         decode_stat(stats_train)
