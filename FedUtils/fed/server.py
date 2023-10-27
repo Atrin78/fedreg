@@ -53,7 +53,7 @@ class Server(object):
         logger.info("Number of clients: {}".format(len(train_data)))
         logger.info("Number of clients: {}".format(len(test_data[0])))
         for j in test_data:
-            print('hereeee')
+            logger.info('hereeee')
             for i in j:
                 logger.info("Number of clients: {}".format(i['x']))
                 logger.info("Number of clients: {}".format(i['x']))
