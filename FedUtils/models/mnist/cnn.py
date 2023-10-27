@@ -164,7 +164,9 @@ class Model(nn.Module):
     
     def get_representation(self, data):
         self.eval()
-        x, y = data
-        with torch.no_grad():
-            representations = self.forward_representation(x).detach().tolist()
+        representations = []
+        for d in data:
+            x, y = d
+            with torch.no_grad():
+                representations += self.forward_representation(x).squeeze().detach().tolist()
         return representations
