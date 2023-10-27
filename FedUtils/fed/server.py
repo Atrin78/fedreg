@@ -51,6 +51,8 @@ class Server(object):
 
     def __set_clients(self, dataset, Model):
         users, groups, train_data, test_data = dataset
+        logger.info("Number of clients: {}".format(len(train_data)))
+        logger.info("Number of clients: {}".format(len(test_data)))
         if len(groups) == 0:
             groups = [None for _ in users]
         all_clients = [(u, g, train_data[u], [td[u] for td in test_data], Model, self.batch_size, self.train_transform, self.test_transform) for u, g in zip(users, groups)]
