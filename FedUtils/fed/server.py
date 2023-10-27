@@ -200,7 +200,6 @@ class Server(object):
     def compute_divergence(self):
         up = 0
         down = 0
-        logger.info("global_classifier: {}".format(self.global_classifier))
         for l in self.local_classifier:
             up += torch.sum(l-self.global_classifier)**2
             down += l-self.global_classifier
@@ -211,9 +210,9 @@ class Server(object):
     def compute_cka(self):
         if self.CKA[0] is list:
             for i in range(len(self.CKA)):
-                logger.info("Test_{} cka: {}".format(i,torch.mean(self.CKA[i])))
+                logger.info("Test_{} cka: {}".format(i,torch.mean( torch.tensor(self.CKA[i]))))
         else:
-            logger.info("cka: {}".format(torch.mean(self.CKA)))
+            logger.info("cka: {}".format(torch.mean( torch.tensor(self.CKA))))
         return  
 
     def train_error_and_loss(self):
