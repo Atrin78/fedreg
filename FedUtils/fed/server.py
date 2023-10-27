@@ -190,7 +190,6 @@ class Server(object):
         if self.F_out[0] is list:
             self.F_out = torch.tensor(self.F_out).reshape(2,-1)
             self.F_in = torch.tensor(self.F_out).reshape(2,-1)
-            logger.info("Forgetting: {} {}".format(self.F_out, self.F_in))
             for i in range(len(self.F_out)):
                 logger.info("Test_{} Out_forgetting: {}".format(i,torch.sum(self.F_out[i]) / len(self.F_out[i])))
                 logger.info("Test_{} In_forgetting: {}".format(i,torch.sum(self.F_in[i]) / len(self.F_in[i])))
