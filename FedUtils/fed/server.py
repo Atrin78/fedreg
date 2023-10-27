@@ -104,8 +104,7 @@ class Server(object):
     def test(self):
         num_samples = []
         tot_correct = []
-        for i in self.clients:
-            logger.info("check test: {}".format(len(i[3][0]['x'])))
+
         clients = [x for x in self.clients if len(x[3][0]['x']) > 0]
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
         for m in clients:
