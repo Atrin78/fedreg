@@ -44,15 +44,17 @@ class FedAvg(Server):
             if r % self.eval_every == 0:
                 logger.info("-- Log At Round {} --".format(r))
                 
-                global_stats = self.test()
+                stats = self.test()
                 if self.eval_train:
                     stats_train = self.train_error_and_loss()
                 else:
-                    stats_train = global_stats
+                    stats_train = stats
                 logger.info("-- TEST RESULTS --")
-                decode_stat(global_stats)
+                decode_stat(stats)
                 logger.info("-- TRAIN RESULTS --")
                 decode_stat(stats_train)
+
+                global_stats = self.local_acc(self.model)
 
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
@@ -98,12 +100,12 @@ class FedAvg(Server):
             
 
         logger.info("-- Log At Round {} --".format(r))
-        global_stats = self.test()
+        stats = self.test()
         if self.eval_train:
             stats_train = self.train_error_and_loss()
         else:
-            stats_train = global_stats
+            stats_train = stats
         logger.info("-- TEST RESULTS --")
-        decode_stat(global_stats)
+        decode_stat(stats)
         logger.info("-- TRAIN RESULTS --")
         decode_stat(stats_train)

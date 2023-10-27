@@ -50,18 +50,10 @@ class Server(object):
 
     def __set_clients(self, dataset, Model):
         users, groups, train_data, test_data = dataset
-        logger.info("Number of clients: {}".format(users))
-        logger.info("Number of clients: {}".format(len(test_data[0])))
-        for i in range(len(test_data)):
-            for key in test_data[i].keys():
-                logger.info('hereeee')
-                logger.info("Number of clients: {}".format(test_data[i][key]['y']))
-                logger.info("Number of clients: {}".format(train_data[key]['y']))
+        
         if len(groups) == 0:
             groups = [None for _ in users]
         all_clients = [(u, g, train_data[u], [td[u] for td in test_data], Model, self.batch_size, self.train_transform, self.test_transform) for u, g in zip(users, groups)]
-        for i in all_clients:
-            logger.info("check setting: {}".format(len(i[3][0]['x'])))
         return all_clients
 
     def set_param(self, state_dict):
@@ -115,7 +107,6 @@ class Server(object):
         for i in self.clients:
             logger.info("check test: {}".format(len(i[3][0]['x'])))
         clients = [x for x in self.clients if len(x[3][0]['x']) > 0]
-        logger.info("test clients: {}".format(len(clients)))
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
         for m in clients:
             m.set_param(self.get_param())
@@ -134,7 +125,7 @@ class Server(object):
     def local_acc(self,model):
         num_samples = []
         tot_correct = []
-        clients = [x for x in self.clients if len(x[3][0]['x']) > -1]
+        clients = [x for x in self.clients if len(x[2]['x']) > 0]
         logger.info("clients: {}".format(len(clients)))
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
 
@@ -142,7 +133,7 @@ class Server(object):
             m.set_param(model.get_param())
 
         for c in clients:
-            ct, ns = c.test()
+            ct, loss, ns = c.train_error_and_loss()
             tot_correct.append(ct)
             num_samples.append(ns)
 
