@@ -188,6 +188,7 @@ class Server(object):
         return
     
     def compute_forgetting(self):
+        logger.info("Forgetting: {} {}".format(self.F_out, self.F_in))
         if self.F_out[0] is list:
             for i in range(len(self.F_out)):
                 logger.info("Test_{} Out_forgetting: {}".format(i, sum(self.F_out[i]) / len(self.F_out[i])))
