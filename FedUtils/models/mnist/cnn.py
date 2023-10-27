@@ -165,7 +165,6 @@ class Model(nn.Module):
     def get_representation(self, data):
         self.eval()
         x, y = data
-        logger.info(x.shape)
         with torch.no_grad():
             representations = self.forward_representation(x).detach().tolist()
         return representations
