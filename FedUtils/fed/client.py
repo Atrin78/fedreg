@@ -60,10 +60,10 @@ class Client(object):
             train_dataloader = DataLoader(TensorDataset(x_rot, y_rot), batch_size=self.batchsize, shuffle=True, drop_last=self.drop_last)
                     
         if self.gen_data is None:
-            data_loaders = [train_dataloader]
+            data_loaders = [self.train_data]
         else:
             gen_dataloader = DataLoader(self.gen_data, batch_size=self.batchsize, shuffle=True, drop_last=self.drop_last)
-            data_loaders = [train_dataloader, gen_dataloader]
+            data_loaders = [self.train_data, gen_dataloader]
         soln, comp, weight = self.model.solve_inner(data_loaders, num_epochs=num_epochs, step_func=step_func)
         bytes_r = self.model.size
         return (self.num_train_samples*weight, soln), (bytes_w, comp, bytes_r)
