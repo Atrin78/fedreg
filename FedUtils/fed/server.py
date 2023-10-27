@@ -136,6 +136,7 @@ class Server(object):
 
 
         ids = [c.id for c in clients]
+        logger.info("local_ids: {}".format(ids))
         groups = [c.group for c in clients]
         num_test = len(tot_correct[0])
         tot_correct = [[a[i] for a in tot_correct] for i in range(num_test)]
