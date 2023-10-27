@@ -125,7 +125,6 @@ class Server(object):
         tot_correct = []
         clients = [x for x in self.clients if len(x[3][0]['x']) > 0]
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
-        logger.info("compute forgetting for client {}".format(len(clients)))
 
         for m in clients:
             m.set_param(model.get_param())

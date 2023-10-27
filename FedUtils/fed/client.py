@@ -78,10 +78,10 @@ class Client(object):
         return TC,  self.num_test_samples
     
     
-    def get_cka(self, local_model, global_model):
+    def get_cka(self, global_model):
         cka = []
         for ed in self.eval_data:
-            cka.append(self.feature_space_linear_cka(local_model.get_representation(ed),global_model.get_representation(ed)))
+            cka.append(self.feature_space_linear_cka(self.model.get_representation(ed),global_model.get_representation(ed)))
 
         return cka
 

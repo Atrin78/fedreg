@@ -45,6 +45,7 @@ class FedAvg(Server):
                 logger.info("-- Log At Round {} --".format(r))
                 
                 stats = self.test()
+                logger.info(f'len stats: {len(stats)}')
                 if self.eval_train:
                     stats_train = self.train_error_and_loss()
                 else:
@@ -81,9 +82,11 @@ class FedAvg(Server):
                         csolns[x].data.add_(soln[1][x]*soln[0])
                 if r % self.eval_every == 0:
                     self.local_classifier.append(c.model.get_classifier())
-                    self.CKA.append(c.get_cka())
+                    self.CKA.append(c.get_cka(self.model))
                     local_stats = self.local_acc(c.model)
-                    self.local_forgetting(c.id ,stats, local_stats)
+                    logger.info(f'len stats: {len(local_stats)}')
+                    logger.info("compute forgetting for client {}".format(c.id))
+                    self.local_forgetting(c.id , stats, local_stats)
                 del c
             
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
