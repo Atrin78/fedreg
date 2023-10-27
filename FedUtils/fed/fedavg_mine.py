@@ -80,10 +80,10 @@ class FedAvg(Server):
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
                 if r % self.eval_every == 0:
-                    local_stats = self.local_acc(c.model)
-                    self.local_forgetting(c.id ,stats, local_stats)
                     self.local_classifier.append(c.model.get_classifier())
                     self.CKA.append(c.get_cka())
+                    local_stats = self.local_acc(c.model)
+                    self.local_forgetting(c.id ,stats, local_stats)
                 del c
             
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
