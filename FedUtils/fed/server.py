@@ -144,9 +144,9 @@ class Server(object):
 
     
     def local_forgetting(self, client_id, stats, local_stats):
-        logger.info("local_ids: {}".format(local_ids))
         local_ids, local_groups, local_num_samples, local_tot_correct = local_stats
         global_ids, global_groups, global_num_samples, global_tot_correct = stats
+        logger.info("local_ids: {}".format(local_ids))
         if len(stats) == 4:
             local_ids, local_groups, local_num_samples, local_tot_correct = local_stats
             global_ids, global_groups, global_num_samples, global_tot_correct = stats
