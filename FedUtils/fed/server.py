@@ -141,9 +141,8 @@ class Server(object):
         logger.info("ids: {}".format(ids))
         groups = [c.group for c in clients]
         logger.info("tot_correct: {}".format(tot_correct))
-        num_test = len(tot_correct[0])
-        tot_correct = [[a[i] for a in tot_correct] for i in range(num_test)]
-        num_samples = [[a[i] for a in num_samples] for i in range(num_test)]
+        tot_correct = [[a[i] for a in tot_correct] for i in range(1)]
+        num_samples = [[a[i] for a in num_samples] for i in range(1)]
         return ids, groups, num_samples, tot_correct
 
     
