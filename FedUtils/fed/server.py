@@ -144,6 +144,7 @@ class Server(object):
 
     
     def local_forgetting(self, client_id, stats, local_stats):
+        logger.info("local_ids: {}".format(local_ids))
         local_ids, local_groups, local_num_samples, local_tot_correct = local_stats
         global_ids, global_groups, global_num_samples, global_tot_correct = stats
         if len(stats) == 4:
@@ -190,12 +191,17 @@ class Server(object):
     def compute_forgetting(self):
         logger.info("Forgetting: {} {}".format(self.F_out, self.F_in))
         if self.F_out[0] is list:
+            self.F_out = torch.tensor(self.F_out).reshape(2,-1)
+            self.F_in = torch.tensor(self.F_out).reshape(2,-1)
+            logger.info("Forgetting: {} {}".format(self.F_out, self.F_in))
             for i in range(len(self.F_out)):
-                logger.info("Test_{} Out_forgetting: {}".format(i, sum(self.F_out[i]) / len(self.F_out[i])))
-                logger.info("Test_{} In_forgetting: {}".format(i,sum(self.F_in[i]) / len(self.F_in[i])))
+                logger.info("Test_{} Out_forgetting: {}".format(i,torch.sum(self.F_out[i]) / len(self.F_out[i])))
+                logger.info("Test_{} In_forgetting: {}".format(i,torch.sum(self.F_in[i]) / len(self.F_in[i])))
         else:
-            logger.info("Out_forgetting: {}".format(sum(self.F_out) / len(self.F_out)))
-            logger.info("In_forgetting: {}".format(sum(self.F_in) / len(self.F_in)))
+            self.F_out = torch.tensor(self.F_out)
+            self.F_in = torch.tensor(self.F_out)
+            logger.info("Out_forgetting: {}".format(torch.sum(self.F_out) / len(self.F_out)))
+            logger.info("In_forgetting: {}".format(torch.sum(self.F_in) / len(self.F_in)))
         return
     
     def compute_divergence(self):
