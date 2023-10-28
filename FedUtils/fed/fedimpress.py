@@ -25,7 +25,7 @@ add_bn_normalization = True
 lr_img = 10
 momentum_img = 0.9
 data_size= 50
-warmup = 20
+warmup = 1
 
 def step_func(model, data):
     lr = model.learning_rate
@@ -270,8 +270,8 @@ class FedImpress(Server):
     #            c.set_public()
                 #if idx==0:
                 #    c.rotate=True
-                #if r>= warmup:
-                #    c.gen_data = vir_dataset 
+                if r>= warmup:
+                    c.gen_data = vir_dataset 
                 #glob_dataset = None
                 #_, cs = self.select_clients(r+10, num_clients=5)
                 #for cl in cs:
