@@ -20,7 +20,7 @@ config = {
     "num_epochs": 10,
     "batch_size": 10,
     "use_fed": 1,
-    "log_path": "tasks_mine/mnist/FedNtd_e10_lr1/train.log",
+    "log_path": "tasks_mine/mnist/FedNtd_e10_lr1/train_0.log",
 
     "train_transform": None,
     "test_transform": None,
