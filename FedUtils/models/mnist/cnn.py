@@ -168,8 +168,9 @@ class Model(nn.Module):
         for d in data:
             x, y = d
             with torch.no_grad():
+                output = self.forward_representation(x)
                 if representations is None:
-                    representations = self.forward_representation(x).squeeze()
+                    representations = output.reshape(output.shape[0],-1)
                 else:
-                    representations = torch.cat((representations, self.forward_representation(x).squeeze()), 0) 
+                    representations = torch.cat((representations, output.reshape(output.shape[0],-1)), 0) 
         return representations
