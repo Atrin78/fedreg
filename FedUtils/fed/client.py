@@ -80,7 +80,7 @@ class Client(object):
     
     def get_cka(self, global_model):
 
-        cka = feature_space_linear_cka(self.model.get_representation(self.train_data_fortest),global_model.get_representation(self.train_data_fortest))
+        cka = feature_space_linear_cka(self.model.get_representation(self.train_data_fortest).numpy(),global_model.get_representation(self.train_data_fortest).numpy())
 
         return cka
 
