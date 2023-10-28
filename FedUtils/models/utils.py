@@ -44,22 +44,23 @@ class CusDataset(TensorDataset):
        #     ret.save('ret.jpeg')
          #   plt.imsave('ret.png', ret, cmap='gray')
         else:
-            ret = np.array(self.data["x"][item])
+            ret = np.array(self.data["x"][item]).astype("uint8")
             if ret.shape[-1] == 3:
                 ret = ret
             elif ret.shape[0] == 3:
                 ret = ret.transpose(1, 2, 0)
             else:
                 ret = ret
+            ret = self.transform(Image.fromarray(ret))
         #    ret = ret.reshape((28, 28))
          #   ret = Image.fromarray(ret)
         #    ret.save('ret.png')
         #    plt.imsave('ret.png', ret, cmap='gray')
         #    print(ret.shape)
         #    print(np.max(ret))
-            ret = ret.reshape((28, 28, 1))
-            ret = self.transform(ret).float()
-            ret = (ret-ret.min())/(ret.max()-ret.min())
+        #    ret = ret.reshape((28, 28, 1))
+        #    ret = self.transform(ret).float()
+        #    ret = (ret-ret.min())/(ret.max()-ret.min())
        #     print(ret.max())
        #     plt.imsave('ret2.png', ret[0].cpu().detach().numpy(), cmap='gray')
 
