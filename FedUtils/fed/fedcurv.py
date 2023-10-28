@@ -8,7 +8,7 @@ from functools import partial
 
 def step_func(model, data, fed):
     lr = model.learning_rate
-    parameters = list(model.parameters())
+    parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
     flop = model.flop
     fisher, theta_fisher, gamma = fed.fisher, fed.theta_fisher, fed.gamma
 
@@ -47,6 +47,7 @@ class FedCurv(Server):
                 logger.info("-- TRAIN RESULTS --")
                 decode_stat(stats_train)
 
+                global_stats = self.local_acc(self.model)
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
             active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
@@ -55,6 +56,11 @@ class FedCurv(Server):
             w = 0
             temp_fisher = None
             temp_theta_fisher = None
+            self.global_classifier = self.model.get_classifier()
+            self.local_classifier = []
+            self.F_in = []
+            self.F_out = []
+            self.CKA = []
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=partial(step_func, fed=self))  # stats has (byte w, comp, byte r)
@@ -95,6 +101,12 @@ class FedCurv(Server):
                 else:
                     temp_fisher = [a+b for a, b in zip(temp_fisher, cfisher)]
                     temp_theta_fisher = [a+b for a, b in zip(temp_theta_fisher, ctfisher)]
+                if r % self.eval_every == 0:
+                    self.local_classifier.append(c.model.get_classifier())
+                    self.CKA.append(c.get_cka(self.model))
+                    local_stats = self.local_acc(c.model)
+                    self.local_forgetting(c.id , global_stats, local_stats)
+
                 del c
                 # csolns.append(soln)
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
@@ -102,6 +114,10 @@ class FedCurv(Server):
             self.latest_model = self.aggregate(csolns)
             self.fisher = temp_fisher
             self.theta_fisher = temp_theta_fisher
+            if r % self.eval_every == 0:
+                self.compute_divergence()
+                self.compute_cka()
+                self.compute_forgetting()
         logger.info("-- Log At Round {} --".format(r))
         stats = self.test()
         if self.eval_train:

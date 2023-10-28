@@ -104,6 +104,8 @@ class SCAFFOLD(Server):
                 logger.info("-- TRAIN RESULTS --")
                 decode_stat(stats_train)
 
+                global_stats = self.local_acc(self.model)
+
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
             active_clients = np.random.choice(range(len(indices)), round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
@@ -114,6 +116,11 @@ class SCAFFOLD(Server):
             deltac_locals = []
             w = 0
             sopt = self.model.optimizer
+            self.global_classifier = self.model.get_classifier()
+            self.local_classifier = []
+            self.F_in = []
+            self.F_out = []
+            self.CKA = []
 
             for idx, c in enumerate(active_clients):
                 c.set_param(self.get_param())
@@ -147,9 +154,19 @@ class SCAFFOLD(Server):
                             ds.append((newc-state["c_local"]).detach().cpu())
                     c_locals.append(s)
                     deltac_locals.append(ds)
+                if r % self.eval_every == 0:
+                    self.local_classifier.append(c.model.get_classifier())
+                    self.CKA.append(c.get_cka(self.model))
+                    local_stats = self.local_acc(c.model)
+                    self.local_forgetting(c.id , global_stats, local_stats)
             self.update_c(c_locals, deltac_locals, indices)
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
             self.latest_model = self.aggregate(csolns)
+
+            if r % self.eval_every == 0:
+                self.compute_divergence()
+                self.compute_cka()
+                self.compute_forgetting()
         logger.info("-- Log At Round {} --".format(r))
         stats = self.test()
         if self.eval_train:
