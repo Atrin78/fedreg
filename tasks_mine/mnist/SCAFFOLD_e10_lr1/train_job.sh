@@ -5,7 +5,9 @@
 
 #SBATCH --gres=gpu:1
 
-#SBATCH --qos=m3
+#SBATCH --qos=normal
+
+#SBATCH --time=16:00:00
 
 #SBATCH --cpus-per-task=4
 
