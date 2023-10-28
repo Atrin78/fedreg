@@ -35,7 +35,7 @@ def step_func(model, data, fed):
         model.zero_grad()
         median_model.zero_grad()
         penal_model.zero_grad()
-
+        logger.info(f'{d}')
         x, y = d
         psd, ptd = psuedo_data[idx % len(psuedo_data)], perturb_data[idx % len(perturb_data)]
         idx += 1
