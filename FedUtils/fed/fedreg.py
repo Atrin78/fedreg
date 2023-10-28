@@ -16,7 +16,7 @@ def step_func(model, data, fed):
     beta = 0.5
 
     psuedo_data, perturb_data = [], []
-    for d in data:
+    for d in data[0]:
         x, y = d
         psuedo, perturb = fed.model.generate_fake(x, y)
         psuedo_data.append(psuedo)
@@ -35,7 +35,6 @@ def step_func(model, data, fed):
         model.zero_grad()
         median_model.zero_grad()
         penal_model.zero_grad()
-        logger.info(f'{d}')
         x, y = d
         psd, ptd = psuedo_data[idx % len(psuedo_data)], perturb_data[idx % len(perturb_data)]
         idx += 1
