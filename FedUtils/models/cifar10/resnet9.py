@@ -204,7 +204,7 @@ class Model(nn.Module):
         if step_func is None:
             func = self.train_onestep
         else:
-            func = step_func(self, data)
+            func = step_func(self, data[0])
 
         for _ in range(num_epochs):
             for x, y in data[0]:
