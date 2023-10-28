@@ -27,7 +27,7 @@ class Model(nn.Module):
         self.size = sys.getsizeof(self.state_dict())
 
         if optimizer is not None:
-            self.optimizer = optimizer(self.parameters())
+            self.optimizer = optimizer( list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters()))
         else:
             assert learning_rate, "should provide at least one of optimizer and learning rate"
             self.learning_rate = learning_rate
