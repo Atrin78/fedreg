@@ -172,4 +172,5 @@ class Model(nn.Module):
                     representations = self.forward_representation(x).squeeze()
                 else:
                     representations = torch.cat((representations, self.forward_representation(x).squeeze()), 0) 
+        logger.info(f'representations.shape: {representations.shape}')
         return representations
