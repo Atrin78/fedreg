@@ -6,8 +6,8 @@ from FedUtils.fed.scaffold import SCAFFOLD, Optim
 config = {
 
     "seed": 1,
-    "model": partial(Model, learning_rate=1e-1),
-    "inner_opt": Optim,
+    "model": Model,
+    "inner_opt": partial(Optim, lr=1e-1),
     "optimizer": SCAFFOLD,
     "model_param": (10,),
     "inp_size": (784,),
