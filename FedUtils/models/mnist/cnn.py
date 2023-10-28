@@ -170,8 +170,6 @@ class Model(nn.Module):
             with torch.no_grad():
                 if representations is None:
                     representations = self.forward_representation(x).squeeze()
-                    logger.info(f'representations.shape: {representations.shape}')
                 else:
                     representations = torch.cat((representations, self.forward_representation(x).squeeze()), 0) 
-                    logger.info(f'representations.shape: {representations.shape}')
         return representations
