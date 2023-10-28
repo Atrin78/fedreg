@@ -186,7 +186,6 @@ class Server(object):
         return
     
     def compute_forgetting(self):
-        logger.info("Forgetting: {} {}".format(self.F_out, self.F_in))
         if self.F_out[0] is list:
             self.F_out = torch.tensor(self.F_out).reshape(2,-1)
             self.F_in = torch.tensor(self.F_in).reshape(2,-1)
@@ -195,7 +194,7 @@ class Server(object):
                 logger.info("Test_{} In_forgetting: {}".format(i,torch.sum(self.F_in[i]) / len(self.F_in[i])))
         else:
             self.F_out = torch.tensor(self.F_out)
-            self.F_in = torch.tensor(self.F_out)
+            self.F_in = torch.tensor(self.F_in)
             logger.info("Out_forgetting: {}".format(torch.sum(self.F_out) / len(self.F_out)))
             logger.info("In_forgetting: {}".format(torch.sum(self.F_in) / len(self.F_in)))
         return
@@ -213,9 +212,9 @@ class Server(object):
     def compute_cka(self):
         if self.CKA[0] is list:
             for i in range(len(self.CKA)):
-                logger.info("Test_{} cka: {}".format(i,torch.mean( torch.tensor(self.CKA[i]))))
+                logger.info("Test_{} cka: {}".format(i,torch.mean(torch.tensor(self.CKA[i]))))
         else:
-            logger.info("cka: {}".format(torch.mean( torch.tensor(self.CKA))))
+            logger.info("cka: {}".format(torch.mean(torch.tensor(self.CKA))))
         return  
 
     def train_error_and_loss(self):
