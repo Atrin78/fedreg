@@ -12,7 +12,7 @@ class Reshape(nn.Module):
 
 
 class Model(nn.Module):
-    def __init__(self, num_classes, beta = 0,optimizer=None, learning_rate=None, seed=1, p_iters=10, ps_eta=0.1, pt_eta=0.001):
+    def __init__(self, num_classes, beta = 1,optimizer=None, learning_rate=None, seed=1, p_iters=10, ps_eta=0.1, pt_eta=0.001):
         super(Model, self).__init__()
         self.num_classes = num_classes
         self.num_inp = 784
