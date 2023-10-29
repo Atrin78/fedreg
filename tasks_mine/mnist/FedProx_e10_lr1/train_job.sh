@@ -5,9 +5,9 @@
 
 #SBATCH --gres=gpu:1
 
-#SBATCH --qos=m2
+#SBATCH --qos=m3
 
-#SBATCH --time=8:00:00
+#SBATCH --time=4:00:00
 
 #SBATCH --cpus-per-task=4
 

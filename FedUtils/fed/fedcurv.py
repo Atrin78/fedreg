@@ -47,7 +47,7 @@ class FedCurv(Server):
                 logger.info("-- TRAIN RESULTS --")
                 decode_stat(stats_train)
 
-                global_stats = self.local_acc(self.model)
+                global_stats = self.local_acc_loss(self.model)
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
             active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
@@ -56,10 +56,14 @@ class FedCurv(Server):
             w = 0
             temp_fisher = None
             temp_theta_fisher = None
-            self.global_classifier = self.model.get_classifier()
-            self.local_classifier = []
+            self.global_classifier = list(self.model.head.parameters())
+            self.global_feature_extractor = list(self.model.net.parameters()) + list(self.model.bottleneck.parameters())
+            self.local_classifier = [[] for l in self.global_classifier]
+            self.local_feature_extractor = [[] for l in self.global_feature_extractor]
             self.F_in = []
             self.F_out = []
+            self.loss_in = []
+            self.loss_out = []
             self.CKA = []
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
@@ -102,11 +106,20 @@ class FedCurv(Server):
                     temp_fisher = [a+b for a, b in zip(temp_fisher, cfisher)]
                     temp_theta_fisher = [a+b for a, b in zip(temp_theta_fisher, ctfisher)]
                 if r % self.eval_every == 0:
-                    self.local_classifier.append(c.model.get_classifier())
-                    self.CKA.append(c.get_cka(self.model))
-                    local_stats = self.local_acc(c.model)
-                    self.local_forgetting(c.id , global_stats, local_stats)
+                    temp = list(c.model.net.parameters()) + list(c.model.bottleneck.parameters())
 
+                    for i,l in enumerate(self.global_feature_extractor):
+                        self.local_feature_extractor[i].append(temp[i])  # Append the value to the list for this key
+                        
+                    temp = list(c.model.head.parameters()) 
+                    for i,l in enumerate(self.global_classifier):
+                        self.local_classifier[i].append(temp[i])  # Append the value to the list for this key
+
+                    cka_value = c.get_cka(self.model)
+                    if cka_value != None:
+                        self.CKA.append(c.get_cka(self.model))
+                    local_stats = self.local_acc_loss(c.model)
+                    self.local_forgetting(c.id , global_stats, local_stats)
                 del c
                 # csolns.append(soln)
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]

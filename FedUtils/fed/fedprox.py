@@ -44,7 +44,7 @@ class FedProx(Server):
                 logger.info("-- TRAIN RESULTS --")
                 decode_stat(stats_train)
 
-                global_stats = self.local_acc(self.model)
+                global_stats = self.local_acc_loss(self.model)
 
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
@@ -52,10 +52,14 @@ class FedProx(Server):
 
             csolns = {}
             w = 0
-            self.global_classifier = self.model.get_classifier()
-            self.local_classifier = []
+            self.global_classifier = list(self.model.head.parameters())
+            self.global_feature_extractor = list(self.model.net.parameters()) + list(self.model.bottleneck.parameters())
+            self.local_classifier = [[] for l in self.global_classifier]
+            self.local_feature_extractor = [[] for l in self.global_feature_extractor]
             self.F_in = []
             self.F_out = []
+            self.loss_in = []
+            self.loss_out = []
             self.CKA = []
 
 
@@ -71,9 +75,19 @@ class FedProx(Server):
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
                 if r % self.eval_every == 0:
-                    self.local_classifier.append(c.model.get_classifier())
-                    self.CKA.append(c.get_cka(self.model))
-                    local_stats = self.local_acc(c.model)
+                    temp = list(c.model.net.parameters()) + list(c.model.bottleneck.parameters())
+
+                    for i,l in enumerate(self.global_feature_extractor):
+                        self.local_feature_extractor[i].append(temp[i])  # Append the value to the list for this key
+                        
+                    temp = list(c.model.head.parameters()) 
+                    for i,l in enumerate(self.global_classifier):
+                        self.local_classifier[i].append(temp[i])  # Append the value to the list for this key
+
+                    cka_value = c.get_cka(self.model)
+                    if cka_value != None:
+                        self.CKA.append(c.get_cka(self.model))
+                    local_stats = self.local_acc_loss(c.model)
                     self.local_forgetting(c.id , global_stats, local_stats)
                 del c
             
