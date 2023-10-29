@@ -79,8 +79,11 @@ class Client(object):
     
     
     def get_cka(self, global_model):
-
-        cka_value = cka(self.model.get_representation(self.train_data_fortest).cpu().numpy(),global_model.get_representation(self.train_data_fortest).cpu().numpy(), debiased=True)
+        local_rep = self.model.get_representation(self.train_data_fortest).cpu().numpy()
+        global_rep = global_model.get_representation(self.train_data_fortest).cpu().numpy()
+        logger.info("local_rep shape: {}".format(local_rep.shape))
+        logger.info("global_rep shape: {}".format(global_rep.shape))
+        cka_value = cka(local_rep,global_rep, debiased=True)
 
         return cka_value
 
