@@ -20,7 +20,7 @@ class Model(nn.Module):
         self.ntd = NTD_Loss(num_classes=num_classes, beta=0)
 
         self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
-                                 nn.MaxPool2d(2), nn.ReLU(), Reshape()])
+                                 nn.MaxPool2d(2), nn.ReLU()])
         self.bottleneck = nn.Sequential(*[nn.Linear(576, 128), nn.ReLU()])
         self.head = nn.Sequential(*[nn.Linear(128, self.num_classes)])       
         self.softmax = nn.Softmax(-1)
@@ -89,7 +89,7 @@ class Model(nn.Module):
             data = data.to(next(self.parameters()).device)
         data = data.reshape(-1, 1, 28, 28)
         out = self.net(data)
-        out = self.bottleneck(out)
+        out = self.bottleneck(out.reshape(out.shape[0], -1))
         out = self.head(out)
         return out
     
@@ -98,7 +98,7 @@ class Model(nn.Module):
             data = data.to(next(self.parameters()).device)
         data = data.reshape(-1, 1, 28, 28)
         out = self.net(data)
-        out = self.bottleneck(out)
+        out = self.bottleneck(out.reshape(out.shape[0], -1))
         return out
 
     def train_onestep(self, data):
