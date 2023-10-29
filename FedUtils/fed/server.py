@@ -189,7 +189,7 @@ class Server(object):
         divergence = 0
         i = 0
         for key in self.global_classifier.keys():
-            divergence += self.compute_difference_layer(self.global_classifier[key], self.local_classifier[key])
+            divergence += self.compute_layer_difference(self.global_classifier[key], self.local_classifier[key])
             i += 1
         
         logger.info("classifier divergence: {}".format(divergence/i))
@@ -197,7 +197,7 @@ class Server(object):
         divergence = 0
         i = 0
         for key in self.global_feature_extractor.keys():
-            divergence += self.compute_difference_layer(self.global_feature_extractor[key], self.local_feature_extractor[key])
+            divergence += self.compute_layer_difference(self.global_feature_extractor[key], self.local_feature_extractor[key])
             i += 1
         
         logger.info("feature_extractor divergence: {}".format(divergence/i))
