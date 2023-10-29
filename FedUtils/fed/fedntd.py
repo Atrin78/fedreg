@@ -77,6 +77,8 @@ class FedNtd(Server):
             logger.info("Global bottleneck: {}".format(self.model.bottleneck.state_dict().keys()))
             self.global_feature_extractor = OrderedDict(list(self.model.net.state_dict().items()) + list(self.model.bottleneck.state_dict().items()))
             logger.info("Global feature extractor: {}".format(self.global_feature_extractor.keys()))
+            logger.info("Global model: {}".format(self.model.state_dict().keys()))
+            logger.info("Global model: {}".format(self.model))
             self.local_classifier = {}
             self.local_feature_extractor = {}
             self.F_in = []
