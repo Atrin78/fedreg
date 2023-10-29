@@ -71,13 +71,13 @@ class FedNtd(Server):
             active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
             csolns = {}
             w = 0
-            self.global_classifier = self.model.head.state_dict()
+            self.global_classifier = self.model.head.parameters()
             logger.info("Global Classifier: {}".format(self.global_classifier.keys()))
-            logger.info("Global net: {}".format(self.model.net.state_dict().keys()))
-            logger.info("Global bottleneck: {}".format(self.model.bottleneck.state_dict().keys()))
-            self.global_feature_extractor = OrderedDict(list(self.model.net.state_dict().items()) + list(self.model.bottleneck.state_dict().items()))
+            logger.info("Global net: {}".format(self.model.net.parameters().keys()))
+            logger.info("Global bottleneck: {}".format(self.model.bottleneck.parameters().keys()))
+            self.global_feature_extractor = OrderedDict(list(self.model.net.parameters().items()) + list(self.model.bottleneck.parameters().items()))
             logger.info("Global feature extractor: {}".format(self.global_feature_extractor.keys()))
-            logger.info("Global model: {}".format(self.model.state_dict().keys()))
+            logger.info("Global model: {}".format(self.model.parameters().keys()))
             logger.info("Global model: {}".format(self.model))
             self.local_classifier = {}
             self.local_feature_extractor = {}
@@ -106,7 +106,7 @@ class FedNtd(Server):
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
                 if r % self.eval_every == 0:
-                    temp = OrderedDict(list(c.model.net.state_dict().items()) + list(c.model.bottleneck.state_dict().items()))
+                    temp = OrderedDict(list(c.model.net.parameters().items()) + list(c.model.bottleneck.parameters().items()))
                     for key in self.global_feature_extractor.keys():
                         if key not in self.local_feature_extractor:
                             self.local_feature_extractor[key] = []  # Initialize the list for the key if it doesn't exist
@@ -115,7 +115,7 @@ class FedNtd(Server):
                     for key in self.global_classifier.keys():
                         if key not in self.local_classifier:
                             self.local_classifier[key] = []  # Initialize the list for the key if it doesn't exist
-                        self.local_classifier[key].append(c.model.head.state_dict()[key])  # Append the value to the list for this key
+                        self.local_classifier[key].append(c.model.head.parameters()[key])  # Append the value to the list for this key
 
                     cka_value = c.get_cka(self.model)
                     if cka_value != None:
