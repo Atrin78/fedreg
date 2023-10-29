@@ -87,15 +87,15 @@ class FedAvg(Server):
                         csolns[x].data.add_(soln[1][x]*soln[0])
                 if r % self.eval_every == 0:
                     temp = OrderedDict(list(c.model.net.state_dict().items()) + list(c.model.bottleneck.state_dict().items()))
-                    for key in global_feature_extractor.keys():
-                        if key not in local_feature_extractor:
-                            local_feature_extractor[key] = []  # Initialize the list for the key if it doesn't exist
-                        local_feature_extractor[key].append(temp[key])  # Append the value to the list for this key
+                    for key in self.global_feature_extractor.keys():
+                        if key not in self.local_feature_extractor:
+                            self.local_feature_extractor[key] = []  # Initialize the list for the key if it doesn't exist
+                        self.local_feature_extractor[key].append(temp[key])  # Append the value to the list for this key
 
-                    for key in global_classifier.keys():
-                        if key not in local_classifier:
-                            local_classifier[key] = []  # Initialize the list for the key if it doesn't exist
-                        local_classifier[key].append(c.model.head.state_dict()[key])  # Append the value to the list for this key
+                    for key in self.global_classifier.keys():
+                        if key not in self.local_classifier:
+                            self.local_classifier[key] = []  # Initialize the list for the key if it doesn't exist
+                        self.local_classifier[key].append(c.model.head.state_dict()[key])  # Append the value to the list for this key
 
                     self.CKA.append(c.get_cka(self.model))
                     local_stats = self.local_acc_loss(c.model)
