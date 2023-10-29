@@ -21,7 +21,7 @@ config = {
     "batch_size": 10,
     "use_fed": 1,
     "log_path": "tasks_mine/mnist/FedAvg_e10_lr1/train.log",
-    "save_path": "/scratch/ssd004/scratch/sayromlou/models/mnist/FedAvg_e10_lr1.pt",
+    "save_path": "/scratch/ssd004/scratch/sayromlou/fedreg_models/mnist/FedAvg_e10_lr1.pt",
     "load_path": None,
 
     "train_transform": None,
