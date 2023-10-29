@@ -19,6 +19,7 @@ class Server(object):
         self.drop_percent = config["drop_percent"]
         self.num_epochs = config["num_epochs"]
         self.eval_train = config["eval_train"]
+        self.start_round = 0
         if "gamma" in config:
             self.gamma = config["gamma"]
         else:
@@ -32,6 +33,8 @@ class Server(object):
         self.test_transform = test_transform
 
         self.model = Model(*self.model_param, self.inner_opt)
+        if config["load_path"]:
+            self.load_model()
         self.cmodel = Model(*self.model_param, self.inner_opt)
         self.traincusdataset = traincusdataset
         self.evalcusdataset = evalcusdataset
@@ -84,7 +87,6 @@ class Server(object):
         for key in state_dict:
             diff = old[key].detach().cpu()-state_dict[key].detach().cpu()
             total += torch.norm(diff)**2
-        print(total)
         return self.set_param(state_dict)
 
     def select_clients(self, seed, num_clients=20):
@@ -97,6 +99,17 @@ class Server(object):
 
     def save(self):
         raise NotImplementedError
+
+    def save_model(self, current_round):
+        save_dict = {"model": self.model.state_dict(), "round": current_round}
+        torch.save(save_dict, self.config["save_path"])
+        return
+
+    def load_model(self):
+        load_dict = torch.load(self.config["load_path"])
+        self.model.load_state_dict(load_dict["model"])
+        self.start_round = load_dict["round"]
+        return
 
     def train(self):
         raise NotImplementedError
@@ -204,14 +217,14 @@ class Server(object):
         return
     
     def compute_cka(self):
-        if self.CKA[0] is list:
-            for i in range(len(self.CKA)):
-                logger.info("Test_{} cka: {}".format(i,torch.mean(torch.tensor(self.CKA[i]))))
-        else:
-            if len(self.CKA) > 0:
-                logger.info("cka: {}".format(torch.mean(torch.tensor(self.CKA))))
+        if len(self.CKA) > 0:
+            if self.CKA[0] is list:
+                for i in range(len(self.CKA)):
+                    logger.info("Test_{} cka: {}".format(i,torch.mean(torch.tensor(self.CKA[i]))))
             else:
-                logger.info("cka: {}".format(0))
+                    logger.info("cka: {}".format(torch.mean(torch.tensor(self.CKA))))
+        else:
+            logger.info("cka: {}".format(0))
         return  
 
     def train_error_and_loss(self):
