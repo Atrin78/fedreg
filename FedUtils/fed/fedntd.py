@@ -78,7 +78,7 @@ class FedNtd(Server):
             logger.info("Global feature_extracto: {}".format(len(self.global_feature_extractor)))
             logger.info("Global model: {}".format(self.model))
             self.local_classifier = [[] for l in self.global_classifier]
-            self.local_feature_extractor = [[] r l in self.global_feature_extractor]
+            self.local_feature_extractor = [[] for l in self.global_feature_extractor]
             self.F_in = []
             self.F_out = []
             self.loss_in = []
