@@ -14,6 +14,12 @@ from collections import OrderedDict
 
 def step_func(model, data):
     lr = model.learning_rate
+    for p in model.net.parameters():
+        p.requires_grad = False
+    for p in model.bottleneck.parameters():
+        p.requires_grad = False
+    for p in model.head.parameters():
+        p.requires_grad = True
     parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
     flop = model.flop
 
@@ -28,7 +34,8 @@ def step_func(model, data):
 
         grad = torch.autograd.grad(loss, parameters)
         for p, g in zip(parameters, grad):
-            p.data.add_(-lr*g)
+            if p.requires_grad:
+                p.data.add_(-lr*g)
         return flop*len(x)
     return func
 
