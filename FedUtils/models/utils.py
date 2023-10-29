@@ -236,6 +236,9 @@ def cka(gram_x, gram_y, debiased=False):
 
     normalization_x = np.linalg.norm(gram_x)
     normalization_y = np.linalg.norm(gram_y)
+    logger.info("CKA: {}".format(scaled_hsic ))
+    logger.info("CKA: {}".format(normalization_x ))
+    logger.info("CKA: {}".format(normalization_y ))
     return scaled_hsic / (normalization_x * normalization_y)
 
 
