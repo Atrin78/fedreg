@@ -208,7 +208,10 @@ class Server(object):
             for i in range(len(self.CKA)):
                 logger.info("Test_{} cka: {}".format(i,torch.mean(torch.tensor(self.CKA[i]))))
         else:
-            logger.info("cka: {}".format(torch.mean(torch.tensor(self.CKA))))
+            if len(self.CKA) > 0:
+                logger.info("cka: {}".format(torch.mean(torch.tensor(self.CKA))))
+            else:
+                logger.info("cka: {}".format(0))
         return  
 
     def train_error_and_loss(self):
