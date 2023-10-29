@@ -26,7 +26,10 @@ class NTD_Loss(nn.Module):
         self.beta = beta
 
     def forward(self, logits, targets, dg_logits):
-        ce_loss = self.CE(logits, targets)
+        if len(logits.shape) != len(targets.shape):
+            targets = nn.functional.one_hot(targets.long(), self.num_classes).float()
+        ce_loss = -targets*torch.log(logits+1e-12)
+        ce_loss = loss.sum(1)
         ntd_loss = self._ntd_loss(logits, dg_logits, targets)
 
         loss = ce_loss + self.beta * ntd_loss
