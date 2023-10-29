@@ -53,11 +53,6 @@ class Model(nn.Module):
         self.eval()
         with torch.no_grad():
             return self.softmax(self.forward(x))
-        
-    def get_classifier(self):
-        odict = self.head.state_dict()
-        values_list = [value for value in odict.values()]
-        return torch.cat((values_list[0], values_list[1].unsqueeze(1)), dim=1)
 
     def generate_fake(self, x, y):
         self.eval()

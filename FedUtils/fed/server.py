@@ -38,11 +38,11 @@ class Server(object):
         self.clients = self.__set_clients(datasets, Model)
         self.F_in = []
         self.F_out = []
+        self.loss_in = []
+        self.loss_out = []
         self.classifier_epsilpon = 0
         self.CKA = 0
         self.publicdataset = publicdataset
-        self.global_classifier = []
-        self.local_classifier = []
         self.maybe_active_clients_global_model()
 
     def maybe_active_clients_global_model(self):
@@ -121,9 +121,10 @@ class Server(object):
         num_samples = [[a[i] for a in num_samples] for i in range(num_test)]
         return ids, groups, num_samples, tot_correct
     
-    def local_acc(self,model):
+    def local_acc_loss(self,model):
         num_samples = []
         tot_correct = []
+        loss = []
         clients = [x for x in self.clients if len(x[2]['x']) > 0]
         clients = [Client(c[0], c[1], c[2], c[3], self.cmodel, c[5], c[6], c[7], self.traincusdataset, self.evalcusdataset) for c in clients]
 
@@ -131,82 +132,75 @@ class Server(object):
             m.set_param(model.get_param())
 
         for c in clients:
-            ct, loss, ns = c.train_error_and_loss()
+            ct, ls, ns = c.train_error_and_loss()
             tot_correct.append(ct)
             num_samples.append(ns)
+            loss.append(ls)
 
 
         ids = [c.id for c in clients]
         groups = [c.group for c in clients]
-        return ids, groups, num_samples, tot_correct
+        return ids, groups, num_samples, tot_correct, loss
 
     
     def local_forgetting(self, client_id, stats, local_stats):
-        local_ids, local_groups, local_num_samples, local_tot_correct = local_stats
-        global_ids, global_groups, global_num_samples, global_tot_correct = stats
-        if len(stats) == 4:
-            local_ids, local_groups, local_num_samples, local_tot_correct = local_stats
-            global_ids, global_groups, global_num_samples, global_tot_correct = stats
-        elif len(stats) == 5:
-            local_ids, local_groups, local_num_samples, local_tot_correct, local_loss = local_stats
-            global_ids, global_groups, global_num_samples, global_tot_correct, gloal_loss = stats
-        else:
-            raise ValueError
-        if isinstance(local_num_samples[0], list):
-            assert len(local_num_samples) == len(local_tot_correct)
-            F_in_list = []
-            F_out_list = []
-            for i in range(len(local_tot_correct)):
-                F_in = 0
-                F_out = 0
-                num_out = 0
-                for j in range(len(local_tot_correct[i])):
-                    if local_ids[j] == client_id:
-                        F_in +=  (global_tot_correct[i][j] * 1.0 / global_num_samples[i][j]) - (local_tot_correct[i][j] * 1.0 / local_num_samples[i][j])
-                    else:
-                        F_out +=  (global_tot_correct[i][j] * 1.0 / global_num_samples[i][j]) - (local_tot_correct[i][j] * 1.0 / local_num_samples[i][j])
-                        num_out += 1
-            
-                F_in_list.append(F_in)
-                F_out_list.append(F_out)
-            self.F_in.append(F_in_list)
-            self.F_out.append(F_out_list)
-        else:
-            F_in = 0
-            F_out = 0
-            num_out = 0
-            for j in range(len(local_tot_correct)):
-                if local_ids[j] == client_id:
-                    F_in +=  (global_tot_correct[j] * 1.0 / global_num_samples[j]) - (local_tot_correct[j] * 1.0 / local_num_samples[j])
-                else:
-                    F_out +=  (global_tot_correct[j] * 1.0 / global_num_samples[j]) - (local_tot_correct[j] * 1.0 / local_num_samples[j])
-                    num_out += 1
+        local_ids, local_groups, local_num_samples, local_tot_correct, local_loss = local_stats
+        global_ids, global_groups, global_num_samples, global_tot_correct, global_loss = stats
+        F_in = 0
+        F_out = 0
+        num_out = 0
+        loss_in = 0
+        loss_out = 0
+        for j in range(len(local_tot_correct)):
+            if local_ids[j] == client_id:
+                F_in +=  (global_tot_correct[j] * 1.0 / global_num_samples[j]) - (local_tot_correct[j] * 1.0 / local_num_samples[j])
+                loss_in += global_loss[j] - local_loss[j]
+            else:
+                F_out +=  (global_tot_correct[j] * 1.0 / global_num_samples[j]) - (local_tot_correct[j] * 1.0 / local_num_samples[j])
+                loss_out += global_loss[j] - local_loss[j]
+                num_out += 1
             self.F_in.append(F_in)
-            self.F_out.append(F_out)
+            self.F_out.append(F_out/num_out)
+            self.loss_in.append(loss_in)
+            self.loss_out.append(loss_out/num_out)
         return
     
     def compute_forgetting(self):
-        if self.F_out[0] is list:
-            self.F_out = torch.tensor(self.F_out).reshape(2,-1)
-            self.F_in = torch.tensor(self.F_in).reshape(2,-1)
-            for i in range(len(self.F_out)):
-                logger.info("Test_{} Out_forgetting: {}".format(i,torch.sum(self.F_out[i]) / len(self.F_out[i])))
-                logger.info("Test_{} In_forgetting: {}".format(i,torch.sum(self.F_in[i]) / len(self.F_in[i])))
-        else:
-            self.F_out = torch.tensor(self.F_out)
-            self.F_in = torch.tensor(self.F_in)
-            logger.info("Out_forgetting: {}".format(torch.sum(self.F_out) / len(self.F_out)))
-            logger.info("In_forgetting: {}".format(torch.sum(self.F_in) / len(self.F_in)))
+        self.F_out = torch.tensor(self.F_out)
+        self.F_in = torch.tensor(self.F_in)
+        self.loss_out = torch.tensor(self.loss_out)
+        self.loss_in = torch.tensor(self.loss_in)
+        logger.info("Out_forgetting: {}".format(torch.sum(self.F_out) / len(self.F_out)))
+        logger.info("In_forgetting: {}".format(torch.sum(self.F_in) / len(self.F_in)))
+        logger.info("Out_Loss: {}".format(torch.sum(self.loss_out) / len(self.loss_out)))
+        logger.info("In_Loss: {}".format(torch.sum(self.loss_in) / len(self.loss_in)))
         return
     
-    def compute_divergence(self):
+    def compute_layer_difference(self, globale_layer, local_layers):
         up = 0
         down = 0
-        for l in self.local_classifier:
-            up += torch.sum(l-self.global_classifier)**2
-            down += l-self.global_classifier
-        divergence = up/torch.sum(down)**2
-        logger.info("divergence: {}".format(divergence))
+        for l in local_layers:
+            up += torch.sum(torch.pow(l-globale_layer,2))
+            down += l-globale_layer
+        divergence = up/torch.sum(torch.pow(down,2))
+        return divergence
+
+    def compute_layer_difference(self):
+        divergence = 0
+        i = 0
+        for key in self.global_classifier.keys():
+            divergence += self.compute_difference_layer(self.global_classifier[key], self.local_classifier[key])
+            i += 1
+        
+        logger.info("classifier divergence: {}".format(divergence/i))
+
+        divergence = 0
+        i = 0
+        for key in self.global_feature_extractor.keys():
+            divergence += self.compute_difference_layer(self.global_feature_extractor[key], self.local_feature_extractor[key])
+            i += 1
+        
+        logger.info("feature_extractor divergence: {}".format(divergence/i))
         return
     
     def compute_cka(self):

@@ -1,4 +1,4 @@
-from FedUtils.models.utils import CusDataset, feature_space_linear_cka
+from FedUtils.models.utils import CusDataset, feature_space_linear_cka, cka
 from torch.utils.data import DataLoader, TensorDataset
 import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
@@ -80,9 +80,9 @@ class Client(object):
     
     def get_cka(self, global_model):
 
-        cka = feature_space_linear_cka(self.model.get_representation(self.train_data_fortest).cpu().numpy(),global_model.get_representation(self.train_data_fortest).cpu().numpy())
+        cka_value = cka(self.model.get_representation(self.train_data_fortest).cpu().numpy(),global_model.get_representation(self.train_data_fortest).cpu().numpy(), debiased=True)
 
-        return cka
+        return cka_value
 
     def train_error_and_loss(self):
         tot_correct, loss = self.model.test(self.train_data_fortest)
