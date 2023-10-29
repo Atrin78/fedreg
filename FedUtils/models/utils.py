@@ -201,7 +201,6 @@ def center_gram(gram, unbiased=False):
         # The Annals of Statistics, 42(6), 2382-2412, seems to be more numerically
         # stable than the alternative from Song et al. (2007).
         n = gram.shape[0]
-        logger.info("n: {}".format(n))
         np.fill_diagonal(gram, 0)
         means = np.sum(gram, 0, dtype=np.float64) / (n - 2)
         means -= np.sum(means) / (2 * (n - 1))
@@ -237,9 +236,6 @@ def cka(gram_x, gram_y, debiased=False):
 
     normalization_x = np.linalg.norm(gram_x)
     normalization_y = np.linalg.norm(gram_y)
-    logger.info("CKA: {}".format(scaled_hsic ))
-    logger.info("CKA: {}".format(normalization_x ))
-    logger.info("CKA: {}".format(normalization_y ))
     return scaled_hsic / (normalization_x * normalization_y)
 
 

@@ -82,7 +82,10 @@ class Client(object):
     def get_cka(self, global_model):
         local_rep = self.model.get_representation(self.train_data_fortest).cpu().numpy()
         global_rep = global_model.get_representation(self.train_data_fortest).cpu().numpy()
-        cka_value = cka(gram_linear(local_rep),gram_linear(global_rep), debiased=True)
+        if global_rep.shape[0] > 3:
+            cka_value = cka(gram_linear(local_rep),gram_linear(global_rep), debiased=True)
+        else:
+            cka_value = None
 
         return cka_value
 

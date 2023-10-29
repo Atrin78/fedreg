@@ -97,7 +97,9 @@ class FedAvg(Server):
                             self.local_classifier[key] = []  # Initialize the list for the key if it doesn't exist
                         self.local_classifier[key].append(c.model.head.state_dict()[key])  # Append the value to the list for this key
 
-                    self.CKA.append(c.get_cka(self.model))
+                    cka_value = c.get_cka(self.model)
+                    if cka_value != None:
+                        self.CKA.append(c.get_cka(self.model))
                     local_stats = self.local_acc_loss(c.model)
                     self.local_forgetting(c.id , global_stats, local_stats)
                 del c
