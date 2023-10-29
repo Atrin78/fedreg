@@ -198,6 +198,7 @@ class Server(object):
         i = 0
         for key in self.global_feature_extractor.keys():
             divergence += self.compute_layer_difference(self.global_feature_extractor[key], self.local_feature_extractor[key])
+            logger.info(f"key feature_extractor: {key} {divergence}")
             i += 1
         
         logger.info("feature_extractor divergence: {}".format(divergence/i))
