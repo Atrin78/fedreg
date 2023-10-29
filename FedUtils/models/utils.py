@@ -201,6 +201,7 @@ def center_gram(gram, unbiased=False):
         # The Annals of Statistics, 42(6), 2382-2412, seems to be more numerically
         # stable than the alternative from Song et al. (2007).
         n = gram.shape[0]
+        logger.info("n: {}".format(n))
         np.fill_diagonal(gram, 0)
         means = np.sum(gram, 0, dtype=np.float64) / (n - 2)
         means -= np.sum(means) / (2 * (n - 1))

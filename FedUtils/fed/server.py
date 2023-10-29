@@ -185,7 +185,7 @@ class Server(object):
         divergence = up/torch.sum(torch.pow(down,2))
         return divergence
 
-    def compute_layer_difference(self):
+    def compute_divergence(self):
         divergence = 0
         i = 0
         for key in self.global_classifier.keys():
