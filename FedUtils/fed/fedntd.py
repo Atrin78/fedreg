@@ -74,7 +74,7 @@ class FedNtd(Server):
             w = 0
             self.global_classifier = list(self.model.head.parameters())
             logger.info("Global classifier: {}".format(len(self.global_classifier)))
-            self.global_feature_extractor = list(self.model.net.parameters().items()) + list(self.model.bottleneck.parameters())
+            self.global_feature_extractor = list(self.model.net.parameters()) + list(self.model.bottleneck.parameters())
             logger.info("Global feature_extracto: {}".format(len(self.global_feature_extractor)))
             logger.info("Global model: {}".format(self.model))
             self.local_classifier = [[] for l in self.global_classifier]
@@ -104,7 +104,7 @@ class FedNtd(Server):
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
                 if r % self.eval_every == 0:
-                    temp = list(c.model.net.parameters().items()) + list(c.model.bottleneck.parameters())
+                    temp = list(c.model.net.parameters()) + list(c.model.bottleneck.parameters())
 
                     for i,l in enumerate(self.global_feature_extractor):
                         self.local_feature_extractor[i].append(temp[i])  # Append the value to the list for this key
