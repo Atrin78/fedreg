@@ -187,21 +187,22 @@ class Server(object):
 
     def compute_divergence(self):
         divergence = 0
-        i = 0
-        for key in self.global_classifier.keys():
-            divergence += self.compute_layer_difference(self.global_classifier[key], self.local_classifier[key])
-            i += 1
+
+        for i in range(len(self.global_classifier)):
+            divergence += self.compute_layer_difference(self.global_classifier[i], self.local_classifier[i])
+            logger.info("for classifier divergence: {}".format(divergence))
+
         
-        logger.info("classifier divergence: {}".format(divergence/i))
+        logger.info("classifier divergence: {} {}".format(divergence/i, i))
 
         divergence = 0
-        i = 0
-        for key in self.global_feature_extractor.keys():
-            divergence += self.compute_layer_difference(self.global_feature_extractor[key], self.local_feature_extractor[key])
-            logger.info(f"key feature_extractor: {key} {divergence}")
-            i += 1
         
-        logger.info("feature_extractor divergence: {}".format(divergence/i))
+         for i in range(len(self.global_classifier)):
+            divergence += self.compute_layer_difference(self.global_feature_extractor[i], self.local_feature_extractor[i])
+            logger.info("for classifier divergence: {}".format(divergence))
+    
+        
+        logger.info("feature_extractor divergence: {} {}".format(divergence/i, i))
         return
     
     def compute_cka(self):

@@ -72,16 +72,13 @@ class FedNtd(Server):
             active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
             csolns = {}
             w = 0
-            self.global_classifier = self.model.head.parameters()
-            logger.info("Global Classifier: {}".format(self.global_classifier.keys()))
-            logger.info("Global net: {}".format(self.model.net.parameters().keys()))
-            logger.info("Global bottleneck: {}".format(self.model.bottleneck.parameters().keys()))
-            self.global_feature_extractor = OrderedDict(list(self.model.net.parameters().items()) + list(self.model.bottleneck.parameters().items()))
-            logger.info("Global feature extractor: {}".format(self.global_feature_extractor.keys()))
-            logger.info("Global model: {}".format(self.model.parameters().keys()))
+            self.global_classifier = list(self.model.head.parameters())
+            logger.info("Global classifier: {}".format(len(self.global_classifier)))
+            self.global_feature_extractor = list(self.model.net.parameters().items()) + list(self.model.bottleneck.parameters())
+            logger.info("Global feature_extracto: {}".format(len(self.global_feature_extractor)))
             logger.info("Global model: {}".format(self.model))
-            self.local_classifier = {}
-            self.local_feature_extractor = {}
+            self.local_classifier = [[] fot l in self.global_classifier]
+            self.local_feature_extractor = [[] fot l in self.global_feature_extractor]
             self.F_in = []
             self.F_out = []
             self.loss_in = []
@@ -107,16 +104,14 @@ class FedNtd(Server):
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
                 if r % self.eval_every == 0:
-                    temp = OrderedDict(list(c.model.net.parameters().items()) + list(c.model.bottleneck.parameters().items()))
-                    for key in self.global_feature_extractor.keys():
-                        if key not in self.local_feature_extractor:
-                            self.local_feature_extractor[key] = []  # Initialize the list for the key if it doesn't exist
-                        self.local_feature_extractor[key].append(temp[key])  # Append the value to the list for this key
+                    temp = list(c.model.net.parameters().items()) + list(c.model.bottleneck.parameters())
 
-                    for key in self.global_classifier.keys():
-                        if key not in self.local_classifier:
-                            self.local_classifier[key] = []  # Initialize the list for the key if it doesn't exist
-                        self.local_classifier[key].append(c.model.head.parameters()[key])  # Append the value to the list for this key
+                    for i,l in enumerate(self.global_feature_extractor):
+                        self.local_feature_extractor[i].append(temp[i])  # Append the value to the list for this key
+                        
+                    temp = list(c.model.head.parameters()) 
+                    for i,l in enumerate(self.global_classifier):
+                        self.local_classifier[i].append(temp[i])  # Append the value to the list for this key
 
                     cka_value = c.get_cka(self.model)
                     if cka_value != None:
