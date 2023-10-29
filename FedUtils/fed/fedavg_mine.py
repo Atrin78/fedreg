@@ -63,7 +63,7 @@ class FedAvg(Server):
             csolns = {}
             w = 0
             self.global_classifier = self.model.head.state_dict()
-            self.global_feature_extractor = OrderedDict(list(self.model.net.state_dict().items()) + list(self.bottleneck.net.state_dict().items()))
+            self.global_feature_extractor = OrderedDict(list(self.model.net.state_dict().items()) + list(self.model.bottleneck.state_dict().items()))
             self.local_classifier = {}
             self.local_feature_extractor = {}
             self.F_in = []
@@ -86,7 +86,7 @@ class FedAvg(Server):
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
                 if r % self.eval_every == 0:
-                    temp = OrderedDict(list(c.model.net.state_dict().items()) + list(c.bottleneck.net.state_dict().items()))
+                    temp = OrderedDict(list(c.model.net.state_dict().items()) + list(c.model.bottleneck.state_dict().items()))
                     for key in global_feature_extractor.keys():
                         if key not in local_feature_extractor:
                             local_feature_extractor[key] = []  # Initialize the list for the key if it doesn't exist
