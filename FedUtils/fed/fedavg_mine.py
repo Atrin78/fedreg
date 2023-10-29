@@ -62,10 +62,10 @@ class FedAvg(Server):
             active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
             csolns = {}
             w = 0
-            self.global_classifier = self.model.head.state_dict()
-            self.global_feature_extractor = OrderedDict(list(self.model.net.state_dict().items()) + list(self.model.bottleneck.state_dict().items()))
-            self.local_classifier = {}
-            self.local_feature_extractor = {}
+            self.global_classifier = list(self.model.head.parameters())
+            self.global_feature_extractor = list(self.model.net.parameters()) + list(self.model.bottleneck.parameters())
+            self.local_classifier = [[] for l in self.global_classifier]
+            self.local_feature_extractor = [[] for l in self.global_feature_extractor]
             self.F_in = []
             self.F_out = []
             self.loss_in = []
@@ -86,16 +86,14 @@ class FedAvg(Server):
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
                 if r % self.eval_every == 0:
-                    temp = OrderedDict(list(c.model.net.state_dict().items()) + list(c.model.bottleneck.state_dict().items()))
-                    for key in self.global_feature_extractor.keys():
-                        if key not in self.local_feature_extractor:
-                            self.local_feature_extractor[key] = []  # Initialize the list for the key if it doesn't exist
-                        self.local_feature_extractor[key].append(temp[key])  # Append the value to the list for this key
+                    temp = list(c.model.net.parameters()) + list(c.model.bottleneck.parameters())
 
-                    for key in self.global_classifier.keys():
-                        if key not in self.local_classifier:
-                            self.local_classifier[key] = []  # Initialize the list for the key if it doesn't exist
-                        self.local_classifier[key].append(c.model.head.state_dict()[key])  # Append the value to the list for this key
+                    for i,l in enumerate(self.global_feature_extractor):
+                        self.local_feature_extractor[i].append(temp[i])  # Append the value to the list for this key
+                        
+                    temp = list(c.model.head.parameters()) 
+                    for i,l in enumerate(self.global_classifier):
+                        self.local_classifier[i].append(temp[i])  # Append the value to the list for this key
 
                     cka_value = c.get_cka(self.model)
                     if cka_value != None:

@@ -19,7 +19,6 @@ from collections import OrderedDict
 def step_func(global_model, model ,data):
     lr = model.learning_rate
     parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
-    logger.info("Parameters: {}".format(len(parameters)))
     flop = model.flop
     global_model = global_model
 
@@ -73,10 +72,7 @@ class FedNtd(Server):
             csolns = {}
             w = 0
             self.global_classifier = list(self.model.head.parameters())
-            logger.info("Global classifier: {}".format(len(self.global_classifier)))
             self.global_feature_extractor = list(self.model.net.parameters()) + list(self.model.bottleneck.parameters())
-            logger.info("Global feature_extracto: {}".format(len(self.global_feature_extractor)))
-            logger.info("Global model: {}".format(self.model))
             self.local_classifier = [[] for l in self.global_classifier]
             self.local_feature_extractor = [[] for l in self.global_feature_extractor]
             self.F_in = []

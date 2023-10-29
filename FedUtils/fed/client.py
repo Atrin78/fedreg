@@ -84,9 +84,7 @@ class Client(object):
         global_rep = global_model.get_representation(self.train_data_fortest).cpu().numpy()
         if global_rep.shape[0] > 3:
             cka_value = cka(gram_linear(local_rep),gram_linear(global_rep), debiased=True)
-            logger.info("Computed CKA")
         else:
-            logger.info("Not enough samples for CKA")
             cka_value = None
 
         return cka_value
