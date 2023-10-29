@@ -2,6 +2,7 @@ from FedUtils.models.utils import CusDataset, feature_space_linear_cka, cka
 from torch.utils.data import DataLoader, TensorDataset
 import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
+from loguru import logger
 
 
 class Client(object):
