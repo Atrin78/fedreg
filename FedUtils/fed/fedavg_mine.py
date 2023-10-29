@@ -54,7 +54,7 @@ class FedAvg(Server):
                 logger.info("-- TRAIN RESULTS --")
                 decode_stat(stats_train)
 
-                global_stats = self.local_acc(self.model)
+                global_stats = self.local_acc_loss(self.model)
 
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
