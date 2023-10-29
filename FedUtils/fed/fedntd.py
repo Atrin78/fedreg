@@ -72,7 +72,11 @@ class FedNtd(Server):
             csolns = {}
             w = 0
             self.global_classifier = self.model.head.state_dict()
+            logger.info("Global Classifier: {}".format(self.global_classifier.keys()))
+            logger.info("Global net: {}".format(self.model.net.state_dict().keys()))
+            logger.info("Global bottleneck: {}".format(self.model.bottleneck.state_dict().keys()))
             self.global_feature_extractor = OrderedDict(list(self.model.net.state_dict().items()) + list(self.model.bottleneck.state_dict().items()))
+            logger.info("Global feature extractor: {}".format(self.global_feature_extractor.keys()))
             self.local_classifier = {}
             self.local_feature_extractor = {}
             self.F_in = []
