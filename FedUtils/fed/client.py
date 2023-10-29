@@ -85,6 +85,7 @@ class Client(object):
         if global_rep.shape[0] > 3:
             cka_value = cka(gram_linear(local_rep),gram_linear(global_rep), debiased=True)
         else:
+            logger.info("Not enough samples for CKA")
             cka_value = None
 
         return cka_value
