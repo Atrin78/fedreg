@@ -53,7 +53,7 @@ class FixupLayer(nn.Module):
 
 class FixupResNet9_fe(nn.Module):
     def __init__(self, channels=None, pool=nn.MaxPool2d(2)):
-        super(FixupResNet9, self).__init__()
+        super(FixupResNet9_fe, self).__init__()
         self.num_layers = 2
         self.channels = channels or {"prep": 64, "layer1": 128,
                                      "layer2": 256, "layer3": 512}
@@ -117,7 +117,7 @@ class FixupResNet9_fe(nn.Module):
 
 class FixupResNet9_head(nn.Module):
     def __init__(self, channels=None, pool=nn.MaxPool2d(2)):
-        super(FixupResNet9, self).__init__()
+        super(FixupResNet9_head, self).__init__()
         self.num_layers = 2
         self.channels = channels or {"prep": 64, "layer1": 128,
                                      "layer2": 256, "layer3": 512}
