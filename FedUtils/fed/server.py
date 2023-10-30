@@ -35,6 +35,7 @@ class Server(object):
         self.model = Model(*self.model_param, self.inner_opt)
         if config["load_path"]:
             self.load_model()
+        logger.info("Model: {}".format(self.model))
         self.cmodel = Model(*self.model_param, self.inner_opt)
         self.traincusdataset = traincusdataset
         self.evalcusdataset = evalcusdataset
