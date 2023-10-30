@@ -29,7 +29,7 @@ config = {
     "test_path": ["/scratch/ssd004/scratch/sayromlou/fedreg_data/data/mnist_10000/data/valid/", "/scratch/ssd004/scratch/sayromlou/fedreg_data/data/mnist_10000/data/test/"],
     "clients_per_round": 100,
     "num_rounds": 240,
-    "eval_every": 1,
+    "eval_every": 2,
     "drop_percent": 0.0,
     "num_epochs": 30,
     "batch_size": 5,
