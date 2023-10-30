@@ -34,7 +34,7 @@ config = {
     "num_epochs": 30,
     "batch_size": 5,
     "use_fed": 1,
-    "log_path": "tasks_mine/cifar10/FedAvg_e30_lr05/train_pretrain.log",
+    "log_path": "tasks_mine/cifar10/FedAvg_e30_lr05/train_pretrain_2.log",
     "save_path": "/scratch/ssd004/scratch/sayromlou/fedreg_models/cifar10/FedAvg_e30_lr05_pretrain.pt",
     "load_path": None,
 
