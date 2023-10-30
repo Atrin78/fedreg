@@ -91,7 +91,7 @@ def step_func6(model, data):
 
 def step_func7(model, data):
     lr = model.learning_rate
-    parameters = list(model.adapt.parameters()) + list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
+    parameters = list(model.adaptt.parameters()) + list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
     flop = model.flop
 
     def func(d):
@@ -117,7 +117,7 @@ def step_func7(model, data):
 
 def step_func8(model, data):
     lr = model.learning_rate
-    parameters = list(model.adapt.parameters())
+    parameters = list(model.adaptt.parameters())
     flop = model.flop
 
     def func(d):
