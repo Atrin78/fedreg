@@ -106,9 +106,9 @@ class FedAvg(Server):
                     for i,l in enumerate(self.global_classifier):
                         self.local_classifier[i].append(temp[i])  # Append the value to the list for this key
 
-                    cka_value = c.get_cka(self.model)
-                    if cka_value != None:
-                        self.CKA.append(c.get_cka(self.model))
+                    # cka_value = c.get_cka(self.model)
+                    # if cka_value != None:
+                    #     self.CKA.append(c.get_cka(self.model))
                     local_stats = self.local_acc_loss(c.model)
                     self.local_forgetting(c.id , global_stats, local_stats)
                 del c
@@ -118,7 +118,7 @@ class FedAvg(Server):
 
             if r % self.eval_every == 0:
                 self.compute_divergence()
-                self.compute_cka()
+                # self.compute_cka()
                 self.compute_forgetting()
 
             
