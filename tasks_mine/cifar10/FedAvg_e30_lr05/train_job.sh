@@ -17,4 +17,4 @@
 source /ssd003/projects/aieng/public/FL_env/env3/bin/activate
 
 # put your command here
-python main.py -c tasks_mine/mnist/FedAvg_e10_lr1/config_pretrain
+python main.py -c tasks_mine/cifar10/FedAvg_e30_lr05/config_pretrain
