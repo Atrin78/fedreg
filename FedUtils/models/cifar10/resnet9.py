@@ -207,12 +207,47 @@ class Model(nn.Module):
             func = step_func(self, data[0])
 
         for _ in range(num_epochs):
-            for x, y in data[0]:
-                c = func([x, y])
-                comp += c
-                steps += 1.0
+            train_iters = []
+            train_w = [1.0, 1.0]
+            if len(data)==1:
+                train_w = [1.0]
+            for train_loader in data:
+                train_iters.append(iter(train_loader))
+            for step in range(len(train_iters[0])):
+           #     xt, yt = None, None
+           #     wt = None
+                for i, train_iter in enumerate(train_iters):
+                    try:
+                        x, y = next(train_iter)
+               #         w = torch.ones((y.shape[0],)).to(device)
+                #        x = x.to(device)
+                #        y = y.to(device)
+               #         print(torch.max(x))
+               #         if xt is None:
+               #            xt, yt = x, y
+               #           wt = w * train_w[i]
+               #         else:
+               #             xt = torch.cat((xt, x), 0)
+               #             yt = torch.cat((yt, y), 0)
+               #             wt = torch.cat((wt, w * train_w[i]), 0)
+                        c = func([x, y], train_w[i])
+                        comp += c
+                        steps += 1.0
+                    except Exception as e:
+                        print(e)
+                        
+             #   c = func([xt, yt], wt)
+             #   comp += c
+             #   steps += 1.0
+
+
+         #   for x, y in data:
+         #       c = func([x, y])
+         #       comp += c
+         #       steps += 1.0
         soln = self.get_param()
         return soln, comp, weight
+
 
     def test(self, data):
         tot_correct = 0.0

@@ -242,10 +242,11 @@ class FedAdapt(Server):
         for r in range(self.num_rounds):
             if r % self.eval_every == 0:
                 logger.info("-- Log At Round {} --".format(r))
-                
-                stats = self.test_adapt(step_func8, num_adapt)
+                stats = self.test()
+                #stats = self.test_adapt(step_func8, num_adapt)
                 if self.eval_train:
-                    stats_train = self.train_error_and_loss_adapt(step_func8, num_adapt)
+                    #stats_train = self.train_error_and_loss_adapt(step_func8, num_adapt)
+                    stats_train = self.train_error_and_loss()
                 else:
                     stats_train = stats
                 logger.info("-- TEST RESULTS --")
