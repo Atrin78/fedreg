@@ -57,7 +57,7 @@ class Model(nn.Module):
         torch.manual_seed(123+seed)
 
         self.decorr = FedDecorrLoss()
-        self.adapt = nn.BatchNorm2d(1)
+        self.adaptt = nn.BatchNorm2d(1)
         self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
                                  nn.MaxPool2d(2), nn.ReLU(), Reshape()])
         self.bottleneck = nn.Sequential(*[nn.Linear(576, 128), nn.ReLU()])
@@ -82,7 +82,7 @@ class Model(nn.Module):
 
         self.flop = Flops(self, torch.tensor([[0.0 for _ in range(self.num_inp)]]))
         if torch.cuda.device_count() > 0:
-            self.adapt = self.adapt.cuda()
+            self.adaptt = self.adaptt.cuda()
             self.net = self.net.cuda()
             self.head = self.head.cuda()
             self.decoder = self.decoder.cuda()
@@ -153,7 +153,7 @@ class Model(nn.Module):
     #    data_max = torch.transpose(torch.max(data, 1)[0].repeat((784, 1)),0, 1)
     #    data = (data - data_min)/(data_max-data_min)
         data = data.reshape(-1, 1, 28, 28)
-        out = self.adapt(data)
+        out = self.adaptt(data)
         out = self.net(out)
         out = self.bottleneck(out)
         out = self.head(out)
