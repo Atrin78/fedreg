@@ -9,7 +9,7 @@ import torchvision.transforms as transforms
 from FedUtils.models.utils import read_data, CusDataset, ImageDataset
 from torch.utils.data import DataLoader
 
-warmup=16
+warmup=1
 data_size = 20
 full = 0
 num_adapt=10
