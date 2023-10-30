@@ -14,6 +14,13 @@ from collections import OrderedDict
 
 def step_func(model, data):
     lr = model.learning_rate
+    for p in model.net.parameters():
+        p.requires_grad = False
+    if model.bottleneck != None:
+        for p in model.bottleneck.parameters():
+            p.requires_grad = False
+    for p in model.head.parameters():
+        p.requires_grad = True
     if model.bottleneck != None:
         parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
     else:
