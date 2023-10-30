@@ -187,7 +187,7 @@ class Model(nn.Module):
         if torch.cuda.device_count() > 0:
             self.net = self.net.cuda()
             self.head = self.head.cuda()
-            if self.bottleneck == None:
+            if self.bottleneck != None:
                 self.bottleneck = self.bottleneck.cuda()
     def set_param(self, state_dict):
         self.load_state_dict(state_dict)
