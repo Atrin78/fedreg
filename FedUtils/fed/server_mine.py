@@ -58,20 +58,6 @@ class Server(object):
     def get_param(self):
         return self.model.get_param()
 
-    def _aggregate(self, wstate_dicts):
-        old_params = self.get_param()
-        state_dict = {x: 0.0 for x in self.get_param() if x.split('.')[0]!='adapt'}
-        wtotal = 0.0
-        for w, st in wstate_dicts:
-            wtotal += w
-            for name in state_dict.keys():
-                if name.split('.')[0]=='adapt':
-                    continue
-                assert name in state_dict
-                state_dict[name] += st[name]*w
-        state_dict = {x: state_dict[x]/wtotal for x in state_dict}
-        return state_dict
-
     def compute_layer_difference(self, globale_layer, local_layers):
         up = 0.0
         down = 0.0
@@ -104,12 +90,25 @@ class Server(object):
                 elif name.split('.')[0] == 'net' or name.split('.')[0] == 'bottleneck':
                     feature_extractor_divergence += d_value
                     len_feature_extractor += 1
-
         
         logger.info("classifier divergence: {}".format(classifier_divergence/len_classifer))
         logger.info("feature_extractor divergence: {}".format(feature_extractor_divergence/len_feature_extractor))
 
         return
+
+    def _aggregate(self, wstate_dicts):
+        old_params = self.get_param()
+        state_dict = {x: 0.0 for x in self.get_param() if x.split('.')[0]!='adapt'}
+        wtotal = 0.0
+        for w, st in wstate_dicts:
+            wtotal += w
+            for name in state_dict.keys():
+                if name.split('.')[0]=='adapt':
+                    continue
+                assert name in state_dict
+                state_dict[name] += st[name]*w
+        state_dict = {x: state_dict[x]/wtotal for x in state_dict}
+        return state_dict
 
     def aggregate(self, wstate_dicts):
         old = self.model.get_param()
@@ -237,6 +236,7 @@ class Server(object):
     
     
     def compute_cka(self):
+        logger.info("cka: {}".format(self.CKA))
         if len(self.CKA) > 0:
             if self.CKA[0] is list:
                 for i in range(len(self.CKA)):

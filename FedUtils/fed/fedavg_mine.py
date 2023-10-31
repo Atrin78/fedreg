@@ -95,31 +95,17 @@ class FedAvg(Server):
                 else:
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
-                # if r % self.eval_every == 0:
-                #     pass
-                #     if c.model.bottleneck != None:
-                #         temp = list(c.model.net.parameters()) + list(c.model.bottleneck.parameters())
-                #     else:
-                #         temp = list(c.model.net.parameters())
-
-                #     for i,l in enumerate(self.global_feature_extractor):
-                #         self.local_feature_extractor[i].append(temp[i])  # Append the value to the list for this key
-                        
-                #     temp = list(c.model.head.parameters()) 
-                #     for i,l in enumerate(self.global_classifier):
-                #         self.local_classifier[i].append(temp[i])  # Append the value to the list for this key
-
-                    # cka = c.get_cka(self.model)
-                    # if cka != None:
-                    #     self.CKA.append(cka)
-                    # local_stats = self.local_acc_loss(c.model)
-                    # self.local_forgetting(c.id , global_stats, local_stats)
+                if r % self.eval_every == 0:
+                    cka = c.get_cka(self.model)
+                    if cka != None:
+                        self.CKA.append(cka)
+                    local_stats = self.local_acc_loss(c.model)
+                    self.local_forgetting(c.id , global_stats, local_stats)
                 del c
 
-            # if r % self.eval_every == 0:
-            #     self.compute_divergence()
-                # self.compute_cka()
-                # self.compute_forgetting()
+            if r % self.eval_every == 0:
+                self.compute_cka()
+                self.compute_forgetting()
             
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
             self.latest_model = self.aggregate(csolns)
