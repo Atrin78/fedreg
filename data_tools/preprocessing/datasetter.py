@@ -55,25 +55,25 @@ def data_distributer(
         i: {"datasize": 0, "train": None, "test": None} for i in range(n_clients)
     }
 
-    if partition.method == "centralized":
+    if partition["method"] == "centralized":
         net_dataidx_map = centralized_partition(all_targets)
-    elif partition.method == "iid":
+    elif partition["method"] == "iid":
         net_dataidx_map = iid_partition(all_targets, n_clients)
-    elif partition.method == "sharding":
+    elif partition["method"] == "sharding":
         net_dataidx_map, rand_set_all = sharding_partition(
-            all_targets, n_clients, partition.shard_per_user
+            all_targets, n_clients, partition["shard_per_user"]
         )
         all_targets_test = DATA_INSTANCES[dataset_name](root, train=False)
         net_dataidx_map_test, _ = sharding_partition(
             all_targets_test,
             n_clients,
-            partition.shard_per_user,
+            partition["shard_per_user"],
             rand_set_all=rand_set_all,
         )
-    elif partition.method == "sharding_max":
-        net_dataidx_map = sharding_max_partition(all_targets, n_clients, partition.K)
-    elif partition.method == "lda":
-        net_dataidx_map = lda_partition(all_targets, n_clients, partition.alpha)
+    elif partition["method"]== "sharding_max":
+        net_dataidx_map = sharding_max_partition(all_targets, n_clients, partition["K"])
+    elif partition["method"] == "lda":
+        net_dataidx_map = lda_partition(all_targets, n_clients, partition["alpha"])
     else:
         raise NotImplementedError
 
