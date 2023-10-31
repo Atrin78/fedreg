@@ -123,7 +123,7 @@ class Server(object):
             if key.split('.')[0] == 'head':
                 total_classifier += torch.norm(diff)**2
                 len_classifer += 1
-            elif name.split('.')[0] == 'net' or name.split('.')[0] == 'bottleneck':
+            elif key.split('.')[0] == 'net' or key.split('.')[0] == 'bottleneck':
                 total_feature_extractor +=torch.norm(diff)**2
                 len_feature_extractor += 1
         logger.info("classifier difference: {}".format(total_classifier/len_classifer))
@@ -236,7 +236,6 @@ class Server(object):
     
     
     def compute_cka(self):
-        logger.info("cka: {}".format(self.CKA))
         if len(self.CKA) > 0:
             if self.CKA[0] is list:
                 for i in range(len(self.CKA)):
