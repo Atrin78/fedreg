@@ -112,7 +112,7 @@ class FedAvg(Server):
                     # cka = c.get_cka(self.model)
                     # if cka != None:
                     #     self.CKA.append(cka)
-                    local_stats = self.local_acc_loss(c.model)
+                    # local_stats = self.local_acc_loss(c.model)
                     # self.local_forgetting(c.id , global_stats, local_stats)
                 del c
 
