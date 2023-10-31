@@ -3,6 +3,7 @@ from torch.utils.data import DataLoader, TensorDataset
 import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
 from loguru import logger
+from torch_cka import CKA
 
 
 class Client(object):
@@ -74,12 +75,19 @@ class Client(object):
     
     
     def get_cka(self, global_model):
-        local_rep = self.model.get_representation(self.train_data_fortest).cpu().numpy()
-        global_rep = global_model.get_representation(self.train_data_fortest).cpu().numpy()
-        if global_rep.shape[0] > 3:
-            cka_value = cka(gram_linear(local_rep),gram_linear(global_rep), debiased=True)
-        else:
-            cka_value = None
+
+        cka_model= CKA(self.model, global_model,
+        model1_name="local_model",   # good idea to provide names to avoid confusion
+        model2_name="global_model",   
+        model1_layers=['bottleneck.1'], # List of layers to extract features from
+        model2_layers= ['bottleneck.1'], # extracts all layer features by default
+        device='cuda')
+        cka_model.compare(self.train_data_fortest) # secondary dataloader is optional
+
+        results = cka.export()  # returns a dict that contains model names, layer names
+                        # and the CKA matrix
+        
+        logger.info(f"CKA: {results}")
 
         return cka_value
 

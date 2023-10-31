@@ -108,14 +108,8 @@ class FedAvg(Server):
                     for i,l in enumerate(self.global_classifier):
                         self.local_classifier[i].append(temp[i])  # Append the value to the list for this key
 
-                    cka = CKA(c.model, self.model,
-                    model1_name="local_model",   # good idea to provide names to avoid confusion
-                    model2_name="global_model",   
-                    model1_layers=['bottleneck.1'], # List of layers to extract features from
-                    model2_layers= ['bottleneck.1'], # extracts all layer features by default
-                    device='cuda')
-                    logger.info(f"CKA: {cka.export()}")
-                    self.CKA.append()
+                    cka = c.get_cka(global_model)
+                    self.CKA.append(cka)
                     for name, m in self.model.named_modules():
                         logger.info(f"{name}")
                     local_stats = self.local_acc_loss(c.model)
