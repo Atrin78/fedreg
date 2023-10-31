@@ -10,6 +10,7 @@ from FedUtils.models.utils import read_data, CusDataset, ImageDataset
 from torch.utils.data import DataLoader
 import copy
 from collections import OrderedDict
+from torch_cka import CKA
 
 
 def step_func(model, data):
@@ -95,23 +96,29 @@ class FedAvg(Server):
                         csolns[x].data.add_(soln[1][x]*soln[0])
                 if r % self.eval_every == 0:
                     pass
-                    # if c.model.bottleneck != None:
-                    #     temp = list(c.model.net.parameters()) + list(c.model.bottleneck.parameters())
-                    # else:
-                    #     temp = list(c.model.net.parameters())
+                    if c.model.bottleneck != None:
+                        temp = list(c.model.net.parameters()) + list(c.model.bottleneck.parameters())
+                    else:
+                        temp = list(c.model.net.parameters())
 
-                    # for i,l in enumerate(self.global_feature_extractor):
-                    #     self.local_feature_extractor[i].append(temp[i])  # Append the value to the list for this key
+                    for i,l in enumerate(self.global_feature_extractor):
+                        self.local_feature_extractor[i].append(temp[i])  # Append the value to the list for this key
                         
-                    # temp = list(c.model.head.parameters()) 
-                    # for i,l in enumerate(self.global_classifier):
-                    #     self.local_classifier[i].append(temp[i])  # Append the value to the list for this key
+                    temp = list(c.model.head.parameters()) 
+                    for i,l in enumerate(self.global_classifier):
+                        self.local_classifier[i].append(temp[i])  # Append the value to the list for this key
 
-                    # cka_value = c.get_cka(self.model)
-                    # if cka_value != None:
-                    #     self.CKA.append(c.get_cka(self.model))
-                    # local_stats = self.local_acc_loss(c.model)
-                    # self.local_forgetting(c.id , global_stats, local_stats)
+                    # cka = CKA(c.model, self.model,
+                    # model1_name="local_model",   # good idea to provide names to avoid confusion
+                    # model2_name="global_model",   
+                    # model1_layers=['bottleneck.'], # List of layers to extract features from
+                    # model2_layers=layer_names_resnet34, # extracts all layer features by default
+                    # device='cuda')
+                    # self.CKA.append()
+                    for name, m in model.named_modules():
+                        logger.info(f"{name}")
+                    local_stats = self.local_acc_loss(c.model)
+                    self.local_forgetting(c.id , global_stats, local_stats)
                 del c
             
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
@@ -119,9 +126,9 @@ class FedAvg(Server):
 
             if r % self.eval_every == 0:
                 pass
-                # self.compute_divergence()
+                self.compute_divergence()
                 # self.compute_cka()
-                # self.compute_forgetting()
+                self.compute_forgetting()
 
             
 

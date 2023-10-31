@@ -15,7 +15,6 @@ class Client(object):
         self.train_samplenum = train_data["datasize"] 
         self.num_train_samples = train_data["datasize"] 
         self.num_test_samples = [eval_data["test_datasize"]]
-        logger.info(f'num_train_samples {id}: {self.num_train_samples}')
         drop_last = False
         self.drop_last = drop_last
         self.gen_data = None
