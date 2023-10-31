@@ -122,7 +122,7 @@ class FedAvg(Server):
             if r % self.eval_every == 0:
                 pass
                 self.compute_divergence()
-                # self.compute_cka()
+                self.compute_cka()
                 self.compute_forgetting()
 
             
