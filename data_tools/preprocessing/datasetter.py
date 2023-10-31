@@ -84,7 +84,7 @@ def data_distributer(
             root, train=True, batch_size=batch_size, dataidxs=dataidxs,
         )
         local_loaders[client_idx]["train_for_test"] = DATA_LOADERS[dataset_name](
-            root, train=True, shuffle = False, batch_size=batch_size, dataidxs=dataidxs,
+            root, train=True, shuffle = False, drop_last=True, batch_size=batch_size, dataidxs=dataidxs,
         )
 
     print(">>> Distributing client test data...")
@@ -101,7 +101,7 @@ def data_distributer(
 
     global_loaders = {
         "train": DATA_LOADERS[dataset_name](root, train=True, batch_size=batch_size),
-        "train_for_test": DATA_LOADERS[dataset_name](root, train=True,shuffle = False, batch_size=batch_size),
+        "train_for_test": DATA_LOADERS[dataset_name](root, train=True,shuffle = False, drop_last=True,batch_size=batch_size),
         "test": DATA_LOADERS[dataset_name](root, train=False,shuffle = False, batch_size=batch_size),
     }
     global_loaders["datasize"] = len(global_loaders["train"].dataset)

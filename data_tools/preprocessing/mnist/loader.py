@@ -59,7 +59,7 @@ def get_all_targets_mnist(root, train=True):
     return all_targets
 
 
-def get_dataloader_mnist(root, train=True, batch_size=50, shuffle= True,dataidxs=None):
+def get_dataloader_mnist(root, train=True, batch_size=50, shuffle= True,dataidxs=None,  drop_last=False):
     train_transform, valid_transform = _data_transforms_cifar10()
 
     if train:
@@ -67,7 +67,7 @@ def get_dataloader_mnist(root, train=True, batch_size=50, shuffle= True,dataidxs
             root, dataidxs, train=True, transform=train_transform, download=False
         )
         dataloader = data.DataLoader(
-            dataset=dataset, batch_size=batch_size, shuffle=shuffle, num_workers=0
+            dataset=dataset, batch_size=batch_size, shuffle=shuffle, drop_last = drop_last ,num_workers=0
         )
         dataset.targets
 
@@ -76,7 +76,7 @@ def get_dataloader_mnist(root, train=True, batch_size=50, shuffle= True,dataidxs
             root, dataidxs, train=False, transform=valid_transform, download=False
         )
         dataloader = data.DataLoader(
-            dataset=dataset, batch_size=batch_size, shuffle=shuffle, num_workers=0
+            dataset=dataset, batch_size=batch_size, shuffle=shuffle, drop_last = drop_last ,num_workers=0
         )
 
     return dataloader
