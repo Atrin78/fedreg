@@ -40,6 +40,7 @@ def main():
 
     Model = config["model"]
     inner_opt = config["inner_opt"]
+    torch.multiprocessing.set_sharing_strategy('file_system')
     # if "landmarks" in config["train_path"]:  # load landmark data
     #     assert "image_path" in config
     #     Dataset = partial(ImageDataset, image_path=config["image_path"])
