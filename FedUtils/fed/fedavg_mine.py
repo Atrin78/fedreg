@@ -93,6 +93,8 @@ class FedAvg(Server):
                     csolns = {x: soln[1][x].detach()*soln[0] for x in soln[1]}
                 else:
                     for x in csolns:
+                        logger.info("x: {}".format(soln[1][x].device))
+                        logger.info("x: {}".format(soln[0].device))
                         csolns[x].data.add_(soln[1][x]*soln[0])
                 if r % self.eval_every == 0:
                     pass
