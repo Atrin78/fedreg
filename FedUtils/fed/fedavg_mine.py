@@ -95,19 +95,19 @@ class FedAvg(Server):
                 else:
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
-                if r % self.eval_every == 0:
-                    pass
-                    if c.model.bottleneck != None:
-                        temp = list(c.model.net.parameters()) + list(c.model.bottleneck.parameters())
-                    else:
-                        temp = list(c.model.net.parameters())
+                # if r % self.eval_every == 0:
+                #     pass
+                #     if c.model.bottleneck != None:
+                #         temp = list(c.model.net.parameters()) + list(c.model.bottleneck.parameters())
+                #     else:
+                #         temp = list(c.model.net.parameters())
 
-                    for i,l in enumerate(self.global_feature_extractor):
-                        self.local_feature_extractor[i].append(temp[i])  # Append the value to the list for this key
+                #     for i,l in enumerate(self.global_feature_extractor):
+                #         self.local_feature_extractor[i].append(temp[i])  # Append the value to the list for this key
                         
-                    temp = list(c.model.head.parameters()) 
-                    for i,l in enumerate(self.global_classifier):
-                        self.local_classifier[i].append(temp[i])  # Append the value to the list for this key
+                #     temp = list(c.model.head.parameters()) 
+                #     for i,l in enumerate(self.global_classifier):
+                #         self.local_classifier[i].append(temp[i])  # Append the value to the list for this key
 
                     # cka = c.get_cka(self.model)
                     # if cka != None:

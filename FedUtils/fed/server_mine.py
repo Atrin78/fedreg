@@ -70,8 +70,49 @@ class Server(object):
         state_dict = {x: state_dict[x]/wtotal for x in state_dict}
         return state_dict
 
+    def compute_layer_difference(self, globale_layer, local_layers):
+        up = 0
+        down = 0
+        for l in local_layers:
+            up += torch.sum(torch.pow(l-globale_layer,2))
+            down += l-globale_layer
+        divergence = up/torch.sum(torch.pow(down,2))
+        return divergence
+
+    def compute_divergence(self, wstate_dicts):
+        classifier_divergence = 0
+        len_classifer = 0
+        feature_extractor_divergence = 0
+        len_feature_extractor = 0
+
+        old_params = self.get_param()
+        state_dict = {x: [] for x in self.get_param() }
+        for w, st in wstate_dicts:
+            for name in state_dict.keys():
+                assert name in state_dict
+                state_dict[name].append(st[name])
+
+        for name in state_dict.keys():
+            if len(state_dict[name]) > 0:
+                d_value = self.compute_layer_difference(old_params[name], state_dict[name])
+            if name.split('.')[0] == 'head':
+                classifier_divergence += d_value
+                len_classifer += 1
+            elif name.split('.')[0] == 'net':
+                feature_extractor_divergence += d_value
+                len_feature_extractor += 1
+            elif name.split('.')[0] == 'bottleneck':
+                feature_extractor_divergence += d_value
+                len_feature_extractor += 1
+        
+        logger.info("classifier divergence: {}".format(classifier_divergence/len_classifer))
+        logger.info("feature_extractor divergence: {}".format(feature_extractor_divergence/len_feature_extractor))
+        
+        return
+
     def aggregate(self, wstate_dicts):
         old = self.model.get_param()
+        self.compute_divergence(wstate_dicts)
         state_dict = self._aggregate(wstate_dicts)
         total=0
         for key in state_dict:
@@ -183,32 +224,6 @@ class Server(object):
         logger.info("In_Loss: {}".format(torch.sum(self.loss_in) / len(self.loss_in)))
         return
     
-    def compute_layer_difference(self, globale_layer, local_layers):
-        up = 0
-        down = 0
-        for l in local_layers:
-            up += torch.sum(torch.pow(l-globale_layer,2))
-            down += l-globale_layer
-        divergence = up/torch.sum(torch.pow(down,2))
-        return divergence
-
-    def compute_divergence(self):
-        divergence = 0
-
-        for i in range(len(self.global_classifier)):
-            divergence += self.compute_layer_difference(self.global_classifier[i], self.local_classifier[i])
-
-        
-        logger.info("classifier divergence: {}".format(divergence/(i+1)))
-
-        divergence = 0
-    
-        for i in range(len(self.global_feature_extractor)):
-            divergence += self.compute_layer_difference(self.global_feature_extractor[i], self.local_feature_extractor[i])
-    
-        
-        logger.info("feature_extractor divergence: {}".format(divergence/(i+1)))
-        return
     
     def compute_cka(self):
         if len(self.CKA) > 0:
