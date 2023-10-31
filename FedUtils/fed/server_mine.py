@@ -18,6 +18,7 @@ class Server(object):
         self.drop_percent = config["drop_percent"]
         self.num_epochs = config["num_epochs"]
         self.eval_train = config["eval_train"]
+        self.batch_size = config["batch_size"]
         self.start_round = 0
         if "gamma" in config:
             self.gamma = config["gamma"]
@@ -83,7 +84,7 @@ class Server(object):
         np.random.seed(seed)
         indices = np.random.choice(range(len(self.clients)), num_clients, replace=False)
         clients = [self.clients[c] for c in indices]
-        clients = [Client(c[0], c[1], c[2], self.cmodel) for c in clients]
+        clients = [Client(c[0], c[1], c[2], self.cmodel, self.batch_size) for c in clients]
         return indices, clients
 
     def save(self):
@@ -110,7 +111,7 @@ class Server(object):
         tot_correct = []
 
         clients = self.clients[0:1]
-        clients = [Client(c[0], c[1], c[2], self.cmodel) for c in clients]
+        clients = [Client(c[0], c[1], c[2], self.cmodel, self.batch_size) for c in clients]
         for m in clients:
             m.set_param(self.get_param())
 
@@ -132,7 +133,7 @@ class Server(object):
         tot_correct = []
         loss = []
         clients = self.clients
-        clients = [Client(c[0], c[1], c[2], self.cmodel) for c in clients]
+        clients = [Client(c[0], c[1], c[2], self.cmodel, self.batch_size) for c in clients]
 
         for m in clients:
             m.set_param(model.get_param())
@@ -225,7 +226,7 @@ class Server(object):
         tot_correct = []
         losses = []
         clients = self.clients
-        clients = [Client(c[0], c[1], c[2], self.cmodel) for c in clients]
+        clients = [Client(c[0], c[1], c[2], self.cmodel, self.batch_size) for c in clients]
         for m in clients:
             m.set_param(self.get_param())
         for c in clients:
@@ -242,7 +243,7 @@ class Server(object):
         num_samples = []
         tot_correct = []
         clients = self.clients[0:1]
-        clients = [Client(c[0], c[1], c[2], self.cmodel) for c in clients]
+        clients = [Client(c[0], c[1], c[2], self.cmodel, self.batch_size) for c in clients]
         for m in clients:
             m.set_param(self.get_param())
         [m.solve_inner(num_epochs=num_epochs, step_func=step_fun, coef=1) for m in clients]
@@ -263,7 +264,7 @@ class Server(object):
         tot_correct = []
         losses = []
         clients = self.clients
-        clients = [Client(c[0], c[1], c[2], self.cmodel) for c in clients]
+        clients = [Client(c[0], c[1], c[2], self.cmodel, self.batch_size) for c in clients]
         for m in clients:
             m.set_param(self.get_param())
         [m.solve_inner(num_epochs=num_epochs, step_func=step_fun, coef=1) for m in clients]
@@ -312,7 +313,7 @@ class Server(object):
         num_samples = []
         tot_correct = []
         clients = self.clients[0:1]
-        clients = [Client(c[0], c[1], c[2], self.cmodel) for c in clients]
+        clients = [Client(c[0], c[1], c[2], self.cmodel, self.batch_size) for c in clients]
         for m in clients:
             m.set_param(self.get_param())
 

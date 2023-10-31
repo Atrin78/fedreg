@@ -6,7 +6,7 @@ from loguru import logger
 
 
 class Client(object):
-    def __init__(self, id, train_data, eval_data,model):
+    def __init__(self, id, train_data, eval_data,model, batchsize):
         super(Client, self).__init__()
         self.rotate=False
         self.model = model
