@@ -23,7 +23,7 @@ config = {
     "partition_method": "lda",
     "shard_per_user": 2,
     "alpha": 0.1,
-    "root": "/scratch/ssd002/datasets/mnist/",
+    "root": "/scratch/ssd002/datasets/mnist",
     "dataset_name": "mnist",
     "use_fed": 1,
     "log_path": "tasks_mine/mnist/FedAvg_e10_lr1/train_new_data.log",
