@@ -5,7 +5,7 @@ import numpy as np
 
 
 class MNIST_truncated(data.Dataset):
-    def __init__(self, root, dataidxs=None, train=True, transform=None, download=False):
+    def __init__(self, root, dataidxs=None, train=True, transform=None, download=True):
         self.root = root
         self.dataidxs = dataidxs
         self.train = train
