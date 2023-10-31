@@ -90,7 +90,7 @@ class Client(object):
                             # and the CKA matrix
 
             return results['CKA'][0][0]
-        catch:
+        except:
             return None
 
     def train_error_and_loss(self):
