@@ -109,7 +109,7 @@ class Server(object):
         num_samples = []
         tot_correct = []
 
-        clients = self.clients[0]
+        clients = self.clients[0:1]
         clients = [Client(c[0], c[1], c[2], self.cmodel) for c in clients]
         for m in clients:
             m.set_param(self.get_param())
@@ -241,7 +241,7 @@ class Server(object):
     def test_adapt(self, step_fun, num_epochs):
         num_samples = []
         tot_correct = []
-        clients = self.clients[0]
+        clients = self.clients[0:1]
         clients = [Client(c[0], c[1], c[2], self.cmodel) for c in clients]
         for m in clients:
             m.set_param(self.get_param())
@@ -311,7 +311,7 @@ class Server(object):
     def testAE(self):
         num_samples = []
         tot_correct = []
-        clients = self.clients[0]
+        clients = self.clients[0:1]
         clients = [Client(c[0], c[1], c[2], self.cmodel) for c in clients]
         for m in clients:
             m.set_param(self.get_param())
