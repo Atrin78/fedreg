@@ -35,6 +35,7 @@ def main():
     np.random.seed(12+config["seed"])
     torch.manual_seed(123+config["seed"])
     torch.cuda.manual_seed(123+config["seed"])
+    os.environ["TQDM_DISABLE"] = "1"
 
     
 
