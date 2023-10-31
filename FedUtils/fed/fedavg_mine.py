@@ -68,9 +68,9 @@ class FedAvg(Server):
             active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
             csolns = {}
             w = 0
-            self.global_classifier = list(self.model.head.parameters())
+            self.global_classifier = list(self.model.head.parameters().clone().detach())
             if self.model.bottleneck != None:
-                self.global_feature_extractor = list(self.model.net.parameters()) + list(self.model.bottleneck.parameters())
+                self.global_feature_extractor = list(self.model.net.parameters().clone().detach()) + list(self.model.bottleneck.parameters().clone().detach())
             else:
                 self.global_feature_extractor = list(self.model.net.parameters())
             self.local_classifier = [[] for l in self.global_classifier]
@@ -98,32 +98,32 @@ class FedAvg(Server):
                 if r % self.eval_every == 0:
                     pass
                     if c.model.bottleneck != None:
-                        temp = list(c.model.net.parameters()) + list(c.model.bottleneck.parameters())
+                        temp = list(c.model.net.parameters().clone().detach()) + list(c.model.bottleneck.parameters().clone().detach())
                     else:
-                        temp = list(c.model.net.parameters())
+                        temp = list(c.model.net.parameters().clone().detach())
 
                     for i,l in enumerate(self.global_feature_extractor):
                         self.local_feature_extractor[i].append(temp[i])  # Append the value to the list for this key
                         
-                    temp = list(c.model.head.parameters()) 
+                    temp = list(c.model.head.parameters().clone().detach()) 
                     for i,l in enumerate(self.global_classifier):
                         self.local_classifier[i].append(temp[i])  # Append the value to the list for this key
 
-                    cka = c.get_cka(self.model)
-                    if cka != None:
-                        self.CKA.append(cka)
+                    # cka = c.get_cka(self.model)
+                    # if cka != None:
+                    #     self.CKA.append(cka)
                     local_stats = self.local_acc_loss(c.model)
-                    self.local_forgetting(c.id , global_stats, local_stats)
+                    # self.local_forgetting(c.id , global_stats, local_stats)
                 del c
+
+            if r % self.eval_every == 0:
+                self.compute_divergence()
+                # self.compute_cka()
+                # self.compute_forgetting()
             
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
             self.latest_model = self.aggregate(csolns)
 
-            if r % self.eval_every == 0:
-                pass
-                self.compute_divergence()
-                self.compute_cka()
-                self.compute_forgetting()
 
             
 
