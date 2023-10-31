@@ -7,7 +7,7 @@ from loguru import logger
 from FedUtils.models.utils import decode_stat
 
 class Server(object):
-    def __init__(self, config, Model, data_distributed):
+    def __init__(self, config, Model, data_distributed, publicdataset=None):
         super(Server, self).__init__()
         self.config = config
         self.model_param = config["model_param"]
