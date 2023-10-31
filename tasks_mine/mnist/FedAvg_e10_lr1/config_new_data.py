@@ -26,9 +26,9 @@ config = {
     "root": "/scratch/ssd002/datasets/",
     "dataset_name": "mnist",
     "use_fed": 1,
-    "log_path": "tasks_mine/mnist/FedAvg_e10_lr1/train.log",
-    "save_path": "/scratch/ssd004/scratch/sayromlou/fedreg_models/mnist/FedAvg_e10_lr1.pt",
-    "load_path": "/scratch/ssd004/scratch/sayromlou/fedreg_models/mnist/FedAvg_e10_lr1_pretrain.pt",
+    "log_path": "tasks_mine/mnist/FedAvg_e10_lr1/train_new_data.log",
+    "save_path": "/scratch/ssd004/scratch/sayromlou/fedreg_models/mnist/FedAvg_e10_lr1_new_data.pt",
+    "load_path": None,
 
     "train_transform": None,
     "test_transform": None,
