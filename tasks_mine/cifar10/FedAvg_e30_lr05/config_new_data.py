@@ -27,7 +27,7 @@ config = {
     "inp_size": (3*32*32,),
     "train_path": "/scratch/ssd004/scratch/sayromlou/fedreg_data/data/cifar-10-batches-py/data_uni/train/",
     "test_path": ["/scratch/ssd004/scratch/sayromlou/fedreg_data/data/cifar-10-batches-py/data_uni/valid/", "/scratch/ssd004/scratch/sayromlou/fedreg_data/data/cifar-10-batches-py/data_uni/test/"],
-    "clients_per_round": 2,
+    "clients_per_round": 10,
     "num_rounds": 20,
     "eval_every": 1,
     "drop_percent": 0.0,
