@@ -84,7 +84,7 @@ class Client(object):
         device='cuda')
         cka_model.compare(self.train_data_fortest) # secondary dataloader is optional
 
-        results = cka.export()  # returns a dict that contains model names, layer names
+        results = cka_model.export()  # returns a dict that contains model names, layer names
                         # and the CKA matrix
         
         logger.info(f"CKA: {results}")
