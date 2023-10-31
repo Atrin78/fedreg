@@ -10,7 +10,7 @@ class Client(object):
     def __init__(self, id, train_data, eval_data,model, batchsize):
         super(Client, self).__init__()
         self.rotate=False
-        self.model = model
+        self.model = model.to("cuda")
         self.id = id
         self.group = None
         self.train_samplenum = train_data["datasize"] 

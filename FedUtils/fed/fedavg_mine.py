@@ -96,7 +96,7 @@ class FedAvg(Server):
                 else:
                     for x in csolns:
                         logger.info("x: {} {}".format(soln[1][x].device,csolns[x].device))
-                        csolns[x].data.add_(soln[1][x].detach()*soln[0])
+                        csolns[x].data.add_(soln[1][x]*soln[0])
                 if r % self.eval_every == 0:
                     pass
                     if c.model.bottleneck != None:
