@@ -22,6 +22,7 @@ class Client(object):
         self.batchsize = batchsize
         self.train_data = train_data["train"]
         self.train_data_fortest = train_data["train_for_test"]
+        self.train_data_forcka = train_data["train_for_cka"]
         self.eval_data = [eval_data["test"]]
         self.train_iter = iter(self.train_data)
 
@@ -86,7 +87,7 @@ class Client(object):
             model1_layers=list_layer, # List of layers to extract features from
             model2_layers=list_layer, # extracts all layer features by default
             device='cuda')
-        cka_model.compare(self.train_data_fortest) # secondary dataloader is optional
+        cka_model.compare(self.train_data_forcka) # secondary dataloader is optional
 
         results = cka_model.export()  # returns a dict that contains model names, layer names
                         # and the CKA matrix
