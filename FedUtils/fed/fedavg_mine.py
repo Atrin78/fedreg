@@ -68,9 +68,9 @@ class FedAvg(Server):
             active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
             csolns = {}
             w = 0
-            self.global_classifier = list(self.model.head.parameters().clone().detach())
+            self.global_classifier = list(self.model.head.parameters())
             if self.model.bottleneck != None:
-                self.global_feature_extractor = list(self.model.net.parameters().clone().detach()) + list(self.model.bottleneck.parameters().clone().detach())
+                self.global_feature_extractor = list(self.model.net.parameters()) + list(self.model.bottleneck.parameters())
             else:
                 self.global_feature_extractor = list(self.model.net.parameters())
             self.local_classifier = [[] for l in self.global_classifier]
@@ -98,14 +98,14 @@ class FedAvg(Server):
                 if r % self.eval_every == 0:
                     pass
                     if c.model.bottleneck != None:
-                        temp = list(c.model.net.parameters().clone().detach()) + list(c.model.bottleneck.parameters().clone().detach())
+                        temp = list(c.model.net.parameters()) + list(c.model.bottleneck.parameters())
                     else:
-                        temp = list(c.model.net.parameters().clone().detach())
+                        temp = list(c.model.net.parameters())
 
                     for i,l in enumerate(self.global_feature_extractor):
                         self.local_feature_extractor[i].append(temp[i])  # Append the value to the list for this key
                         
-                    temp = list(c.model.head.parameters().clone().detach()) 
+                    temp = list(c.model.head.parameters()) 
                     for i,l in enumerate(self.global_classifier):
                         self.local_classifier[i].append(temp[i])  # Append the value to the list for this key
 
