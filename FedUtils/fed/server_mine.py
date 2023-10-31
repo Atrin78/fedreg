@@ -31,10 +31,12 @@ class Server(object):
             self.add_mask = -1
 
         self.model = Model(*self.model_param, self.inner_opt)
+        self.model.to("cuda")
         if config["load_path"]:
             self.load_model()
         logger.info("Model: {}".format(self.model))
         self.cmodel = Model(*self.model_param, self.inner_opt)
+        self.cmodel.to("cuda")
         self.clients = self.__set_clients(data_distributed, Model)
         self.F_in = []
         self.F_out = []
@@ -107,7 +109,7 @@ class Server(object):
         
         logger.info("classifier divergence: {}".format(classifier_divergence/len_classifer))
         logger.info("feature_extractor divergence: {}".format(feature_extractor_divergence/len_feature_extractor))
-        
+
         return
 
     def aggregate(self, wstate_dicts):
