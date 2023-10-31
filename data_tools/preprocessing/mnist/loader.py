@@ -67,7 +67,7 @@ def get_dataloader_mnist(root, train=True, batch_size=50, shuffle= True,dataidxs
             root, dataidxs, train=True, transform=train_transform, download=False
         )
         dataloader = data.DataLoader(
-            dataset=dataset, batch_size=batch_size, shuffle=shuffle, num_workers=2
+            dataset=dataset, batch_size=batch_size, shuffle=shuffle, num_workers=0
         )
         dataset.targets
 
@@ -76,7 +76,7 @@ def get_dataloader_mnist(root, train=True, batch_size=50, shuffle= True,dataidxs
             root, dataidxs, train=False, transform=valid_transform, download=False
         )
         dataloader = data.DataLoader(
-            dataset=dataset, batch_size=batch_size, shuffle=shuffle, num_workers=2
+            dataset=dataset, batch_size=batch_size, shuffle=shuffle, num_workers=0
         )
 
     return dataloader
