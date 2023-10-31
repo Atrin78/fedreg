@@ -30,8 +30,6 @@ class MNIST_truncated(data.Dataset):
 
     def __getitem__(self, index):
         img, targets = self.data[index], self.targets[index]
-        logger.debug(f"img.shape: {img.shape}")
-        logger.debug(f"targets.shape: {targets.shape}")
 
         if self.transform is not None:
             img = self.transform(img)
