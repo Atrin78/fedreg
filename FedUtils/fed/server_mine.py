@@ -186,9 +186,7 @@ class Server(object):
     def compute_layer_difference(self, globale_layer, local_layers):
         up = 0
         down = 0
-        logger.info("global layer: {}".format(l))
         for l in local_layers:
-            logger.info("l: {}".format(l))
             up += torch.sum(torch.pow(l-globale_layer,2))
             down += l-globale_layer
         divergence = up/torch.sum(torch.pow(down,2))
