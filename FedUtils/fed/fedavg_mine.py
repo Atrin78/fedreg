@@ -116,8 +116,8 @@ class FedAvg(Server):
                     # self.local_forgetting(c.id , global_stats, local_stats)
                 del c
 
-            if r % self.eval_every == 0:
-                self.compute_divergence()
+            # if r % self.eval_every == 0:
+            #     self.compute_divergence()
                 # self.compute_cka()
                 # self.compute_forgetting()
             
