@@ -115,7 +115,7 @@ class FedAvg(Server):
                     # model2_layers=layer_names_resnet34, # extracts all layer features by default
                     # device='cuda')
                     # self.CKA.append()
-                    for name, m in model.named_modules():
+                    for name, m in self.model.named_modules():
                         logger.info(f"{name}")
                     local_stats = self.local_acc_loss(c.model)
                     self.local_forgetting(c.id , global_stats, local_stats)
