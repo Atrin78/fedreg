@@ -223,7 +223,7 @@ class Server(object):
                 self.F_out.append(F_out/num_out)
                 self.loss_out.append(loss_out/num_out)
             except:
-                looger.info("error in local forgetting calculation")
+                logger.info("error in local forgetting calculation")
         return
     
     def compute_forgetting(self):
