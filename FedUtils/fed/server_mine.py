@@ -33,8 +33,6 @@ class Server(object):
         self.model = Model(*self.model_param, self.inner_opt)
         if config["load_path"]:
             self.load_model()
-        for name, m in self.model.named_modules():
-            logger.info(f"{name}")
         logger.info("Model: {}".format(self.model))
         self.cmodel = Model(*self.model_param, self.inner_opt)
         self.clients = self.__set_clients(data_distributed, Model)
