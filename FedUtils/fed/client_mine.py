@@ -86,10 +86,8 @@ class Client(object):
 
         results = cka_model.export()  # returns a dict that contains model names, layer names
                         # and the CKA matrix
-        
-        logger.info(f"CKA: {results}")
 
-        return cka_value
+        return results['CKA'][0][0]
 
     def train_error_and_loss(self):
         tot_correct, loss = self.model.test(self.train_data_fortest)
