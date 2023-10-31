@@ -108,7 +108,7 @@ class FedAvg(Server):
                     for i,l in enumerate(self.global_classifier):
                         self.local_classifier[i].append(temp[i])  # Append the value to the list for this key
 
-                    cka = c.get_cka(global_model)
+                    cka = c.get_cka(self.model)
                     self.CKA.append(cka)
                     for name, m in self.model.named_modules():
                         logger.info(f"{name}")
