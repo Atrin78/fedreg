@@ -11,7 +11,7 @@ class Client(object):
         self.rotate=False
         self.model = model
         self.id = id
-        self.group = group
+        self.group = None
         self.train_samplenum = train_data["datasize"] 
         self.num_train_samples = train_data["datasize"] 
         self.num_test_samples = [eval_data["test_datasize"]]
