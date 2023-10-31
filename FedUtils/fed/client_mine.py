@@ -77,22 +77,25 @@ class Client(object):
     
     def get_cka(self, global_model):
 
-        if self.model.bottleneck != None:
-            list_layer = ['bottleneck.1']
-        else:
-            list_layer = ['net.pool']
-        cka_model= CKA(self.model, global_model,
-            model1_name="local_model",   # good idea to provide names to avoid confusion
-            model2_name="global_model",   
-            model1_layers=list_layer, # List of layers to extract features from
-            model2_layers=list_layer, # extracts all layer features by default
-            device='cuda')
-        cka_model.compare(self.train_data_forcka) # secondary dataloader is optional
+        try:
+            if self.model.bottleneck != None:
+                list_layer = ['bottleneck.1']
+            else:
+                list_layer = ['net.pool']
+            cka_model= CKA(self.model, global_model,
+                model1_name="local_model",   # good idea to provide names to avoid confusion
+                model2_name="global_model",   
+                model1_layers=list_layer, # List of layers to extract features from
+                model2_layers=list_layer, # extracts all layer features by default
+                device='cuda')
+            cka_model.compare(self.train_data_forcka) # secondary dataloader is optional
 
-        results = cka_model.export()  # returns a dict that contains model names, layer names
+            results = cka_model.export()  # returns a dict that contains model names, layer names
                         # and the CKA matrix
 
-        return results['CKA'][0][0]
+            return results['CKA'][0][0]
+        except:
+            return None
 
     def train_error_and_loss(self):
         tot_correct, loss = self.model.test(self.train_data_fortest)

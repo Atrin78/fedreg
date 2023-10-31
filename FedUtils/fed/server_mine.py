@@ -217,10 +217,13 @@ class Server(object):
                 F_out +=  (global_tot_correct[j] * 1.0 / global_num_samples[j]) - (local_tot_correct[j] * 1.0 / local_num_samples[j])
                 loss_out += global_loss[j] - local_loss[j]
                 num_out += 1
-            self.F_in.append(F_in)
-            self.F_out.append(F_out/num_out)
-            self.loss_in.append(loss_in)
-            self.loss_out.append(loss_out/num_out)
+            try:
+                self.F_in.append(F_in)
+                self.loss_in.append(loss_in)
+                self.F_out.append(F_out/num_out)
+                self.loss_out.append(loss_out/num_out)
+            except:
+                looger.info("error in local forgetting calculation")
         return
     
     def compute_forgetting(self):
@@ -243,7 +246,7 @@ class Server(object):
             else:
                     logger.info("cka: {}".format(torch.mean(torch.tensor(self.CKA))))
         else:
-            logger.info("cka: {}".format(0))
+            logger.info("cka: {}".format(None))
         return  
 
     def train_error_and_loss(self):
