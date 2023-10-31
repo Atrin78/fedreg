@@ -66,7 +66,7 @@ def get_dataloader_cifar10(root, train=True,  shuffle= True,batch_size=50, datai
             root, dataidxs, train=True, transform=train_transform, download=False
         )
         dataloader = data.DataLoader(
-            dataset=dataset, batch_size=batch_size, shuffle=shuffle, num_workers=5
+            dataset=dataset, batch_size=batch_size, shuffle=shuffle, num_workers=0
         )
         dataset.targets
 
@@ -75,7 +75,7 @@ def get_dataloader_cifar10(root, train=True,  shuffle= True,batch_size=50, datai
             root, dataidxs, train=False, transform=valid_transform, download=False
         )
         dataloader = data.DataLoader(
-            dataset=dataset, batch_size=batch_size, shuffle=shuffle, num_workers=5
+            dataset=dataset, batch_size=batch_size, shuffle=shuffle, num_workers=0
         )
 
     return dataloader
