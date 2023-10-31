@@ -73,18 +73,18 @@ class Server(object):
         return state_dict
 
     def compute_layer_difference(self, globale_layer, local_layers):
-        up = 0
-        down = 0
+        up = 0.0
+        down = 0.0
         for l in local_layers:
             up += torch.sum(torch.pow(l-globale_layer,2))
-            down += l-globale_layer
+            down += (l-globale_layer)
         divergence = up/torch.sum(torch.pow(down,2))
         return divergence
 
     def compute_divergence(self, wstate_dicts):
-        classifier_divergence = 0
+        classifier_divergence = 0.0
         len_classifer = 0
-        feature_extractor_divergence = 0
+        feature_extractor_divergence = 0.0
         len_feature_extractor = 0
 
         old_params = self.get_param()
@@ -97,15 +97,14 @@ class Server(object):
         for name in state_dict.keys():
             if len(state_dict[name]) > 0:
                 d_value = self.compute_layer_difference(old_params[name], state_dict[name])
-            if name.split('.')[0] == 'head':
-                classifier_divergence += d_value
-                len_classifer += 1
-            elif name.split('.')[0] == 'net':
-                feature_extractor_divergence += d_value
-                len_feature_extractor += 1
-            elif name.split('.')[0] == 'bottleneck':
-                feature_extractor_divergence += d_value
-                len_feature_extractor += 1
+
+                if name.split('.')[0] == 'head':
+                    classifier_divergence += d_value
+                    len_classifer += 1
+                elif name.split('.')[0] == 'net' or name.split('.')[0] == 'bottleneck':
+                    feature_extractor_divergence += d_value
+                    len_feature_extractor += 1
+
         
         logger.info("classifier divergence: {}".format(classifier_divergence/len_classifer))
         logger.info("feature_extractor divergence: {}".format(feature_extractor_divergence/len_feature_extractor))
@@ -116,10 +115,20 @@ class Server(object):
         old = self.model.get_param()
         self.compute_divergence(wstate_dicts)
         state_dict = self._aggregate(wstate_dicts)
-        total=0
+        total_classifier=0
+        total_feature_extractor=0
+        len_classifer=0
+        len_feature_extractor=0
         for key in state_dict:
             diff = old[key].detach().cpu()-state_dict[key].detach().cpu()
-            total += torch.norm(diff)**2
+            if key.split('.')[0] == 'head':
+                total_classifier += torch.norm(diff)**2
+                len_classifer += 1
+            elif name.split('.')[0] == 'net' or name.split('.')[0] == 'bottleneck':
+                total_feature_extractor +=torch.norm(diff)**2
+                len_feature_extractor += 1
+        logger.info("classifier difference: {}".format(total_classifier/len_classifer))
+        logger.info("feature_extractor difference: {}".format(total_feature_extractor/len_feature_extractor))
         return self.set_param(state_dict)
 
     def select_clients(self, seed, num_clients=20):
