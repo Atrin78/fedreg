@@ -114,7 +114,7 @@ class FedAvg(Server):
                     model1_layers=['bottleneck.1'], # List of layers to extract features from
                     model2_layers= ['bottleneck.1'], # extracts all layer features by default
                     device='cuda')
-                    logger.info(f"CKA: {cka}")
+                    logger.info(f"CKA: {cka.export()}")
                     self.CKA.append()
                     for name, m in self.model.named_modules():
                         logger.info(f"{name}")
