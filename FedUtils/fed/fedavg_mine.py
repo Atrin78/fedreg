@@ -1,4 +1,4 @@
-from .server import Server
+from .server_mine import Server
 from loguru import logger
 import numpy as np
 from FedUtils.models.utils import decode_stat
