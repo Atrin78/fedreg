@@ -62,7 +62,7 @@ def main():
     elif config["partition_method"] == "sharding":
         dict_data["partition"]["shard_per_user"] = config["shard_per_user"]
         
-    data_distributed = data_distributer(dict_data)
+    data_distributed = data_distributer(**dict_data)
 
 
     if config["use_fed"]:
