@@ -83,7 +83,7 @@ class Server(object):
 
 
         for name in wstate_dicts.keys():
-            if len(state_dict[name]) > 0:
+            if len(wstate_dicts[name]) > 0:
                 logger.info("name: {}".format(name))
                 d_value = self.compute_layer_difference(old_params[name], wstate_dicts[name], name)
 
