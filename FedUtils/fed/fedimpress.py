@@ -247,17 +247,34 @@ class FedImpress(Server):
             csolns = {}
             w = 0
 
-            transform_cifar = transforms.Compose(
+      #      transform_cifar = transforms.Compose(
+      #      [
+      #       torchvision.transforms.functional.rgb_to_grayscale,
+      #       transforms.ToTensor(),
+      #       torchvision.transforms.Resize(28),
+      #       ])
+      #      if r >= warmup:
+      #          cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
+      #                                            download=True, transform=transform_cifar)
+      #          cifar = torch.utils.data.Subset(cifar, list(range(data_size)))
+      #          gen_loader = torch.utils.data.DataLoader(cifar, batch_size=self.batch_size, shuffle=True)
+      #          gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size)
+      #          gen_dataset = torch.tensor(gen_dataset)
+      #          gen_labels = torch.tensor(gen_labels)
+      #          vir_dataset = TensorDataset(gen_dataset, gen_labels)
+
+
+            transform_mnist = transforms.Compose(
             [
-            # torchvision.transforms.functional.rgb_to_grayscale,
              transforms.ToTensor(),
-            # torchvision.transforms.Resize(28),
+             transforms.Lambda(lambda x: torch.stack([torch.unsqueeze(x, -1),torch.unsqueeze(x, -1),torch.unsqueeze(x, -1)],2),
+             torchvision.transforms.Resize(32), 
              ])
             if r >= warmup:
-                cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                                  download=True, transform=transform_cifar)
-                cifar = torch.utils.data.Subset(cifar, list(range(data_size)))
-                gen_loader = torch.utils.data.DataLoader(cifar, batch_size=self.batch_size, shuffle=True)
+                mnist = torchvision.datasets.MNIST(root='./data', train=True,
+                                                  download=True, transform=transform_mnist)
+                mnist = torch.utils.data.Subset(mnist, list(range(data_size)))
+                gen_loader = torch.utils.data.DataLoader(mnist, batch_size=self.batch_size, shuffle=True)
                 gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size)
                 gen_dataset = torch.tensor(gen_dataset)
                 gen_labels = torch.tensor(gen_labels)
