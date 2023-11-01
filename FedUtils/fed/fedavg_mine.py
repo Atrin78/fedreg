@@ -96,6 +96,7 @@ class FedAvg(Server):
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
                 if r % self.eval_every == 0:
+                    pass
                     # cka = c.get_cka(self.model)
                     # if cka != None:
                     #     self.CKA.append(cka)
@@ -104,6 +105,7 @@ class FedAvg(Server):
                 del c
 
             if r % self.eval_every == 0:
+                pass
                 # self.compute_cka()
                 # self.compute_forgetting()
             
