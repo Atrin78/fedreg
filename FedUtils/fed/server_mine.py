@@ -79,18 +79,13 @@ class Server(object):
         len_feature_extractor = 0
 
         old_params = self.get_param()
-        state_dict = {x: [] for x in self.get_param() }
-        logger.info("state_dict: {}".format(state_dict))
-        for w, st in wstate_dicts:
-            logger.info("state_dict: {}".format(st.keys()))
-            for name in state_dict.keys():
-                assert name in state_dict
-                state_dict[name].append(st[name])
+        logger.info("state_dict: {}".format(wstate_dicts.keys()))
 
-        for name in state_dict.keys():
-            logger.info("name: {}".format(name))
+
+        for name in wstate_dicts.keys():
             if len(state_dict[name]) > 0:
-                d_value = self.compute_layer_difference(old_params[name], state_dict[name], name)
+                logger.info("name: {}".format(name))
+                d_value = self.compute_layer_difference(old_params[name], wstate_dicts[name], name)
 
                 if name.split('.')[0] == 'head':
                     classifier_divergence += d_value
@@ -120,7 +115,6 @@ class Server(object):
 
     def aggregate(self, wstate_dicts):
         old = self.model.get_param()
-        self.compute_divergence(wstate_dicts)
         state_dict = self._aggregate(wstate_dicts)
         total_classifier=0
         total_feature_extractor=0

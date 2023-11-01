@@ -67,6 +67,7 @@ class FedAvg(Server):
             np.random.seed(r)
             active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
             csolns = {}
+            list_clients = {}
             w = 0
             self.global_classifier = list(self.model.head.parameters())
             if self.model.bottleneck != None:
@@ -92,9 +93,11 @@ class FedAvg(Server):
                 if len(csolns) == 0:
                     for x in soln[1]:
                         csolns[x] = soln[1][x].detach()*soln[0]
+                        list_clients[x] = [soln[1][x].detach()*soln[0]]
                 else:
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
+                        list_clients[x].append(soln[1][x].detach()*soln[0])
                 if r % self.eval_every == 0:
                     pass
                     # cka = c.get_cka(self.model)
@@ -110,6 +113,7 @@ class FedAvg(Server):
                 # self.compute_forgetting()
             
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
+            self.compute_divergence(list_clients)
             self.latest_model = self.aggregate(csolns)
 
 
