@@ -59,16 +59,13 @@ class Server(object):
         return self.model.get_param()
 
     def compute_layer_difference(self, globale_layer, local_layers,name):
-        if name.split('.')[0] == 'head':
-            logger.info("global classifier layer: {}".format(globale_layer))
-            logger.info("local classifier layer: {}".format(local_layers))
         up = 0.0
         down = 0.0
         for l in local_layers:
             up += torch.sum(torch.pow(l-globale_layer,2))
-            logger.info("up: {}".format(up))
             down += (l-globale_layer)
-            logger.info("down: {}".format(down))
+        if down == 0:
+            return None
         divergence = up/torch.sum(torch.pow(down,2))
         return divergence
 
@@ -79,7 +76,6 @@ class Server(object):
         len_feature_extractor = 0
 
         old_params = self.get_param()
-        logger.info("state_dict: {}".format(wstate_dicts.keys()))
 
 
         for name in wstate_dicts.keys():
@@ -87,12 +83,17 @@ class Server(object):
                 logger.info("name: {}".format(name))
                 d_value = self.compute_layer_difference(old_params[name], wstate_dicts[name], name)
 
-                if name.split('.')[0] == 'head':
-                    classifier_divergence += d_value
-                    len_classifer += 1
-                elif name.split('.')[0] == 'net' or name.split('.')[0] == 'bottleneck':
-                    feature_extractor_divergence += d_value
-                    len_feature_extractor += 1
+                if d_value != None:
+
+                    if name.split('.')[0] == 'head':
+                        classifier_divergence += d_value
+                        len_classifer += 1
+                    elif name.split('.')[0] == 'net' or name.split('.')[0] == 'bottleneck':
+                        feature_extractor_divergence += d_value
+                        len_feature_extractor += 1
+                else:
+
+                    logger.info("name: {} is None".format(name))
         
         logger.info("classifier divergence: {}".format(classifier_divergence/len_classifer))
         logger.info("feature_extractor divergence: {}".format(feature_extractor_divergence/len_feature_extractor))
