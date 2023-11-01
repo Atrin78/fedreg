@@ -80,7 +80,9 @@ class Server(object):
 
         old_params = self.get_param()
         state_dict = {x: [] for x in self.get_param() }
+        logger.info("state_dict: {}".format(state_dict))
         for w, st in wstate_dicts:
+            logger.info("state_dict: {}".format(st.keys()))
             for name in state_dict.keys():
                 assert name in state_dict
                 state_dict[name].append(st[name])

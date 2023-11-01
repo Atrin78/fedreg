@@ -61,7 +61,7 @@ class FedAvg(Server):
                 decode_stat(stats_train)
                 self.save_model(r)
 
-                global_stats = self.local_acc_loss(self.model)
+                # global_stats = self.local_acc_loss(self.model)
 
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
@@ -99,13 +99,13 @@ class FedAvg(Server):
                     # cka = c.get_cka(self.model)
                     # if cka != None:
                     #     self.CKA.append(cka)
-                    local_stats = self.local_acc_loss(c.model)
-                    self.local_forgetting(c.id , global_stats, local_stats)
+                    # local_stats = self.local_acc_loss(c.model)
+                    # self.local_forgetting(c.id , global_stats, local_stats)
                 del c
 
             if r % self.eval_every == 0:
                 # self.compute_cka()
-                self.compute_forgetting()
+                # self.compute_forgetting()
             
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
             self.latest_model = self.aggregate(csolns)
