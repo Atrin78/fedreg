@@ -17,4 +17,4 @@
 source /ssd003/projects/aieng/public/FL_env/env3/bin/activate
 
 # put your command here
-python main_new_data.py -c tasks_mine/mnist/FedAvg_e10_lr1/config_new_data
+python main_new_data.py -c tasks_mine/mnist/FedAvg_e10_lr1/config_new_data_local_forgetting
