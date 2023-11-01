@@ -93,9 +93,14 @@ class Server(object):
                 else:
 
                     pass
-        
-        logger.info("classifier divergence: {}".format(classifier_divergence/len_classifer))
-        logger.info("feature_extractor divergence: {}".format(feature_extractor_divergence/len_feature_extractor))
+        if len_classifer > 0:
+            logger.info("classifier divergence: {}".format(classifier_divergence/len_classifer))
+        else: 
+            logger.info("classifier divergence: {}".format(None))
+        if len_feature_extractor > 0:
+            logger.info("feature_extractor divergence: {}".format(feature_extractor_divergence/len_feature_extractor))
+        else:
+            logger.info("feature_extractor divergence: {}".format(None))
 
         return
 
