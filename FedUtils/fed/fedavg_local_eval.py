@@ -15,6 +15,7 @@ from torch_cka import CKA
 
 def step_func(model, data):
     lr = model.learning_rate
+    logger.info("Freezing head parameters")
     for p in model.net.parameters():
         p.requires_grad = False
     if model.bottleneck != None:
