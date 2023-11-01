@@ -92,7 +92,7 @@ class Server(object):
                         len_feature_extractor += 1
                 else:
 
-                    logger.info("name: {} is None".format(name))
+                    pass
         
         logger.info("classifier divergence: {}".format(classifier_divergence/len_classifer))
         logger.info("feature_extractor divergence: {}".format(feature_extractor_divergence/len_feature_extractor))
