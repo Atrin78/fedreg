@@ -143,7 +143,7 @@ class Server(object):
 
     def save_model(self, current_round):
         save_dict = {"model": self.model.state_dict(), "round": current_round}
-        torch.save(save_dict, self.config["save_path"])
+        torch.save(save_dict, self.config["save_path"]+'_'+str(current_round)
         return
 
     def load_model(self):
