@@ -61,7 +61,7 @@ class FedAvg(Server):
                 decode_stat(stats_train)
                 self.save_model(r)
 
-                # global_stats = self.local_acc_loss(self.model)
+                global_stats = self.local_acc_loss(self.model)
 
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
