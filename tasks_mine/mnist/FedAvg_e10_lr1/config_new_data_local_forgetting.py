@@ -14,7 +14,7 @@ config = {
     "train_path": "/scratch/ssd004/scratch/sayromlou/fedreg_data/data/mnist_10000/data/train/",
     "test_path": ["/scratch/ssd004/scratch/sayromlou/fedreg_data/data/mnist_10000/data/valid/", "/scratch/ssd004/scratch/sayromlou/fedreg_data/data/mnist_10000/data/test/"],
     "clients_per_round": 10,
-    "num_rounds": 21,
+    "num_rounds": 30,
     "eval_every": 1,
     "drop_percent": 0.0,
     "num_epochs": 10,
