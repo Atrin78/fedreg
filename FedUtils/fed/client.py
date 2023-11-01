@@ -35,9 +35,14 @@ class Client(object):
             self.eval_data = [DataLoader(CusDataset(ed, transform=test_transform), batch_size=100, shuffle=False) for ed in eval_data]
         self.train_iter = iter(self.train_data)
 
-    def set_param(self, state_dict):
+    def set_param_adapt(self, state_dict):
         st = {x: state_dict[x] for x in state_dict if x.split('.')[0]!='adapt'}
         self.model.set_param(st)
+        return True
+
+    def set_param(self, state_dict):
+       # st = {x: state_dict[x] for x in state_dict if x.split('.')[0]!='adapt'}
+        self.model.set_param(state_dict)
         return True
 
     def get_param(self):
