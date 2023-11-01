@@ -146,14 +146,14 @@ class FedReg(Server):
             #        del c
 
             self.latest_model = self.aggregate(csolns)
-            if last_clients is not None:
-                stats_clients = self.train_error_and_loss_clients(last_clients)
-                logger.info("-- Last Client RESULTS --")
-                decode_stat(stats_clients)
-            last_clients = active_clients
-            stats_clients = self.train_error_and_loss_clients(active_clients)
-            logger.info("-- Active Client RESULTS --")
-            decode_stat(stats_clients)
+            #if last_clients is not None:
+            #    stats_clients = self.train_error_and_loss_clients(last_clients)
+            #    logger.info("-- Last Client RESULTS --")
+            #    decode_stat(stats_clients)
+            #last_clients = active_clients
+            #stats_clients = self.train_error_and_loss_clients(active_clients)
+            #logger.info("-- Active Client RESULTS --")
+            #decode_stat(stats_clients)
 
            # print(self.model.get_param()['net.0.weight'][0])
 
