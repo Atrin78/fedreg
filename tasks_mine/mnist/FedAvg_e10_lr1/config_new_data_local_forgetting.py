@@ -28,7 +28,7 @@ config = {
     "use_fed": 1,
     "log_path": "tasks_mine/mnist/FedAvg_e10_lr1/train_pretrain_new_data_2.log",
     "save_path": "/scratch/ssd004/scratch/sayromlou/fedreg_models/mnist/FedAvg_e10_lr1_pretrain_new_data_2.pt",
-    "load_path":  "/scratch/ssd004/scratch/sayromlou/fedreg_models/mnist/FedAvg_e10_lr1_pretrain_new_data_2.pt_19.pt",,
+    "load_path":  "/scratch/ssd004/scratch/sayromlou/fedreg_models/mnist/FedAvg_e10_lr1_pretrain_new_data_2.pt_19.pt",
 
     "train_transform": None,
     "test_transform": None,
