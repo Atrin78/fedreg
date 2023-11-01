@@ -69,6 +69,7 @@ def main():
 
     if config["use_fed"]:
         Optimizer = config["optimizer"]
+        logger.info(f'inner_opt: {inner_opt} ')
         t = Optimizer(config, Model, data_distributed = data_distributed)
         t.train()
     else:

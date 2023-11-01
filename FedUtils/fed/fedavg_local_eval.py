@@ -15,18 +15,27 @@ from torch_cka import CKA
 
 def step_func(model, data):
     lr = model.learning_rate
+    grad_head= True
+    grad_feature_extractor = False
     logger.info("Freezing feature extractor parameters")
+    
+    parameters = []
+    if grad_head:
+        parameters += list(model.head.parameters())
+    if grad_feature_extractor:
+        if model.bottleneck != None:
+            parameters += list(model.net.parameters()) + list(model.bottleneck.parameters())
+        else:
+            parameters += list(model.net.parameters())
+
     for p in model.net.parameters():
-        p.requires_grad = False
+        p.requires_grad = grad_head
     if model.bottleneck != None:
         for p in model.bottleneck.parameters():
-            p.requires_grad = False
+            p.requires_grad = grad_feature_extractor
     for p in model.head.parameters():
-        p.requires_grad = True
-    if model.bottleneck != None:
-        parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
-    else:
-        parameters = list(model.net.parameters()) + list(model.head.parameters())
+        p.requires_grad = grad_feature_extractor
+
     flop = model.flop
 
     def func(d):
