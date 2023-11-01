@@ -64,10 +64,10 @@ class Server(object):
         for l in local_layers:
             up += torch.sum(torch.pow(l-globale_layer,2))
             down += (l-globale_layer)
+        down = torch.sum(torch.pow(down,2))
         if down == 0:
             return None
-        divergence = up/torch.sum(torch.pow(down,2))
-        return divergence
+        return up/down
 
     def compute_divergence(self, wstate_dicts):
         classifier_divergence = 0.0
@@ -80,7 +80,6 @@ class Server(object):
 
         for name in wstate_dicts.keys():
             if len(wstate_dicts[name]) > 0:
-                logger.info("name: {}".format(name))
                 d_value = self.compute_layer_difference(old_params[name], wstate_dicts[name], name)
 
                 if d_value != None:
