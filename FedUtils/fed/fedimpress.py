@@ -267,7 +267,7 @@ class FedImpress(Server):
             transform_mnist = transforms.Compose(
             [
              transforms.ToTensor(),
-             transforms.Lambda(lambda x: torch.stack([torch.unsqueeze(x, -1),torch.unsqueeze(x, -1),torch.unsqueeze(x, -1)],2)),
+           #  transforms.Lambda(lambda x: torch.stack([torch.unsqueeze(x, -1),torch.unsqueeze(x, -1),torch.unsqueeze(x, -1)],2)),
              torchvision.transforms.Resize(32), 
              ])
             if r >= warmup:
