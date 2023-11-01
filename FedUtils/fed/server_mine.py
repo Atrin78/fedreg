@@ -58,12 +58,17 @@ class Server(object):
     def get_param(self):
         return self.model.get_param()
 
-    def compute_layer_difference(self, globale_layer, local_layers):
+    def compute_layer_difference(self, globale_layer, local_layers,name):
+        if name.split('.')[0] == 'head':
+            logger.info("global classifier layer: {}".format(globale_layer))
+            logger.info("local classifier layer: {}".format(local_layers))
         up = 0.0
         down = 0.0
         for l in local_layers:
             up += torch.sum(torch.pow(l-globale_layer,2))
+            logger.info("up: {}".format(up))
             down += (l-globale_layer)
+            logger.info("down: {}".format(down))
         divergence = up/torch.sum(torch.pow(down,2))
         return divergence
 
@@ -81,8 +86,9 @@ class Server(object):
                 state_dict[name].append(st[name])
 
         for name in state_dict.keys():
+            logger.info("name: {}".format(name))
             if len(state_dict[name]) > 0:
-                d_value = self.compute_layer_difference(old_params[name], state_dict[name])
+                d_value = self.compute_layer_difference(old_params[name], state_dict[name], name)
 
                 if name.split('.')[0] == 'head':
                     classifier_divergence += d_value
