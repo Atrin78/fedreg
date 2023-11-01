@@ -128,3 +128,11 @@ class FedAvg(Server):
         decode_stat(stats)
         logger.info("-- TRAIN RESULTS --")
         decode_stat(stats_train)
+
+# for p in model.net.parameters():
+#         p.requires_grad = False
+#     if model.bottleneck != None:
+#         for p in model.bottleneck.parameters():
+#             p.requires_grad = False
+#     for p in model.head.parameters():
+#         p.requires_grad = True
