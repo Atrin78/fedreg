@@ -267,8 +267,8 @@ class FedImpress(Server):
             transform_mnist = transforms.Compose(
             [
              transforms.ToTensor(),
-             transforms.Lambda(lambda x: torch.stack([torch.unsqueeze(x, -1),torch.unsqueeze(x, -1),torch.unsqueeze(x, -1)],-1)),
-             torchvision.transforms.Resize(32), 
+             torchvision.transforms.Resize(32),
+             transforms.Lambda(lambda x: torch.stack([x,x,x],-1)),
              ])
             if r >= warmup:
                 mnist = torchvision.datasets.MNIST(root='./data', train=True,
