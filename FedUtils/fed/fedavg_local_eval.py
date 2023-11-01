@@ -18,7 +18,7 @@ def step_func(model, data):
     grad_head= True
     grad_feature_extractor = False
     logger.info("Freezing feature extractor parameters")
-    
+
     parameters = []
     if grad_head:
         parameters += list(model.head.parameters())
@@ -29,12 +29,12 @@ def step_func(model, data):
             parameters += list(model.net.parameters())
 
     for p in model.net.parameters():
-        p.requires_grad = grad_head
+        p.requires_grad = grad_feature_extractor
     if model.bottleneck != None:
         for p in model.bottleneck.parameters():
             p.requires_grad = grad_feature_extractor
     for p in model.head.parameters():
-        p.requires_grad = grad_feature_extractor
+        p.requires_grad = grad_head
 
     flop = model.flop
 
