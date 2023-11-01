@@ -54,8 +54,8 @@ class FixupResNet9(nn.Module):
                                  1, nn.MaxPool2d(2))
 
         self.pool = nn.MaxPool2d(4)
-        self.bias2 = nn.Parameter(torch.zeros(1))
-        self.linear = nn.Linear(self.channels["layer3"], 10)
+        # self.bias2 = nn.Parameter(torch.zeros(1))
+        # self.linear = nn.Linear(self.channels["layer3"], 10)
 
         # initialize conv1
         std = np.sqrt(2 /
@@ -110,7 +110,7 @@ class FixupResNet9(nn.Module):
         out = self.layer2(out)
         out = self.layer3(out)
         out = self.pool(out).view(out.size()[0], -1)
-        out = self.linear(out + self.bias2)
+      #  out = self.linear(out + self.bias2)
         return out
 
 
@@ -127,10 +127,12 @@ class Model(nn.Module):
         torch.manual_seed(123+seed)
 
         self.net = FixupResNet9()
+        self.head = nn.Linear(512, 10)
         self.size = sys.getsizeof(self.state_dict())
         self.flop = Flops(self, torch.tensor([[0.0 for _ in range(self.num_inp)]]))
         if torch.cuda.device_count() > 0:
             self.net = self.net.cuda()
+            self.head = self.head.cuda()
 
         self.softmax = nn.Softmax(-1)
 
@@ -183,7 +185,16 @@ class Model(nn.Module):
             data = data.to(next(self.parameters()).device)
         data = data.reshape(-1, 3, 32, 32)
         out = self.net(data)
+        out = self.head(out)
         return out
+
+    def forward_emb(self, data):
+        if data.device != next(self.parameters()).device:
+            data = data.to(next(self.parameters()).device)
+        data = data.reshape(-1, 3, 32, 32)
+        feat = self.net(data)
+        out = self.head(feat)
+        return out, feat
 
     def train_onestep(self, data):
         self.train()
@@ -208,7 +219,7 @@ class Model(nn.Module):
 
         for _ in range(num_epochs):
             train_iters = []
-            train_w = [1.0, 1.0]
+            train_w = [1.0, 0.25]
             if len(data)==1:
                 train_w = [1.0]
             for train_loader in data:

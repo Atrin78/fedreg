@@ -1,7 +1,7 @@
 from FedUtils.models.cifar10.resnet9 import Model
 import torch
 from functools import partial
-from FedUtils.fed.fedavg import FedAvg
+from FedUtils.fed.fedimpress import FedImpress
 from torchvision import transforms, utils
 
 transform_train = transforms.Compose([
@@ -22,7 +22,7 @@ config = {
     "seed": 1,
     "model": partial(Model, learning_rate=5e-2),
     "inner_opt": None,
-    "optimizer": FedAvg,
+    "optimizer": FedImpress,
     "model_param": (10,),
     "inp_size": (3*32*32,),
     "train_path": "data/cifar-10-batches-py/data_uni/train/",
