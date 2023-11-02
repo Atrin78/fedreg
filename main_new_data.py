@@ -68,10 +68,19 @@ def main():
 
 
     if config["use_fed"]:
-        Optimizer = config["optimizer"]
-        logger.info(f'inner_opt: {inner_opt} ')
-        t = Optimizer(config, Model, data_distributed = data_distributed)
-        t.train()
+        #mnist
+        if config["dataset_name"] == "mnist":
+            layers = ['net.0', 'net.2', 'net.5', 'bottleneck.0', 'head.0']
+        #cifar
+        if config["dataset_name"] == "cifar10":
+            layers = ['net.conv1', 'net.layer1.conv', 'net.layer1.blocks.0.conv1', 'net.layer1.blocks.0.conv2', 'net.layer2.conv', 'net.layer3.conv', 'net.layer3.blocks.0.conv1', 'net.layer3.blocks.0.conv2', 'head.linear']
+        
+        for l in layers:
+            logger.info(f'active layer: {l} ')
+            Optimizer = config["optimizer"]
+            logger.info(f'inner_opt: {inner_opt} ')
+            t = Optimizer(config, Model, data_distributed = data_distributed, active_layers = [l])
+            t.train()
     else:
         train_data_total = {"x": [], "y": []}
         eval_data_total = {"x": [], "y": []}

@@ -14,30 +14,32 @@ from torch_cka import CKA
 from functools import partial
 
 
-def step_func(active_layer,model, data):
+def step_func(active_layer ,model, data):
     lr = model.learning_rate
     logger.info(f"active layer: {active_layer}")
-    for p in model.parameters():
-        p.requires_grad = False
-    
+
+    parameters = []
     for name, layer in model.named_modules():
-        logger.info(f'{name}')
-
-    if grad_head:
-        parameters += list(model.head.parameters())
-    if grad_feature_extractor:
-        if model.bottleneck != None:
-            parameters += list(model.net.parameters()) + list(model.bottleneck.parameters())
+        if name in active_layer:
+            parameters += list(layer.parameters())
         else:
-            parameters += list(model.net.parameters())
+            for p in layer.parameters():
+                p.requires_grad = False
+    # if grad_head:
+    #     parameters += list(model.head.parameters())
+    # if grad_feature_extractor:
+    #     if model.bottleneck != None:
+    #         parameters += list(model.net.parameters()) + list(model.bottleneck.parameters())
+    #     else:
+    #         parameters += list(model.net.parameters())
 
-    for p in model.net.parameters():
-        p.requires_grad = grad_feature_extractor
-    if model.bottleneck != None:
-        for p in model.bottleneck.parameters():
-            p.requires_grad = grad_feature_extractor
-    for p in model.head.parameters():
-        p.requires_grad = grad_head
+    # for p in model.net.parameters():
+    #     p.requires_grad = grad_feature_extractor
+    # if model.bottleneck != None:
+    #     for p in model.bottleneck.parameters():
+    #         p.requires_grad = grad_feature_extractor
+    # for p in model.head.parameters():
+    #     p.requires_grad = grad_head
 
     flop = model.flop
 
@@ -107,7 +109,7 @@ class FedAvg(Server):
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
                 coef=1
-                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=partial(step_func,0))  # stats has (byte w, comp, byte r)
+                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=partial(step_func,self.active_layers))  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
                 if len(csolns) == 0:
