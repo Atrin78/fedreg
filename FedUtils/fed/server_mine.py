@@ -84,15 +84,16 @@ class Server(object):
 
         old_params = self.get_param()
         for name in wstate_dicts.keys():
-            for l_name in self.active_layers:
-                logger.info("name: {} {} {}".format(name, l_name, name.startswith(l_name)))
-                if name.startswith(l_name) and len(wstate_dicts[name]) > 0:
-                    d_value, diff = self.compute_layer_difference(old_params[name], wstate_dicts[name], name)
-                    difference[l_name].append(diff)
-                    if d_value != None:
-                        divergence[l_name].append(d_value)
-                    else:
-                        pass
+            if name.startswith('net') or name.startswith('bottleneck') or name.startswith('head')
+                for l_name in self.active_layers:
+                    logger.info("name: {} {} {}".format(name, l_name, name.startswith(l_name)))
+                    if name.startswith(l_name) and len(wstate_dicts[name]) > 0:
+                        d_value, diff = self.compute_layer_difference(old_params[name], wstate_dicts[name], name)
+                        difference[l_name].append(diff)
+                        if d_value != None:
+                            divergence[l_name].append(d_value)
+                        else:
+                            pass
 
         for key,value in divergence.items():
             if len(value) > 0:
