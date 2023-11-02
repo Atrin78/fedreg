@@ -16,7 +16,7 @@ def refine_as_not_true(logits, targets, num_classes):
 class NTD_Loss(nn.Module):
     """Not-true Distillation Loss"""
 
-    def __init__(self, num_classes=10, tau=3, beta=1):
+    def __init__(self, num_classes=10, tau=3, beta=0):
         super(NTD_Loss, self).__init__()
         self.CE = nn.CrossEntropyLoss()
         self.MSE = nn.MSELoss()
