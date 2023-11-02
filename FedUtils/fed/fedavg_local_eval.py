@@ -18,15 +18,19 @@ def step_func(active_layer ,model, data):
     lr = model.learning_rate
 
     parameters = []
+    for p in model.net.parameters():
+        p.requires_grad = False
+    if model.bottleneck != None:
+        for p in model.bottleneck.parameters():
+            p.requires_grad = False
+    for p in model.head.parameters():
+        p.requires_grad = False
     for name, layer in model.named_modules():
         if name.startswith('net') or name.startswith('bottleneck') or name.startswith('head'):
             if name in active_layer:
-                logger.info(f"Active layer: {name}")
                 parameters += list(layer.parameters())
-            else:
-                logger.info(f"Deactive layer: {name}")
                 for p in layer.parameters():
-                    p.requires_grad = False
+                    p.requires_grad = True
     # if grad_head:
     #     parameters += list(model.head.parameters())
     # if grad_feature_extractor:
