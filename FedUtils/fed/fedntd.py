@@ -58,7 +58,7 @@ class FedNtd(Server):
     def train(self):
 
         logger.info("Train with {} workers...".format(self.clients_per_round))
-        for r in range(self.start_round+1,self.num_rounds):
+        for r in range(self.start_round+1,self.num_rounds+1):
             if r % self.eval_every == 0:
                 logger.info("-- Log At Round {} --".format(r))
                 
