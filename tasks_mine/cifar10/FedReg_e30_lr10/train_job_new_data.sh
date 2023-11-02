@@ -11,6 +11,10 @@
 
 #SBATCH --cpus-per-task=4
 
+#SBATCH --output=/h/sayromlou/ubc/fedreg/here.out
+
+#SBATCH --error=/h/sayromlou/ubc/fedreg/here.err
+
 #SBATCH --mem-per-cpu=8G
 
 # prepare your environment here
