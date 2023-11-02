@@ -51,13 +51,16 @@ class NTD_Loss(nn.Module):
 
         # Get smoothed local model prediction
         logits = refine_as_not_true(logits, targets, self.num_classes)
+        print(f"check {logits}")
         pred_probs = F.log_softmax(logits / self.tau, dim=1)
-
+        print(f"check 2 {pred_probs}")
         # Get smoothed global model prediction
         with torch.no_grad():
             dg_logits = refine_as_not_true(dg_logits, targets, self.num_classes)
             dg_probs = torch.softmax(dg_logits / self.tau, dim=1)
 
+
         loss = (self.tau ** 2) * self.KLDiv(pred_probs, dg_probs)
+        print(f"check 2 {loss}")
 
         return loss
