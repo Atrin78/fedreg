@@ -222,7 +222,7 @@ class Server(object):
         loss_in = 0
         loss_out = 0
         logger.info("local_ids: {}".format(local_ids))
-        for j in range(len(local_tot_correct)):
+        for j in range(len(local_ids)):
             if local_ids[j] == client_id:
                 F_in +=  (global_tot_correct[j] * 1.0 / global_num_samples[j]) - (local_tot_correct[j] * 1.0 / local_num_samples[j])
                 loss_in += (global_loss[j] * 1.0 / global_num_samples[j]) - (local_loss[j]* 1.0 / local_num_samples[j])
