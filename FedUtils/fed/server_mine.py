@@ -62,9 +62,9 @@ class Server(object):
     def compute_layer_difference(self, globale_layer, local_layers,name):
         up = 0.0
         down = 0.0
-        # if name.split('.')[0] == 'head':
-        #     logger.info("globale_layer: {}".format(globale_layer))
-        #     logger.info("local_layers: {}".format(local_layers))
+        if name.split('.')[0] == 'head':
+            logger.info("globale_layer: {}".format(globale_layer))
+            logger.info("local_layers: {}".format(local_layers))
         for l in local_layers:
             up += torch.sum(torch.pow(l-globale_layer,2))
             down += (l-globale_layer)
@@ -143,14 +143,14 @@ class Server(object):
                     elif key.split('.')[0] == 'net' or key.split('.')[0] == 'bottleneck':
                         total_feature_extractor +=torch.norm(diff)**2
                         len_feature_extractor += 1
-                if len_classifer > 0:
-                    logger.info("classifier difference: {}".format(total_classifier/len_classifer))
-                else:
-                    logger.info("classifier difference: {}".format(0))
-                if len_feature_extractor > 0:
-                    logger.info("feature_extractor difference: {}".format(total_feature_extractor/len_feature_extractor))
-                else:
-                    logger.info("feature_extractor difference: {}".format(0))
+        if len_classifer > 0:
+            logger.info("classifier difference: {}".format(total_classifier/len_classifer))
+        else:
+            logger.info("classifier difference: {}".format(0))
+        if len_feature_extractor > 0:
+            logger.info("feature_extractor difference: {}".format(total_feature_extractor/len_feature_extractor))
+        else:
+            logger.info("feature_extractor difference: {}".format(0))
         return self.set_param(state_dict)
 
     def select_clients(self, seed, num_clients=20):
