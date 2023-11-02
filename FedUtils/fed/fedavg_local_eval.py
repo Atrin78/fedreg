@@ -16,7 +16,6 @@ from functools import partial
 
 def step_func(active_layer ,model, data):
     lr = model.learning_rate
-    logger.info(f"active layer: {active_layer}")
 
     parameters = []
     for name, layer in model.named_modules():

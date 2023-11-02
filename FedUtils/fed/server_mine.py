@@ -89,10 +89,10 @@ class Server(object):
 
                 if d_value != None:
 
-                    if name.split('.')[0] == 'head':
+                    if name.split('.')[0] == 'head' and name in self.active_layers:
                         classifier_divergence += d_value
                         len_classifer += 1
-                    elif name.split('.')[0] == 'net' or name.split('.')[0] == 'bottleneck':
+                    elif (name.split('.')[0] == 'net' or name.split('.')[0] == 'bottleneck') and name in self.active_layers:
                         feature_extractor_divergence += d_value
                         len_feature_extractor += 1
                 else:
@@ -221,14 +221,16 @@ class Server(object):
         num_out = 0
         loss_in = 0
         loss_out = 0
+        logger.info("local_ids: {}".format(local_ids))
         for j in range(len(local_tot_correct)):
             if local_ids[j] == client_id:
                 F_in +=  (global_tot_correct[j] * 1.0 / global_num_samples[j]) - (local_tot_correct[j] * 1.0 / local_num_samples[j])
-                loss_in += global_loss[j] - local_loss[j]
+                loss_in += (global_loss[j] * 1.0 / global_num_samples[j]) - (local_loss[j]* 1.0 / local_num_samples[j])
             else:
                 F_out +=  (global_tot_correct[j] * 1.0 / global_num_samples[j]) - (local_tot_correct[j] * 1.0 / local_num_samples[j])
-                loss_out += global_loss[j] - local_loss[j]
+                loss_out += (global_loss[j]* 0.1 / / global_num_samples[j]) - (local_loss[j]* 1.0 / local_num_samples[j])
                 num_out += 1
+                logger.info("client_id: {}".format(client_id))
             try:
                 self.F_in.append(F_in)
                 self.loss_in.append(loss_in)
