@@ -32,7 +32,7 @@ class NTD_Loss(nn.Module):
         ce_loss = ce_loss.sum(1)
         ntd_loss = self._ntd_loss(logits, dg_logits, targets)
 
-        loss = ce_loss.mean() + self.beta * ntd_loss
+        loss = ce_loss.mean() + (self.beta * ntd_loss).mean() 
 
 
         return loss
