@@ -26,7 +26,7 @@ class NTD_Loss(nn.Module):
         self.tau = tau
         self.beta = beta
 
-    def forward(self, pred, gt, global_pred):
+    def forward(self, pred, gt, global_pred = None):
         pred = self.softmax(pred)
         if gt.device != pred.device:
             gt = gt.to(pred.device)

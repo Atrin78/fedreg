@@ -224,9 +224,6 @@ class Model(nn.Module):
         loss = loss.sum(1)
         return loss
     
-    def loss_NTD(self, pred, gt, global_pred):
-        loss = self.ntd(pred, gt, global_pred)
-        return loss
     
 
     def forward(self, data):
