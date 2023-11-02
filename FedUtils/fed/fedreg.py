@@ -10,7 +10,10 @@ import copy
 def step_func(model, data, fed):
     lr = model.learning_rate
 
-
+    if model.bottleneck != None:
+        parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
+    else:
+        parameters = list(model.net.parameters()) + list(model.head.parameters())
     flop = model.flop
     gamma = fed.gamma
     add_mask = fed.add_mask
