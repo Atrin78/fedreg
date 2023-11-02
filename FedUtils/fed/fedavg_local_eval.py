@@ -18,9 +18,9 @@ def step_func(model, data):
     for p in model.parameters():
         p.requires_grad = False
     
-    for name, layer in model1.named_modules():
-        logger.info(name)
-        
+    for name, layer in model.named_modules():
+        logger.info('f{name}')
+
     if grad_head:
         parameters += list(model.head.parameters())
     if grad_feature_extractor:
