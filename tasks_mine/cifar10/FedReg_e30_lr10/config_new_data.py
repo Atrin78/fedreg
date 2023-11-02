@@ -30,7 +30,7 @@ config = {
     "train_path": "/scratch/ssd004/scratch/sayromlou/fedreg_data/data/cifar-10-batches-py/data_uni/train/",
     "test_path": ["/scratch/ssd004/scratch/sayromlou/fedreg_data/data/cifar-10-batches-py/data_uni/valid/", "/scratch/ssd004/scratch/sayromlou/fedreg_data/data/cifar-10-batches-py/data_uni/test/"],
     "clients_per_round": 1,
-    "num_rounds": 1,
+    "num_rounds": 2,
     "eval_every": 1,
     "drop_percent": 0.0,
     "num_epochs": 1,
