@@ -20,7 +20,7 @@ transform_test = transforms.Compose([
 config = {
 
     "seed": 1,
-    "model": partial(Model, learning_rate=2e-5),
+    "model": partial(Model, learning_rate=2e-5), 
     "inner_opt": None,
     "optimizer": FedImpress,
     "model_param": (10,),
@@ -38,6 +38,7 @@ config = {
     "train_transform": transform_train,
     "test_transform": transform_test,
     "eval_train": False
+
 
 
 }
