@@ -24,7 +24,7 @@ def step_func(global_model, model ,data):
         parameters = list(model.net.parameters()) + list(model.head.parameters())
     flop = model.flop
     global_model = global_model
-    ntd = NTD_Loss(num_classes=num_classes)
+    ntd = NTD_Loss(num_classes=10)
 
     def func(d):
         nonlocal flop, lr
