@@ -22,14 +22,14 @@ def step_func(model, data, fed):
         psuedo, perturb = fed.model.generate_fake(x, y)
         psuedo_data.append(psuedo)
         perturb_data.append(perturb)
-        
+
     idx = 0
     median_model, old_model, penal_model = copy.deepcopy(fed.model), copy.deepcopy(fed.model), copy.deepcopy(fed.model)
     if median_model.bottleneck != None:
         median_parameters = list(median_model.net.parameters()) + list(median_model.bottleneck.parameters()) + list(median_model.head.parameters())
     else:
         median_parameters = list(median_model.net.parameters()) + list(median_model.head.parameters())
-    if old_parameters.bottleneck != None:
+    if old_model.bottleneck != None:
         old_parameters = list(old_model.net.parameters()) + list(old_model.bottleneck.parameters()) + list(old_model.head.parameters())
     else:
         old_parameters = list(old_model.net.parameters()) + list(old_model.head.parameters())
