@@ -15,10 +15,12 @@ from torch_cka import CKA
 
 def step_func(model, data):
     lr = model.learning_rate
-    grad_head= True
-    grad_feature_extractor = False
-
-    parameters = []
+    for p in model.parameters():
+        p.requires_grad = False
+    
+    for name, layer in model1.named_modules():
+        logger.info(name)
+        
     if grad_head:
         parameters += list(model.head.parameters())
     if grad_feature_extractor:
