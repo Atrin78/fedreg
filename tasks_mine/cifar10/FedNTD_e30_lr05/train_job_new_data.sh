@@ -17,4 +17,4 @@
 source /ssd003/projects/aieng/public/FL_env/env3/bin/activate
 
 # put your command here
-python main_new_data.py -c tasks_mine/cifar10/FedAvg_e30_lr05/config_new_data
+python main_new_data.py -c tasks_mine/cifar10/FedNTD_e30_lr05/config_new_data
