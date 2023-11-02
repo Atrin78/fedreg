@@ -70,7 +70,6 @@ class Server(object):
 
             diff += torch.norm(globale_layer-l)**2
         down = torch.sum(torch.pow(down,2))
-        logger.info("diff: {}".format(diff))
         if down == 0:
             return None, diff/len(local_layers)
         return up/down, diff/len(local_layers)
@@ -84,16 +83,14 @@ class Server(object):
 
         old_params = self.get_param()
         for name in wstate_dicts.keys():
-            if name.startswith('net') or name.startswith('bottleneck') or name.startswith('head'):
-                for l_name in self.active_layers:
-                    logger.info("name: {} {} {}".format(name, l_name, name.startswith(l_name)))
-                    if name.startswith(l_name) and len(wstate_dicts[name]) > 0:
-                        d_value, diff = self.compute_layer_difference(old_params[name], wstate_dicts[name], name)
-                        difference[l_name].append(diff)
-                        if d_value != None:
-                            divergence[l_name].append(d_value)
-                        else:
-                            pass
+            for l_name in self.active_layers:
+                if name.startswith(l_name) and len(wstate_dicts[name]) > 0:
+                    d_value, diff = self.compute_layer_difference(old_params[name], wstate_dicts[name], name)
+                    difference[l_name].append(diff)
+                    if d_value != None:
+                        divergence[l_name].append(d_value)
+                    else:
+                        pass
 
         for key,value in divergence.items():
             if len(value) > 0:

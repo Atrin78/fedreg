@@ -26,11 +26,10 @@ def step_func(active_layer ,model, data):
     for p in model.head.parameters():
         p.requires_grad = False
     for name, layer in model.named_modules():
-        if name.startswith('net') or name.startswith('bottleneck') or name.startswith('head'):
-            if name in active_layer:
-                parameters += list(layer.parameters())
-                for p in layer.parameters():
-                    p.requires_grad = True
+        if name in active_layer:
+            parameters += list(layer.parameters())
+            for p in layer.parameters():
+                p.requires_grad = True
     # if grad_head:
     #     parameters += list(model.head.parameters())
     # if grad_feature_extractor:
