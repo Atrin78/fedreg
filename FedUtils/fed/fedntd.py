@@ -39,7 +39,6 @@ def step_func(global_model, model ,data):
         loss = model.loss(pred, y).mean()
         ntd_loss = model.ntd(pred, y, global_pred).mean()
         logger.info(f"ntd_loss: {ntd_loss}")
-        loss += ntd_loss
 
         grad = torch.autograd.grad(loss, parameters)
         for p, g in zip(parameters, grad):
