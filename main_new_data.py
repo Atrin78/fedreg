@@ -81,9 +81,7 @@ def main():
         #     logger.info(f'inner_opt: {inner_opt} ')
         #     t = Optimizer(config, Model, data_distributed = data_distributed, active_layers = [l])
         #     t.train()
-        logger.info(f'active layer: {l} ')
         Optimizer = config["optimizer"]
-        logger.info(f'inner_opt: {inner_opt} ')
         t = Optimizer(config, Model, data_distributed = data_distributed, active_layers = layers)
         t.train()
     else:
