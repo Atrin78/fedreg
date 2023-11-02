@@ -228,7 +228,7 @@ class Server(object):
                 loss_in += (global_loss[j] * 1.0 / global_num_samples[j]) - (local_loss[j]* 1.0 / local_num_samples[j])
             else:
                 F_out +=  (global_tot_correct[j] * 1.0 / global_num_samples[j]) - (local_tot_correct[j] * 1.0 / local_num_samples[j])
-                loss_out += (global_loss[j]* 0.1 / / global_num_samples[j]) - (local_loss[j]* 1.0 / local_num_samples[j])
+                loss_out += (global_loss[j]* 0.1 / global_num_samples[j]) - (local_loss[j]* 1.0 / local_num_samples[j])
                 num_out += 1
                 logger.info("client_id: {}".format(client_id))
             try:
