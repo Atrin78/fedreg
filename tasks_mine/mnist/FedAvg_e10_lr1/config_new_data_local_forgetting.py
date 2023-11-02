@@ -17,7 +17,7 @@ config = {
     "num_rounds": 21,
     "eval_every": 1,
     "drop_percent": 0.0,
-    "num_epochs": 10,
+    "num_epochs": 1,
     "batch_size": 50,
     "number_of_clients": 100,
     "partition_method": "lda",
