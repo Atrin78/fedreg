@@ -75,40 +75,26 @@ class Server(object):
         return up/down
 
     def compute_divergence(self, wstate_dicts):
-        classifier_divergence = 0.0
-        len_classifer = 0
-        feature_extractor_divergence = 0.0
-        len_feature_extractor = 0
+        divergence = {}
+        for k in self.active_layers:
+            divergence[k] = []
 
         old_params = self.get_param()
-
-
         for name in wstate_dicts.keys():
             for l_name in self.active_layers:
                 logger.info("name: {} {} {}".format(name, l_name, name.startswith(l_name)))
                 if name.startswith(l_name) and len(wstate_dicts[name]) > 0:
-                    
                     d_value = self.compute_layer_difference(old_params[name], wstate_dicts[name], name)
-
                     if d_value != None:
-
-                        if name.split('.')[0] == 'head':
-                            classifier_divergence += d_value
-                            len_classifer += 1
-                        elif name.split('.')[0] == 'net' or name.split('.')[0] == 'bottleneck':
-                            feature_extractor_divergence += d_value
-                            len_feature_extractor += 1
+                        divergence[l_name].append(d_value)
                     else:
                         pass
 
-        if len_classifer > 0:
-            logger.info("classifier divergence: {}".format(classifier_divergence/len_classifer))
-        else: 
-            logger.info("classifier divergence: {}".format(0))
-        if len_feature_extractor > 0:
-            logger.info("feature_extractor divergence: {}".format(feature_extractor_divergence/len_feature_extractor))
-        else:
-            logger.info("feature_extractor divergence: {}".format(0))
+        for key,value in divergence.items():
+            if len(value) > 0:
+                logger.info("{} divergence: {}".format(key, torch.mean(torch.tensor(value))))
+            else:
+                logger.info("{} divergence: {}".format(key, None))
 
         return
 
@@ -129,28 +115,21 @@ class Server(object):
     def aggregate(self, wstate_dicts):
         old = self.model.get_param()
         state_dict = self._aggregate(wstate_dicts)
-        total_classifier=0
-        total_feature_extractor=0
-        len_classifer=0
-        len_feature_extractor=0
-        for key in state_dict:
+        divergence = {}
+        for k in self.active_layers:
+            divergence[k] = []
+        for name in wstate_dicts.keys():
             for l_name in self.active_layers:
-                if key.startswith(l_name):
+                if name.startswith(l_name) and len(wstate_dicts[name]) > 0:
                     diff = old[key].detach().cpu()-state_dict[key].detach().cpu()
-                    if key.split('.')[0] == 'head':
-                        total_classifier += torch.norm(diff)**2
-                        len_classifer += 1
-                    elif key.split('.')[0] == 'net' or key.split('.')[0] == 'bottleneck':
-                        total_feature_extractor +=torch.norm(diff)**2
-                        len_feature_extractor += 1
-        if len_classifer > 0:
-            logger.info("classifier difference: {}".format(total_classifier/len_classifer))
-        else:
-            logger.info("classifier difference: {}".format(0))
-        if len_feature_extractor > 0:
-            logger.info("feature_extractor difference: {}".format(total_feature_extractor/len_feature_extractor))
-        else:
-            logger.info("feature_extractor difference: {}".format(0))
+                    divergence[l_name].append(torch.norm(diff)**2)
+        for key,value in divergence.items():
+            if len(value) > 0:
+                logger.info("{} difference: {}".format(key, torch.mean(torch.tensor(value))))
+            else:
+                logger.info("{} difference: {}".format(key, None))
+
+        
         return self.set_param(state_dict)
 
     def select_clients(self, seed, num_clients=20):
