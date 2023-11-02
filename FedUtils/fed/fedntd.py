@@ -13,6 +13,7 @@ from .client import Client
 from functools import partial
 from collections import OrderedDict
 from torch_cka import CKA
+from FedUtils.models.losses import NTD_Loss
 
 
 def step_func(global_model, model ,data):
@@ -23,6 +24,7 @@ def step_func(global_model, model ,data):
         parameters = list(model.net.parameters()) + list(model.head.parameters())
     flop = model.flop
     global_model = global_model
+    ntd = NTD_Loss(num_classes=num_classes)
 
     def func(d):
         nonlocal flop, lr
@@ -37,8 +39,8 @@ def step_func(global_model, model ,data):
             
         # loss = self.criterion(logits, targets, dg_logits)
         loss = model.loss(pred, y).mean()
-        ntd_loss = model.ntd(pred, y, global_pred).mean()
-        logger.info(f"ntd_loss: {ntd_loss}")
+        # ntd_loss = model.ntd(pred, y, global_pred).mean()
+        # logger.info(f"ntd_loss: {ntd_loss}")
 
         grad = torch.autograd.grad(loss, parameters)
         for p, g in zip(parameters, grad):
