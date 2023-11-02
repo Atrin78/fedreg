@@ -36,6 +36,9 @@ def step_func(global_model, model ,data):
         pred = model.forward(x)
         with torch.no_grad():
             global_pred = global_model.forward(x)
+
+        if y.device != pred.device:
+            y = y.to(pred.device)
             
         # loss = self.criterion(logits, targets, dg_logits)
         # loss = model.loss(pred, y).mean()
