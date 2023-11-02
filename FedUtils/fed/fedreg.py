@@ -9,10 +9,6 @@ import copy
 
 def step_func(model, data, fed):
     lr = model.learning_rate
-    if model.bottleneck != None:
-        parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
-    else:
-        parameters = list(model.net.parameters()) + list(model.head.parameters())
 
 
     flop = model.flop
@@ -26,11 +22,21 @@ def step_func(model, data, fed):
         psuedo, perturb = fed.model.generate_fake(x, y)
         psuedo_data.append(psuedo)
         perturb_data.append(perturb)
+        
     idx = 0
     median_model, old_model, penal_model = copy.deepcopy(fed.model), copy.deepcopy(fed.model), copy.deepcopy(fed.model)
-    median_parameters = list(median_model.net.parameters()) + list(median_model.bottleneck.parameters()) + list(median_model.head.parameters())
-    old_parameters = list(old_model.net.parameters()) + list(old_model.bottleneck.parameters()) + list(old_model.head.parameters())
-    penal_parameters = list(penal_model.net.parameters()) + list(penal_model.bottleneck.parameters()) + list(penal_model.head.parameters())
+    if median_model.bottleneck != None:
+        median_parameters = list(median_model.net.parameters()) + list(median_model.bottleneck.parameters()) + list(median_model.head.parameters())
+    else:
+        median_parameters = list(median_model.net.parameters()) + list(median_model.head.parameters())
+    if old_parameters.bottleneck != None:
+        old_parameters = list(old_model.net.parameters()) + list(old_model.bottleneck.parameters()) + list(old_model.head.parameters())
+    else:
+        old_parameters = list(old_model.net.parameters()) + list(old_model.head.parameters())
+    if penal_model.bottleneck != None:
+        penal_parameters = list(penal_model.net.parameters()) + list(penal_model.bottleneck.parameters()) + list(penal_model.head.parameters())
+    else:
+        penal_parameters = list(penal_model.net.parameters()) + list(penal_model.head.parameters())
 
     def func(d):
         nonlocal idx, add_mask, beta, flop, gamma, lr
