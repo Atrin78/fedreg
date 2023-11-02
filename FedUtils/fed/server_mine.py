@@ -84,7 +84,7 @@ class Server(object):
 
         old_params = self.get_param()
         for name in wstate_dicts.keys():
-            if name.startswith('net') or name.startswith('bottleneck') or name.startswith('head')
+            if name.startswith('net') or name.startswith('bottleneck') or name.startswith('head'):
                 for l_name in self.active_layers:
                     logger.info("name: {} {} {}".format(name, l_name, name.startswith(l_name)))
                     if name.startswith(l_name) and len(wstate_dicts[name]) > 0:
