@@ -107,6 +107,7 @@ class FedAvg(Server):
 
 
             for idx, c in enumerate(active_clients):
+                logger.info("Client {} Training".format(c.train_samplenum))
                 c.set_param(self.model.get_param())
                 coef=1
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=partial(step_func,self.active_layers))  # stats has (byte w, comp, byte r)
