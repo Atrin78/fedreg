@@ -60,30 +60,35 @@ class Server(object):
         return self.model.get_param()
 
     def compute_layer_difference(self, globale_layer, local_layers,name):
+        diff = 0.0
         up = 0.0
         down = 0.0
-        logger.info("global_layer: {}".format(globale_layer))
-        logger.info("local_layers: {}".format(local_layers))
+
         for l in local_layers:
             up += torch.sum(torch.pow(l-globale_layer,2))
             down += (l-globale_layer)
+
+            diff += torch.norm(globale_layer-l)**2
         down = torch.sum(torch.pow(down,2))
-        # logger.info("up: {}".format(up))
+        logger.info("diff: {}".format(diff))
         if down == 0:
-            return None
-        return up/down
+            return None, diff/len(local_layers)
+        return up/down, diff/len(local_layers)
 
     def compute_divergence(self, wstate_dicts):
         divergence = {}
+        difference = {}
         for k in self.active_layers:
             divergence[k] = []
+            difference[k] = []
 
         old_params = self.get_param()
         for name in wstate_dicts.keys():
             for l_name in self.active_layers:
                 logger.info("name: {} {} {}".format(name, l_name, name.startswith(l_name)))
                 if name.startswith(l_name) and len(wstate_dicts[name]) > 0:
-                    d_value = self.compute_layer_difference(old_params[name], wstate_dicts[name], name)
+                    d_value, diff = self.compute_layer_difference(old_params[name], wstate_dicts[name], name)
+                    difference[l_name].append(diff)
                     if d_value != None:
                         divergence[l_name].append(d_value)
                     else:
@@ -94,6 +99,11 @@ class Server(object):
                 logger.info("{} divergence: {}".format(key, torch.mean(torch.tensor(value))))
             else:
                 logger.info("{} divergence: {}".format(key, None))
+        for key,value in difference.items():
+            if len(value) > 0:
+                logger.info("{} difference: {}".format(key, torch.mean(torch.tensor(value))))
+            else:
+                logger.info("{} difference: {}".format(key, None))
 
         return
 
@@ -114,19 +124,21 @@ class Server(object):
     def aggregate(self, wstate_dicts):
         old = self.model.get_param()
         state_dict = self._aggregate(wstate_dicts)
-        divergence = {}
-        for k in self.active_layers:
-            divergence[k] = []
-        for name in wstate_dicts.keys():
-            for l_name in self.active_layers:
-                if name.startswith(l_name) and len(wstate_dicts[name]) > 0:
-                    diff = old[key].detach().cpu()-state_dict[key].detach().cpu()
-                    divergence[l_name].append(torch.norm(diff)**2)
-        for key,value in divergence.items():
-            if len(value) > 0:
-                logger.info("{} difference: {}".format(key, torch.mean(torch.tensor(value))))
-            else:
-                logger.info("{} difference: {}".format(key, None))
+        # divergence = {}
+        # for k in self.active_layers:
+        #     divergence[k] = []
+
+
+        # for name in wstate_dicts.keys():
+        #     for l_name in self.active_layers:
+        #         if name.startswith(l_name) and len(wstate_dicts[name]) > 0:
+        #             diff = old[key].detach().cpu()-state_dict[key].detach().cpu()
+        #             divergence[l_name].append(torch.norm(diff)**2)
+        # for key,value in divergence.items():
+        #     if len(value) > 0:
+        #         logger.info("{} difference: {}".format(key, torch.mean(torch.tensor(value))))
+        #     else:
+        #         logger.info("{} difference: {}".format(key, None))
 
         
         return self.set_param(state_dict)

@@ -20,8 +20,10 @@ def step_func(active_layer ,model, data):
     parameters = []
     for name, layer in model.named_modules():
         if name in active_layer:
+            logger.info(f"Active layer: {name}")
             parameters += list(layer.parameters())
         else:
+            logger.info(f"Deactive layer: {name}")
             for p in layer.parameters():
                 p.requires_grad = False
     # if grad_head:
