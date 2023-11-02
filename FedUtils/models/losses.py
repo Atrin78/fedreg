@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
+from loguru import logger
 
 
 def refine_as_not_true(logits, targets, num_classes):
@@ -31,6 +32,7 @@ class NTD_Loss(nn.Module):
         ce_loss = -targets*torch.log(logits+1e-12)
         ce_loss = ce_loss.sum(1)
         ntd_loss = self._ntd_loss(logits, dg_logits, targets)
+        logger.info(f"ntd_loss: {ntd_loss}")
 
         loss = ce_loss.mean() + (self.beta * ntd_loss).mean() 
 
