@@ -167,7 +167,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
                 loss.backward()
                 optimizer_s.step()
 
-                print(loss)
+           #     print(loss)
 
                 # images_s.clamp(0.0, 1.0)
                 gc.collect()
