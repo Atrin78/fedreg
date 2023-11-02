@@ -11,15 +11,17 @@ from torch.utils.data import DataLoader
 import copy
 from collections import OrderedDict
 from torch_cka import CKA
+from functools import partial
 
 
-def step_func(model, data):
+def step_func(active_layer,model, data):
     lr = model.learning_rate
+    logger.info(f"active layer: {active_layer}")
     for p in model.parameters():
         p.requires_grad = False
     
     for name, layer in model.named_modules():
-        logger.info('f{name}')
+        logger.info(f'{name}')
 
     if grad_head:
         parameters += list(model.head.parameters())
@@ -105,7 +107,7 @@ class FedAvg(Server):
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
                 coef=1
-                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
+                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=partial(step_func,0))  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
                 if len(csolns) == 0:
