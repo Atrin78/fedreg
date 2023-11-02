@@ -62,9 +62,8 @@ class Server(object):
     def compute_layer_difference(self, globale_layer, local_layers,name):
         up = 0.0
         down = 0.0
-        if name.split('.')[0] == 'head':
-            logger.info("globale_layer: {}".format(globale_layer))
-            logger.info("local_layers: {}".format(local_layers))
+        logger.info("global_layer: {}".format(globale_layer))
+        logger.info("local_layers: {}".format(local_layers))
         for l in local_layers:
             up += torch.sum(torch.pow(l-globale_layer,2))
             down += (l-globale_layer)
