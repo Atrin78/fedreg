@@ -84,28 +84,30 @@ class Server(object):
 
 
         for name in wstate_dicts.keys():
-            if len(wstate_dicts[name]) > 0:
-                d_value = self.compute_layer_difference(old_params[name], wstate_dicts[name], name)
+            for l_name in self.active_layers:
+                if name.startswith(l_name) and len(wstate_dicts[name]) > 0:
+                    
+                    d_value = self.compute_layer_difference(old_params[name], wstate_dicts[name], name)
 
-                if d_value != None:
+                    if d_value != None:
 
-                    if name.split('.')[0] == 'head' and name in self.active_layers:
-                        classifier_divergence += d_value
-                        len_classifer += 1
-                    elif (name.split('.')[0] == 'net' or name.split('.')[0] == 'bottleneck') and name in self.active_layers:
-                        feature_extractor_divergence += d_value
-                        len_feature_extractor += 1
-                else:
+                        if name.split('.')[0] == 'head':
+                            classifier_divergence += d_value
+                            len_classifer += 1
+                        elif name.split('.')[0] == 'net' or name.split('.')[0] == 'bottleneck':
+                            feature_extractor_divergence += d_value
+                            len_feature_extractor += 1
+                    else:
+                        pass
 
-                    pass
         if len_classifer > 0:
             logger.info("classifier divergence: {}".format(classifier_divergence/len_classifer))
         else: 
-            logger.info("classifier divergence: {}".format(None))
+            logger.info("classifier divergence: {}".format(0))
         if len_feature_extractor > 0:
             logger.info("feature_extractor divergence: {}".format(feature_extractor_divergence/len_feature_extractor))
         else:
-            logger.info("feature_extractor divergence: {}".format(None))
+            logger.info("feature_extractor divergence: {}".format(0))
 
         return
 
@@ -131,15 +133,23 @@ class Server(object):
         len_classifer=0
         len_feature_extractor=0
         for key in state_dict:
-            diff = old[key].detach().cpu()-state_dict[key].detach().cpu()
-            if key.split('.')[0] == 'head':
-                total_classifier += torch.norm(diff)**2
-                len_classifer += 1
-            elif key.split('.')[0] == 'net' or key.split('.')[0] == 'bottleneck':
-                total_feature_extractor +=torch.norm(diff)**2
-                len_feature_extractor += 1
-        logger.info("classifier difference: {}".format(total_classifier/len_classifer))
-        logger.info("feature_extractor difference: {}".format(total_feature_extractor/len_feature_extractor))
+            for l_name in self.active_layers:
+                if key.startswith(l_name):
+                    diff = old[key].detach().cpu()-state_dict[key].detach().cpu()
+                    if key.split('.')[0] == 'head':
+                        total_classifier += torch.norm(diff)**2
+                        len_classifer += 1
+                    elif key.split('.')[0] == 'net' or key.split('.')[0] == 'bottleneck':
+                        total_feature_extractor +=torch.norm(diff)**2
+                        len_feature_extractor += 1
+                if len_classifer > 0:
+                    logger.info("classifier difference: {}".format(total_classifier/len_classifer))
+                else:
+                    logger.info("classifier difference: {}".format(0))
+                if len_feature_extractor > 0:
+                    logger.info("feature_extractor difference: {}".format(total_feature_extractor/len_feature_extractor))
+                else:
+                    logger.info("feature_extractor difference: {}".format(0))
         return self.set_param(state_dict)
 
     def select_clients(self, seed, num_clients=20):
