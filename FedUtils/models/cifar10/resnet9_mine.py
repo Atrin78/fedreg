@@ -226,8 +226,16 @@ class Model(nn.Module):
 
     def loss_ntd(self, pred, gt, global_pred):
         pred = self.softmax(pred)
+        if gt.device != pred.device:
+            gt = gt.to(pred.device)
+        if len(gt.shape) != len(pred.shape):
+            gt = nn.functional.one_hot(gt.long(), self.num_classes).float()
+        assert len(gt.shape) == len(pred.shape)
+        loss = -gt*torch.log(pred+1e-12)
+        loss = loss.sum(1)
         # global_pred = self.softmax(global_pred)
-        return self.ntd(pred, gt)
+        # self.ntd(pred, gt)
+        return loss
 
     
     
