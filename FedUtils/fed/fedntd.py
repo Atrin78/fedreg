@@ -138,13 +138,13 @@ class FedNtd(Server):
 
             
 
-        logger.info("-- Log At Round {} --".format(r))
-        stats = self.test()
-        if self.eval_train:
-            stats_train = self.train_error_and_loss()
-        else:
-            stats_train = stats
-        logger.info("-- TEST RESULTS --")
-        decode_stat(stats)
-        logger.info("-- TRAIN RESULTS --")
-        decode_stat(stats_train)
+        # logger.info("-- Log At Round {} --".format(r))
+        # stats = self.test()
+        # if self.eval_train:
+        #     stats_train = self.train_error_and_loss()
+        # else:
+        #     stats_train = stats
+        # logger.info("-- TEST RESULTS --")
+        # decode_stat(stats)
+        # logger.info("-- TRAIN RESULTS --")
+        # decode_stat(stats_train)
