@@ -163,6 +163,7 @@ class Model(nn.Module):
         self.net = FixupResNet9_fe()
         self.bottleneck = None
         self.head = FixupResNet9_head()
+
         self.ntd = NTD_Loss(num_classes=num_classes)
         self.size = sys.getsizeof(self.state_dict())
         self.flop = Flops(self, torch.tensor([[0.0 for _ in range(self.num_inp)]]))
