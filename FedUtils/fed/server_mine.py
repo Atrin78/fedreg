@@ -85,6 +85,7 @@ class Server(object):
 
         for name in wstate_dicts.keys():
             for l_name in self.active_layers:
+                logger.info("name: {} {} {}".format(name, l_name, name.startswith(l_name)))
                 if name.startswith(l_name) and len(wstate_dicts[name]) > 0:
                     
                     d_value = self.compute_layer_difference(old_params[name], wstate_dicts[name], name)
