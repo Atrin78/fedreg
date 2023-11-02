@@ -13,10 +13,6 @@
 
 #SBATCH --mem-per-cpu=8G
 
-#SBATCH --output=/h/sayromlou/ubc/fedreg/here.out
-
-#SBATCH --error=/h/sayromlou/ubc/fedreg/here.err
-
 # prepare your environment here
 source /ssd003/projects/aieng/public/FL_env/env3/bin/activate
 

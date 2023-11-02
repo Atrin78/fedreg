@@ -43,7 +43,6 @@ def step_func(global_model, model ,data):
         # loss = self.criterion(logits, targets, dg_logits)
         loss = model.loss(pred, y).mean()
         loss_ntd = ntd.forward(pred, y, global_pred)
-        print(f"ntd_loss: {loss_ntd}")
         loss += loss_ntd
 
         grad = torch.autograd.grad(loss, parameters)
@@ -77,7 +76,7 @@ class FedNtd(Server):
                 decode_stat(stats_train)
                 self.save_model(r)
 
-                # global_stats = self.local_acc_loss(self.model)
+                global_stats = self.local_acc_loss(self.model)
 
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
@@ -119,18 +118,18 @@ class FedNtd(Server):
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
                         list_clients[x].append(soln[1][x].detach()*soln[0])
-                # if r % self.eval_every == 0:
-                #     # cka = c.get_cka(self.model)
-                #     # if cka != None:
-                #     #     self.CKA.append(cka)
-                #     local_stats = self.local_acc_loss(c.model)
-                #     self.local_forgetting(c.id , global_stats, local_stats)
+                if r % self.eval_every == 0:
+                    # cka = c.get_cka(self.model)
+                    # if cka != None:
+                    #     self.CKA.append(cka)
+                    local_stats = self.local_acc_loss(c.model)
+                    self.local_forgetting(c.id , global_stats, local_stats)
                 del c
 
-            # if r % self.eval_every == 0:
-            #     # pass
-            #     # self.compute_cka()
-            #     self.compute_forgetting()
+            if r % self.eval_every == 0:
+                # pass
+                # self.compute_cka()
+                self.compute_forgetting()
             
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
             self.compute_divergence(list_clients)
@@ -139,13 +138,13 @@ class FedNtd(Server):
 
             
 
-        # logger.info("-- Log At Round {} --".format(r))
-        # stats = self.test()
-        # if self.eval_train:
-        #     stats_train = self.train_error_and_loss()
-        # else:
-        #     stats_train = stats
-        # logger.info("-- TEST RESULTS --")
-        # decode_stat(stats)
-        # logger.info("-- TRAIN RESULTS --")
-        # decode_stat(stats_train)
+        logger.info("-- Log At Round {} --".format(r))
+        stats = self.test()
+        if self.eval_train:
+            stats_train = self.train_error_and_loss()
+        else:
+            stats_train = stats
+        logger.info("-- TEST RESULTS --")
+        decode_stat(stats)
+        logger.info("-- TRAIN RESULTS --")
+        decode_stat(stats_train)
