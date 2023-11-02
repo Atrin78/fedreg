@@ -225,9 +225,9 @@ class Model(nn.Module):
         return loss
 
     def loss_ntd(self, pred, gt, global_pred):
-        pred_soft = self.softmax(pred)
-        global_pred_soft = self.softmax(global_pred)
-        return self.ntd(pred_soft, gt, global_pred_soft)
+        pred = self.softmax(pred)
+        global_pred = self.softmax(global_pred)
+        return self.ntd(pred, gt, global_pred)
 
     
     
