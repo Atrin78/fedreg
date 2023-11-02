@@ -26,13 +26,17 @@ class NTD_Loss(nn.Module):
         self.tau = tau
         self.beta = beta
 
-    def forward(self, pred, gt, global_pred):
-        if len(gt.shape) != len(pred.shape):
-            gt_2 = nn.functional.one_hot(gt.long(), self.num_classes).float()
-        ce_loss = -gt_2*torch.log(pred+1e-12)
+    def forward(self, pred_logit, gt_v, global_pred_logit):
+        pred = self.softmax(pred_logit)
+        global_pred = self.softmax(global_pred_logit)
+        if gt.device != pred.device:
+            gt_v = gt_v.to(pred.device)
+        if len(gt_v.shape) != len(pred.shape):
+            gt_ce = nn.functional.one_hot(gt_v.long(), self.num_classes).float()
+        ce_loss = -gt_ce*torch.log(pred+1e-12)
         ce_loss = ce_loss.sum(1)
-        ntd_loss = self._ntd_loss(pred, global_pred, gt)
-        # logger.info(f"ntd_loss: {ntd_loss}")
+        ntd_loss = self._ntd_loss(pred_logit, global_pred_logit, gt)
+        logger.info(f"ntd_loss: {ntd_loss}")
         # logger.info(f"ce_loss: {ce_loss}")
 
         loss = ce_loss + self.beta * ntd_loss

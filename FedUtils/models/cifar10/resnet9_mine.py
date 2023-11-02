@@ -224,10 +224,6 @@ class Model(nn.Module):
         return loss
     
     def loss_NTD(self, pred, gt, global_pred):
-        pred = self.softmax(pred)
-        global_pred = self.softmax(global_pred)
-        if gt.device != pred.device:
-            gt = gt.to(pred.device)
         loss = self.ntd(pred, gt, global_pred)
         return loss
     
