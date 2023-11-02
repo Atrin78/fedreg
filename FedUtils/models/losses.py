@@ -45,16 +45,6 @@ class NTD_Loss(nn.Module):
 
         return loss
 
-        def loss(self, pred, gt):
-        pred = self.softmax(pred)
-        if gt.device != pred.device:
-            gt = gt.to(pred.device)
-        if len(gt.shape) != len(pred.shape):
-            gt = nn.functional.one_hot(gt.long(), self.num_classes).float()
-        assert len(gt.shape) == len(pred.shape)
-        loss = -gt*torch.log(pred+1e-12)
-        loss = loss.sum(1)
-        return loss
 
     def _ntd_loss(self, logits, dg_logits, targets):
         """Not-tue Distillation Loss"""
