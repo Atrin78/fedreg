@@ -32,8 +32,8 @@ class NTD_Loss(nn.Module):
         ce_loss = -gt_2*torch.log(pred+1e-12)
         ce_loss = ce_loss.sum(1)
         ntd_loss = self._ntd_loss(pred, global_pred, gt)
-        logger.info(f"ntd_loss: {ntd_loss}")
-        logger.info(f"ce_loss: {ce_loss}")
+        # logger.info(f"ntd_loss: {ntd_loss}")
+        # logger.info(f"ce_loss: {ce_loss}")
 
         loss = ce_loss + self.beta * ntd_loss
 
