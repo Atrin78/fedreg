@@ -1,8 +1,10 @@
 from FedUtils.models.cifar10.resnet9_mine import Model
 import torch
 from functools import partial
-from FedUtils.fed.fedntd import FedNtd
-from torchvision import transforms, utils
+from FedUtils.fed.fedreg import FedReg
+from torch.optim import SGD
+from torchvision import transforms
+
 
 transform_train = transforms.Compose([
     transforms.RandomCrop(32, padding=4),
@@ -20,9 +22,9 @@ transform_test = transforms.Compose([
 config = {
 
     "seed": 1,
-    "model": partial(Model, learning_rate=5e-3),
+    "model": partial(Model, learning_rate=1e-2, p_iters=10, ps_eta=1e-1, pt_eta=1e-3),
     "inner_opt": None,
-    "optimizer": FedNtd,
+    "optimizer": FedReg,
     "model_param": (10,),
     "inp_size": (3*32*32,),
     "train_path": "/scratch/ssd004/scratch/sayromlou/fedreg_data/data/cifar-10-batches-py/data_uni/train/",
@@ -40,8 +42,8 @@ config = {
     "root": "/scratch/ssd004/scratch/sayromlou/datasets",
     "dataset_name": "cifar10",
     "use_fed": 1,
-    "log_path": "tasks_mine/cifar10/FedNTD_e30_lr05/train_pretrain_new_data_final.log",
-    "save_path": "/scratch/ssd004/scratch/sayromlou/fedreg_models/cifar10/FedNTD_e30_lr05_pretrain_new_data_final",
+    "log_path": "tasks_mine/cifar10/FedReg_e30_lr10/train_pretrain_new_data_final.log",
+    "save_path": "/scratch/ssd004/scratch/sayromlou/fedreg_models/cifar10/FedReg_e30_lr10_pretrain_new_data_final",
     "load_path": None,
 
     "train_transform": transform_train,
