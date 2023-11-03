@@ -61,7 +61,7 @@ class Client(object):
             data_loaders = [self.train_data]
         else:
             indices = random.choices(range(len(self.gen_data)), k=len(self.train_data))
-            gen_dataloader = DataLoader(self.gen_data, batch_size=self.batchsize, shuffle=True, drop_last=self.drop_last, sampler=indices)
+            gen_dataloader = DataLoader(self.gen_data, batch_size=self.batchsize, drop_last=self.drop_last, sampler=indices)
             data_loaders = [self.train_data, gen_dataloader]
         soln, comp, weight = self.model.solve_inner(data_loaders, num_epochs=num_epochs, step_func=step_func)
         bytes_r = self.model.size
