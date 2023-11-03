@@ -161,7 +161,8 @@ class Model(nn.Module):
 
         self.net = FixupResNet9_fe()
         self.bottleneck = None
-        self.head = FixupResNet9_head()
+        self.head = nn.Linear(512, 10)
+
 
         self.size = sys.getsizeof(self.state_dict())
         self.flop = Flops(self, torch.tensor([[0.0 for _ in range(self.num_inp)]]))
@@ -256,6 +257,18 @@ class Model(nn.Module):
         if self.bottleneck != None:
             out = self.bottleneck(out)
         return out
+
+    def forward_emb(self, data):
+        if data.device != next(self.parameters()).device:
+            data = data.to(next(self.parameters()).device)
+        data = data.reshape(-1, 3, 32, 32)
+        out = self.net(data)
+        if self.bottleneck != None:
+            out = self.bottleneck(out)
+        pred = self.head(out)
+        return pred, out
+
+
     def train_onestep(self, data):
         self.train()
         self.zero_grad()
