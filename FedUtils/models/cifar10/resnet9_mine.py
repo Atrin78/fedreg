@@ -321,7 +321,8 @@ class Model(nn.Module):
                         comp += c
                         steps += 1.0
                     except Exception as e:
-                        print(e)
+                        pass
+                    #    print(e)
                         
              #   c = func([xt, yt], wt)
              #   comp += c
