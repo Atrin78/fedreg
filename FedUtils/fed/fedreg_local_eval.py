@@ -7,7 +7,7 @@ from functools import partial
 import copy
 
 
-def step_func(model,active_layer, data, fed):
+def step_func(model, data, fed, active_layer):
     lr = model.learning_rate
 
     parameters = []
@@ -183,7 +183,7 @@ class FedReg(Server):
             self.CKA = []
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
-                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=partial(step_func, fed=self, active_layer=self.active_layer))
+                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=partial(step_func, fed=self, active_layer=self.active_layers))
                 soln = [1.0, soln[1]]
                 w += soln[0]
                 if len(csolns) == 0:

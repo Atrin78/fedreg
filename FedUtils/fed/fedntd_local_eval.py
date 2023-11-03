@@ -16,7 +16,7 @@ from torch_cka import CKA
 from FedUtils.models.losses import NTD_Loss
 
 
-def step_func(global_model, active_layer ,model ,data):
+def step_func(model ,data, global_model, active_layer):
     lr = model.learning_rate
 
     parameters = []
