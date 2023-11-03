@@ -1,7 +1,7 @@
 from FedUtils.models.cifar10.resnet9_mine import Model
 import torch
 from functools import partial
-from FedUtils.fed.fedavg_mine import FedAvg
+from FedUtils.fed.fedavg_local_eval import FedAvg
 from torchvision import transforms, utils
 
 transform_train = transforms.Compose([

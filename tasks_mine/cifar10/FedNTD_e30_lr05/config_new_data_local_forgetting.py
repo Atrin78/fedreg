@@ -1,7 +1,7 @@
 from FedUtils.models.cifar10.resnet9_mine import Model
 import torch
 from functools import partial
-from FedUtils.fed.fedntd import FedNtd
+from FedUtils.fed.fedntd_local_eval import FedNtd
 from torchvision import transforms, utils
 
 transform_train = transforms.Compose([

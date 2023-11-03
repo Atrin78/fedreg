@@ -1,7 +1,7 @@
 from FedUtils.models.cifar10.resnet9_mine import Model
 import torch
 from functools import partial
-from FedUtils.fed.fedreg import FedReg
+from FedUtils.fed.fedreg_local_eval import FedReg
 from torch.optim import SGD
 from torchvision import transforms
 
