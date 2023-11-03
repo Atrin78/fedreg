@@ -153,8 +153,9 @@ class Server(object):
         raise NotImplementedError
 
     def save_model(self, current_round):
-        save_dict = {"model": self.model.state_dict(), "round": current_round}
-        torch.save(save_dict, self.config["save_path"]+'_'+str(current_round)+".pt")
+        if self.config["save_path"] != None:
+            save_dict = {"model": self.model.state_dict(), "round": current_round}
+            torch.save(save_dict, self.config["save_path"]+'_'+str(current_round)+".pt")
         return
 
     def load_model(self):
