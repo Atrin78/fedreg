@@ -20,9 +20,9 @@ synthesize_label='cond'
 iters_admm=5
 iters_img=30
 param_gamma=0.001 
-param_admm_rho=0.05
+param_admm_rho=0.2
 add_bn_normalization = True
-lr_img = 10
+lr_img = 1
 momentum_img = 0.9
 data_size= 50
 warmup = 1
@@ -167,7 +167,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
                 loss.backward()
                 optimizer_s.step()
 
-           #     print(loss)
+                print(loss)
 
                 # images_s.clamp(0.0, 1.0)
                 gc.collect()
