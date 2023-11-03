@@ -22,8 +22,8 @@ iters_img=30
 param_gamma=0.001 
 param_admm_rho=0.2
 add_bn_normalization = True
-lr_img = 100
-momentum_img = 0.9
+lr_img = 10
+momentum_img = 0.5
 data_size= 50
 warmup = 1
 
