@@ -1,4 +1,4 @@
-from .server_mine import Server
+from .server import Server
 from loguru import logger
 import numpy as np
 from FedUtils.models.utils import decode_stat
@@ -9,39 +9,25 @@ import copy
 
 def step_func(model, data, fed):
     lr = model.learning_rate
-
-    if model.bottleneck != None:
-        parameters = list(model.net.parameters()) + list(model.bottleneck.parameters()) + list(model.head.parameters())
-    else:
-        parameters = list(model.net.parameters()) + list(model.head.parameters())
+    parameters = list(model.parameters())
     flop = model.flop
     gamma = fed.gamma
     add_mask = fed.add_mask
     beta = 0.5
 
     psuedo_data, perturb_data = [], []
-    for d in data[0]:
+    for d in data:
         x, y = d
         psuedo, perturb = fed.model.generate_fake(x, y)
         psuedo_data.append(psuedo)
         perturb_data.append(perturb)
-
     idx = 0
     median_model, old_model, penal_model = copy.deepcopy(fed.model), copy.deepcopy(fed.model), copy.deepcopy(fed.model)
-    if median_model.bottleneck != None:
-        median_parameters = list(median_model.net.parameters()) + list(median_model.bottleneck.parameters()) + list(median_model.head.parameters())
-    else:
-        median_parameters = list(median_model.net.parameters()) + list(median_model.head.parameters())
-    if old_model.bottleneck != None:
-        old_parameters = list(old_model.net.parameters()) + list(old_model.bottleneck.parameters()) + list(old_model.head.parameters())
-    else:
-        old_parameters = list(old_model.net.parameters()) + list(old_model.head.parameters())
-    if penal_model.bottleneck != None:
-        penal_parameters = list(penal_model.net.parameters()) + list(penal_model.bottleneck.parameters()) + list(penal_model.head.parameters())
-    else:
-        penal_parameters = list(penal_model.net.parameters()) + list(penal_model.head.parameters())
+    median_parameters = list(median_model.parameters())
+    old_parameters = list(old_model.parameters())
+    penal_parameters = list(penal_model.parameters())
 
-    def func(d):
+    def func(d, _):
         nonlocal idx, add_mask, beta, flop, gamma, lr
         model.train()
         median_model.train()
@@ -49,6 +35,7 @@ def step_func(model, data, fed):
         model.zero_grad()
         median_model.zero_grad()
         penal_model.zero_grad()
+
         x, y = d
         psd, ptd = psuedo_data[idx % len(psuedo_data)], perturb_data[idx % len(perturb_data)]
         idx += 1
@@ -102,9 +89,10 @@ class FedReg(Server):
         logger.info("Train with {} workers...".format(self.clients_per_round))
         epochs = self.num_epochs
         last_clients = None
-        for r in range(self.start_round+1,self.num_rounds):
+        for r in range(self.num_rounds):
             self.round = r
-
+            print('this is round')
+            print(r)
 
             if r % self.eval_every == 0:
                 logger.info("-- Log At Round {} --".format(r))
@@ -118,58 +106,56 @@ class FedReg(Server):
                 decode_stat(stats)
                 logger.info("-- TRAIN RESULTS --")
                 decode_stat(stats_train)
-                self.save_model(r)
-
-                global_stats = self.local_acc_loss(self.model)
+                
 
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
             active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
-            csolns = {}
-            list_clients = {}
+
+            csolns = []
+
             w = 0
-            self.global_classifier = list(self.model.head.parameters())
-            if self.model.bottleneck != None:
-                self.global_feature_extractor = list(self.model.net.parameters()) + list(self.model.bottleneck.parameters())
-            else:
-                self.global_feature_extractor = list(self.model.net.parameters())
-            self.local_classifier = [[] for l in self.global_classifier]
-            self.local_feature_extractor = [[] for l in self.global_feature_extractor]
-            self.F_in = []
-            self.F_out = []
-            self.loss_in = []
-            self.loss_out = []
-            self.CKA = []
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=partial(step_func, fed=self))
+                
+                if last_clients is not None:
+                    print(c.id)
+                    stats_clients = self.local_train_error_and_loss_clients(c.model, last_clients)
+                    logger.info("-- Last Client RESULTS --")
+                    decode_stat(stats_clients)
+                #if r > sum(stats_clients[4]):
+
                 soln = [1.0, soln[1]]
                 w += soln[0]
                 if len(csolns) == 0:
-                    for x in soln[1]:
-                        csolns[x] = soln[1][x].detach()*soln[0]
-                        list_clients[x] = [soln[1][x].detach()*soln[0]]
+                    csolns = {x: soln[1][x].detach()*soln[0] for x in soln[1]}
                 else:
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
-                        list_clients[x].append(soln[1][x].detach()*soln[0])
-                if r % self.eval_every == 0:
-                    # cka = c.get_cka(self.model)
-                    # if cka != None:
-                    #     self.CKA.append(cka)
-                    local_stats = self.local_acc_loss(c.model)
-                    self.local_forgetting(c.id , global_stats, local_stats)
-                del c
-
-            if r % self.eval_every == 0:
-                # pass
-                # self.compute_cka()
-                self.compute_forgetting()
+                #del c
 
             csolns = [[w, {x: csolns[x]/w for x in csolns}]]
-            self.compute_divergence(list_clients)
-            self.latest_model = self.aggregate(csolns)
 
+            #if last_clients is not None:
+            #    for idx, c in enumerate(active_clients):
+            #        print(c.id)
+            #        stats_clients = self.local_train_error_and_loss_clients(c.model, last_clients)
+            #        logger.info("-- Last Client RESULTS --")
+            #        decode_stat(stats_clients)
+            #        del c
+
+            self.latest_model = self.aggregate(csolns)
+            #if last_clients is not None:
+            #    stats_clients = self.train_error_and_loss_clients(last_clients)
+            #    logger.info("-- Last Client RESULTS --")
+            #    decode_stat(stats_clients)
+            #last_clients = active_clients
+            #stats_clients = self.train_error_and_loss_clients(active_clients)
+            #logger.info("-- Active Client RESULTS --")
+            #decode_stat(stats_clients)
+
+           # print(self.model.get_param()['net.0.weight'][0])
 
         logger.info("-- Log At Round {} --".format(r))
         stats = self.test()
