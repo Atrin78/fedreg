@@ -4,6 +4,7 @@ import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
 from loguru import logger
 from torch_cka import CKA
+import random
 
 
 class Client(object):
@@ -59,7 +60,8 @@ class Client(object):
         if self.gen_data is None:
             data_loaders = [self.train_data]
         else:
-            gen_dataloader = DataLoader(self.gen_data, batch_size=self.batchsize*4, shuffle=True, drop_last=self.drop_last)
+            indices = random.choices(range(len(self.gen_data)), k=len(self.train_data))
+            gen_dataloader = DataLoader(self.gen_data, batch_size=self.batchsize, shuffle=True, drop_last=self.drop_last, sampler=indices)
             data_loaders = [self.train_data, gen_dataloader]
         soln, comp, weight = self.model.solve_inner(data_loaders, num_epochs=num_epochs, step_func=step_func)
         bytes_r = self.model.size

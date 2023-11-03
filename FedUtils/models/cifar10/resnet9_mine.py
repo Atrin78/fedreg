@@ -298,7 +298,6 @@ class Model(nn.Module):
             for train_loader in data:
                 train_iters.append(iter(train_loader))
             for step in range(len(train_iters[0])):
-                print(len(train_iters[0]))
            #     xt, yt = None, None
            #     wt = None
                 for i, train_iter in enumerate(train_iters):
@@ -322,8 +321,8 @@ class Model(nn.Module):
                         comp += c
                         steps += 1.0
                     except Exception as e:
-                        pass
-                    #    print(e)
+                    #    pass
+                        print('h')
                         
              #   c = func([xt, yt], wt)
              #   comp += c
