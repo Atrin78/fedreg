@@ -22,6 +22,8 @@ def step_func(model, data, fed):
         psuedo_data.append(psuedo)
         perturb_data.append(perturb)
     idx = 0
+    print(len(psuedo_data))
+    print(len(perturb_data))
     median_model, old_model, penal_model = copy.deepcopy(fed.model), copy.deepcopy(fed.model), copy.deepcopy(fed.model)
     median_parameters = list(median_model.parameters())
     old_parameters = list(old_model.parameters())
