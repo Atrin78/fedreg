@@ -45,7 +45,7 @@ def step_func(model, data):
         pred = model.forward(x)
         loss = torch.mul(model.loss(pred, y), w)
         print(w)
-        print(loss)
+        print(loss.mean())
         loss = loss.mean()
         grad = torch.autograd.grad(loss, parameters)
         total_norm = 0
