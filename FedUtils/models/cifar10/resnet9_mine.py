@@ -161,7 +161,7 @@ class Model(nn.Module):
 
         self.net = FixupResNet9_fe()
         self.bottleneck = None
-        self.head = nn.Linear(512, 10)
+        self.head = FixupResNet9_head()
 
 
         self.size = sys.getsizeof(self.state_dict())
