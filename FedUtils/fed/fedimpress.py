@@ -47,7 +47,7 @@ def step_func(model, data):
         #print(w)
         #print(loss.mean())
         loss = loss.mean()
-        grad = torch.autograd.grad(loss, parameters, allow_unused=True)
+        grad = torch.autograd.grad(loss, parameters)
         total_norm = 0
         for p, g in zip(parameters, grad):
             p.data.add_(-lr*g)

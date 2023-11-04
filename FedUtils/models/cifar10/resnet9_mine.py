@@ -120,7 +120,7 @@ class FixupResNet9_head(nn.Module):
         self.num_layers = 2
         self.channels = channels or {"prep": 64, "layer1": 128,
                                      "layer2": 256, "layer3": 512}
-        self.bias2 = nn.Parameter(torch.zeros(1))
+     #   self.bias2 = nn.Parameter(torch.zeros(1))
         self.linear = nn.Linear(self.channels["layer3"], 10)
 
         initialize(self.modules(),self.num_layers)
