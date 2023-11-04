@@ -147,7 +147,7 @@ class FixupResNet9_head(nn.Module):
                 m.conv.weight.data.clamp_(-std*2, std*2)
 
     def forward(self, x):
-        out = self.linear(x + self.bias2)
+        out = self.linear(x)
         return out
 
 
