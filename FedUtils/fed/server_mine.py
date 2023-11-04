@@ -159,7 +159,7 @@ class Server(object):
 
     def load_model(self):
         load_dict = torch.load(self.config["load_path"])
-        self.model.load_state_dict(load_dict["model"])
+        self.model.load_state_dict(load_dict["model"], strict=False)
         self.start_round = load_dict["round"]
         return
 
