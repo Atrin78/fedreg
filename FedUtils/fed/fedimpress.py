@@ -25,7 +25,7 @@ synthesize_label='cond'
 iters_admm=5
 iters_img=30
 param_gamma=0.001 
-param_admm_rho=0.5
+param_admm_rho=0.2
 add_bn_normalization = True
 lr_img = 20
 momentum_img = 0.9
@@ -300,6 +300,7 @@ class FedImpress(Server):
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
                 soln = [1.0, soln[1]]
                 w += soln[0]
+                local_stats = self.local_acc_loss(c.model)
                 if len(csolns) == 0:
                     for x in soln[1]:
                         csolns[x] = soln[1][x].detach()*soln[0]
@@ -312,7 +313,7 @@ class FedImpress(Server):
                     # cka = c.get_cka(self.model)
                     # if cka != None:
                     #     self.CKA.append(cka)
-                    local_stats = self.local_acc_loss(c.model)
+                    #local_stats = self.local_acc_loss(c.model)
                     self.local_forgetting(c.id , global_stats, local_stats)
                 del c
 
