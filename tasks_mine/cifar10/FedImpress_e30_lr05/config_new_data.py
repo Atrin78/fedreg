@@ -42,7 +42,7 @@ config = {
     "use_fed": 1,
     "log_path": "tasks_mine/cifar10/FedImpress_e30_lr05/train_pretrain_new_data_final_30.log",
     "save_path": "/home/atrin/fedreg/cifar10_models/FedImpress_e30_lr05",
-    "load_path": "tasks_mine/cifar10/FedImpress_e30_lr05/FedAvg_e30_lr05_pretrain_new_data_final_30_10.pt",
+    "load_path": "tasks_mine/cifar10/FedImpress_e30_lr05/FedAvg_e30_lr05_pretrain_new_data_final_30_10.pt", 
 
     "train_transform": transform_train,
     "test_transform": transform_test,
