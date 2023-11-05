@@ -44,8 +44,8 @@ def step_func(model, data):
         x, y = d
         pred = model.forward(x)
         loss = torch.mul(model.loss(pred, y), w)
-        print(w)
-        print(loss.mean())
+        #print(w)
+        #print(loss.mean())
         loss = loss.mean()
         grad = torch.autograd.grad(loss, parameters)
         total_norm = 0
@@ -271,7 +271,6 @@ class FedImpress(Server):
                 gen_dataset = torch.tensor(gen_dataset)
                 gen_labels = torch.tensor(gen_labels)
                 vir_dataset = TensorDataset(gen_dataset, gen_labels)
-
 
             self.model = self.model_type(*self.model_param, self.inner_opt)
 
