@@ -32,7 +32,7 @@ config = {
     "eval_every": 1,
     "drop_percent": 0.0,
     "num_epochs": 30,
-    "batch_size": 50,
+    "batch_size": 100,
     "number_of_clients": 10,
     "partition_method": "lda",
     "shard_per_user": 2,

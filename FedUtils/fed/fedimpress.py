@@ -29,7 +29,7 @@ param_admm_rho=0.2
 add_bn_normalization = True
 lr_img = 0.1
 momentum_img = 0.9
-data_size= 10000
+data_size= 5000
 warmup = 0
 
 def step_func(model, data):
