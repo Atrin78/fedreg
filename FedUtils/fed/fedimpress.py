@@ -24,12 +24,12 @@ class_num=10
 synthesize_label='cond'
 iters_admm=5
 iters_img=30
-param_gamma=0.001 
+param_gamma=0.1 
 param_admm_rho=0.2
 add_bn_normalization = True
 lr_img = 0.1
 momentum_img = 0.9
-data_size= 2000
+data_size= 500
 warmup = 0
 
 def step_func(model, data):
