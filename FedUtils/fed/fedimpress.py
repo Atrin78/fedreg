@@ -34,7 +34,8 @@ warmup = 0
 
 def step_func(model, data):
     lr = model.learning_rate
-    parameters = list(model.parameters())
+    #parameters = list(model.parameters())
+    parameters = list(model.head.parameters())
     flop = model.flop
 
     def func(d, w):
@@ -272,7 +273,7 @@ class FedImpress(Server):
                 gen_labels = torch.tensor(gen_labels)
                 vir_dataset = TensorDataset(gen_dataset, gen_labels)
 
-            self.model = self.model_type(*self.model_param, self.inner_opt)
+            #self.model = self.model_type(*self.model_param, self.inner_opt)
 
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
