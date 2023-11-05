@@ -9,6 +9,7 @@ from FedUtils.models.utils import decode_stat
 class Server(object):
     def __init__(self, config, Model, data_distributed, active_layers = None,publicdataset=None):
         super(Server, self).__init__()
+        self.model_type = Model
         self.config = config
         self.model_param = config["model_param"]
         self.inner_opt = config["inner_opt"]

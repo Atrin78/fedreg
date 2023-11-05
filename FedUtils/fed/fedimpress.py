@@ -256,6 +256,25 @@ class FedImpress(Server):
 
                 global_stats = self.local_acc_loss(self.model)
 
+            transform_mnist = transforms.Compose(
+            [
+             transforms.ToTensor(),
+             torchvision.transforms.Resize(32),
+             transforms.Lambda(lambda x: torch.stack([x,x,x],-1)),
+             ])
+            if r >= warmup:
+                mnist = torchvision.datasets.MNIST(root='./data', train=True,
+                                                  download=True, transform=transform_mnist)
+                mnist = torch.utils.data.Subset(mnist, list(range(data_size)))
+                gen_loader = torch.utils.data.DataLoader(mnist, batch_size=self.batch_size, shuffle=True)
+                gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size)
+                gen_dataset = torch.tensor(gen_dataset)
+                gen_labels = torch.tensor(gen_labels)
+                vir_dataset = TensorDataset(gen_dataset, gen_labels)
+
+
+            self.model = self.model_type(*self.model_param, self.inner_opt)
+
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
             active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
@@ -276,21 +295,7 @@ class FedImpress(Server):
             self.CKA = []
             
 
-            transform_mnist = transforms.Compose(
-            [
-             transforms.ToTensor(),
-             torchvision.transforms.Resize(32),
-             transforms.Lambda(lambda x: torch.stack([x,x,x],-1)),
-             ])
-            if r >= warmup:
-                mnist = torchvision.datasets.MNIST(root='./data', train=True,
-                                                  download=True, transform=transform_mnist)
-                mnist = torch.utils.data.Subset(mnist, list(range(data_size)))
-                gen_loader = torch.utils.data.DataLoader(mnist, batch_size=self.batch_size, shuffle=True)
-                gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size)
-                gen_dataset = torch.tensor(gen_dataset)
-                gen_labels = torch.tensor(gen_labels)
-                vir_dataset = TensorDataset(gen_dataset, gen_labels)
+            
 
 
 
