@@ -35,7 +35,7 @@ warmup = 0
 def step_func(model, data):
     lr = model.learning_rate
     #parameters = list(model.parameters())
-    parameters = list(model.head.parameters())
+    parameters = list(model.parameters())
     flop = model.flop
 
     def func(d, w):
