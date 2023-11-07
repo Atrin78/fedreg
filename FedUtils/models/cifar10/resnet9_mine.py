@@ -190,7 +190,7 @@ class Model(nn.Module):
             if self.bottleneck != None:
                 self.bottleneck = self.bottleneck.cuda()
     def set_param(self, state_dict):
-        self.load_state_dict(state_dict)
+        self.load_state_dict(state_dict, strict=False)
         return True
 
     def get_param(self):
