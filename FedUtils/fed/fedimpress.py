@@ -35,35 +35,6 @@ warmup = 0
 def step_func(model, data):
     lr = model.learning_rate
     #parameters = list(model.parameters())
-    parameters = list(model.head.linear.parameters())
-    flop = model.flop
-
-    def func(d, w):
-        nonlocal flop, lr
-        model.train()
-        model.zero_grad()
-        x, y = d
-        pred = model.forward(x)
-        loss = torch.mul(model.loss(pred, y), w)
-        #print(w)
-        if loss.mean() > 5:
-            print(loss.mean())
-        #print(loss.mean())
-        loss = loss.mean()
-        grad = torch.autograd.grad(loss, parameters)
-        total_norm = 0
-        for p, g in zip(parameters, grad):
-            p.data.add_(-lr*g)
-            total_norm += torch.norm(g)**2
-    #    print(w)
-    #    print(total_norm)
-        return flop*len(x)
-    return func
-
-
-def step_func(active_layer, model, data):
-    lr = model.learning_rate
-    #parameters = list(model.parameters())
     parameters = list(model.head.parameters())
     flop = model.flop
 
