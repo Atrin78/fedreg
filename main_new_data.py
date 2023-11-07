@@ -72,7 +72,9 @@ def main():
             layers = ['net.0', 'net.2', 'net.5', 'bottleneck.0', 'head.0']
         #cifar
         if config["dataset_name"] == "cifar10":
-            layers = ['net.conv1', 'net.layer1.conv', 'net.layer1.blocks.0.conv1', 'net.layer1.blocks.0.conv2', 'net.layer2.conv', 'net.layer3.conv', 'net.layer3.blocks.0.conv1', 'net.layer3.blocks.0.conv2', 'head.linear']
+            # layers = ['net.conv1', 'net.layer1.conv', 'net.layer1.blocks.0.conv1', 'net.layer1.blocks.0.conv2', 'net.layer2.conv', 'net.layer3.conv', 'net.layer3.blocks.0.conv1', 'net.layer3.blocks.0.conv2', 'head.linear']
+            layers = ['head.linear']
+
 
         if config["local_train"]:
             for l in layers:
