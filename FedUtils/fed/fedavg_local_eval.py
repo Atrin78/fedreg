@@ -116,6 +116,13 @@ class FedAvg(Server):
                 c.set_param(self.model.get_param())
                 coef=1
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=partial(step_func,self.active_layers))  # stats has (byte w, comp, byte r)
+                if r % self.eval_every == 0:
+
+                    # cka = c.get_cka(self.model)
+                    # if cka != None:
+                    #     self.CKA.append(cka)
+                    local_stats = self.local_acc_loss(c.model)
+                    self.local_forgetting(c.id , global_stats, local_stats)
                 soln = [1.0, soln[1]]
                 w += soln[0]
                 if len(csolns) == 0:
@@ -126,13 +133,6 @@ class FedAvg(Server):
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
                         list_clients[x].append(soln[1][x].detach()*soln[0])
-                if r % self.eval_every == 0:
-
-                    # cka = c.get_cka(self.model)
-                    # if cka != None:
-                    #     self.CKA.append(cka)
-                    local_stats = self.local_acc_loss(c.model)
-                    self.local_forgetting(c.id , global_stats, local_stats)
                 del c
 
             if r % self.eval_every == 0:
