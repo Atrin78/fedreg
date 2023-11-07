@@ -302,7 +302,7 @@ class FedImpress(Server):
 
 
             for idx, c in enumerate(active_clients):
-                c.set_param_part(self.model.get_param())
+                c.set_param(self.model.get_param())
                 if r>= warmup:
                     c.gen_data = vir_dataset
                 coef=1
