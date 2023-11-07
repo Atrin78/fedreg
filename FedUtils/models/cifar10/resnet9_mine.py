@@ -288,12 +288,14 @@ class Model(nn.Module):
         if step_func is None:
             func = self.train_onestep
         else:
-            func = step_func(self, data[0])
+            if len(data)!=1:
+                func = [step_func(self, data[0], False), step_func(self, data[0], True)]
+            else:
+                func = step_func(self, data[0])
 
         for _ in range(num_epochs):
             train_iters = []
             train_w = [1, 1]
-            synth = [False, True]
             if len(data)==1:
                 train_w = [1.0]
             for train_loader in data:
@@ -316,7 +318,7 @@ class Model(nn.Module):
                #             yt = torch.cat((yt, y), 0)
                #             wt = torch.cat((wt, w * train_w[i]), 0)
                         if len(data)!=1:
-                            c = func([x, y], train_w[i], synth[i])
+                            c = func[i]([x, y], train_w[i])
                         else:
                             c = func([x, y])
                         comp += c
