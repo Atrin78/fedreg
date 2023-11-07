@@ -292,7 +292,8 @@ class Model(nn.Module):
 
         for _ in range(num_epochs):
             train_iters = []
-            train_w = [0.5, 1]
+            train_w = [1, 1]
+            synth = [False, True]
             if len(data)==1:
                 train_w = [1.0]
             for train_loader in data:
@@ -315,7 +316,7 @@ class Model(nn.Module):
                #             yt = torch.cat((yt, y), 0)
                #             wt = torch.cat((wt, w * train_w[i]), 0)
                         if len(data)!=1:
-                            c = func([x, y], train_w[i])
+                            c = func([x, y], train_w[i], synth[i])
                         else:
                             c = func([x, y])
                         comp += c

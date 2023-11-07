@@ -32,10 +32,13 @@ momentum_img = 0.9
 data_size= 500
 warmup = 0
 
-def step_func(model, data):
+def step_func(model, data, synth=False):
     lr = model.learning_rate
     #parameters = list(model.parameters())
-    parameters = list(model.parameters())
+    if synth:
+        parameters = list(model.head.parameters())
+    else:
+        parameters = list(model.parameters())
     flop = model.flop
 
     def func(d, w):
@@ -59,6 +62,7 @@ def step_func(model, data):
     #    print(total_norm)
         return flop*len(x)
     return func
+
 
 
 
