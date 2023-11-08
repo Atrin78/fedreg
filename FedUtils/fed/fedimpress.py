@@ -134,8 +134,8 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
     for i in range(iters_admm):
         
         for j in range(5):
-            print(gen_dataset[j].shape)
-            plt.imsave('imgs/pic'+str(j)+'-'+str(i), gen_dataset[j])
+            print(gen_dataset[j].cpu().numpy().shape)
+            plt.imsave('imgs/pic'+str(j)+'-'+str(i), gen_dataset[j].cpu().numpy())
 
         print(f'admm iter: {i}/{iters_admm}')
 
