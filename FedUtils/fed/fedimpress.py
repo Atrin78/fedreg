@@ -23,12 +23,12 @@ from matplotlib import pyplot as plt
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
 synthesize_label='cond'
-iters_admm=20
+iters_admm=5
 iters_img=30
 param_gamma=0.001 
 param_admm_rho=0.2
 add_bn_normalization = True
-lr_img = 1
+lr_img = 100
 momentum_img = 0.9
 data_size= 500
 warmup = 0
@@ -133,9 +133,9 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
 
     for i in range(iters_admm):
         
-        for j in range(5):
-            print(gen_dataset[j].cpu().numpy().shape)
-            plt.imsave('imgs/pic'+str(j)+'-'+str(i), gen_dataset[j].cpu().numpy())
+        #for j in range(5):
+        #    print(gen_dataset[j].cpu().numpy().shape)
+        #    plt.imsave('imgs/pic'+str(j)+'-'+str(i), gen_dataset[j].cpu().numpy())
 
         print(f'admm iter: {i}/{iters_admm}')
 
