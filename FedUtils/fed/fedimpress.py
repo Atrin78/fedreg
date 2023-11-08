@@ -22,7 +22,7 @@ from torch_cka import CKA
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
 synthesize_label='cond'
-iters_admm=5
+iters_admm=0
 iters_img=30
 param_gamma=0.001 
 param_admm_rho=0.2
