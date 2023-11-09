@@ -48,16 +48,16 @@ def step_func(model, data, synth=False):
         model.zero_grad()
         x, y = d
         pred = model.forward(x)
-        l2_reg = torch.tensor(0.).to(device)
-        for param in model.parameters():
-            l2_reg += torch.norm(param)
-        loss_reg = param_gamma * l2_reg * w
+        #l2_reg = torch.tensor(0.).to(device)
+        #for param in model.parameters():
+        #    l2_reg += torch.norm(param)
+        #loss_reg = param_gamma * l2_reg * w
         loss = torch.mul(model.loss(pred, y), w)
         #print(w)
         if loss.mean() > 5:
             print(loss.mean())
         #print(loss.mean())
-        loss = loss.mean() + loss_reg
+        loss = loss.mean() 
         grad = torch.autograd.grad(loss, parameters)
         total_norm = 0
         for p, g in zip(parameters, grad):
@@ -195,7 +195,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
 
                 print(loss)
 
-                # images_s.clamp(0.0, 1.0)
+                images_s.clamp(0.0, 1.0)
                 gc.collect()
 
 
