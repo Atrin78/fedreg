@@ -286,6 +286,9 @@ class FedImpress(Server):
 
                 global_stats = self.local_acc_loss(self.model)
 
+            if os.path.exists(save_dir):
+                print("Directory already exists ...")
+
             transform_mnist = transforms.Compose(
             [
              transforms.ToTensor(),
