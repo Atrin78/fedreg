@@ -238,8 +238,11 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
 
         save_dir = os.path.join(save_dir, "admm_"+str(i)+".png")
         print("saving image dir to", save_dir)
+
         print(original_dataset.squeeze(1)[0:20].shape,gen_dataset.squeeze(1)[0:20].shape)
-        vutils.save_image(torch.cat((original_dataset.squeeze(1)[0:20],gen_dataset.squeeze(1)[0:20]),0), save_dir ,
+        original_dataset_lost = [original_dataset.squeeze(1)[i, :, :] for i in range(20)]
+        gen_dataset_lost = [gen_dataset.squeeze(1)[i, :, :] for i in range(20)]
+        vutils.save_image(original_dataset_lost+gen_dataset_lost, save_dir ,
                             normalize=True, scale_each=True, nrow=int(10))
         plt.style.use('dark_background')
         fig = plt.figure()
