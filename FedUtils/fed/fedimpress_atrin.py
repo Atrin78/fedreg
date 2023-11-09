@@ -27,12 +27,12 @@ from matplotlib import pyplot as plt
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
 synthesize_label='real'
-iters_admm= 1
-iters_img=1
+iters_admm= 3000
+iters_img=10
 param_gamma=0.001 
 param_admm_rho=0.2
 add_bn_normalization = False
-lr_img = 0.001
+lr_img = 0.01
 momentum_img = 0.9
 data_size= 40
 warmup = 0
@@ -55,8 +55,8 @@ def step_func(model, data, synth=False):
         pred = model.forward(x)
         loss = torch.mul(model.loss(pred, y), w)
         #print(w)
-        if loss.mean() > 5:
-            print(loss.mean())
+        # if loss.mean() > 5:
+        #     print('Im here',loss.mean())
         #print(loss.mean())
         loss = loss.mean()
         grad = torch.autograd.grad(loss, parameters)
@@ -106,9 +106,9 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
             elif synthesize_label == 'pred' or mode == 'test':
                 gen_labels = labels_s
             else:
-                print('hereee')
+                # print('hereee')
                 gen_labels = labels_real
-            original_dataset = images_s
+            original_dataset = images_s.clone().detach()
             original_labels = labels_real
         else:
             gen_dataset = torch.cat((gen_dataset, images_s), 0)
@@ -119,7 +119,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
                 gen_labels = torch.cat((gen_labels, labels_s), 0)
             else:
                 gen_labels = torch.cat((gen_labels, labels_real), 0)
-            original_dataset = torch.cat((original_dataset, images_s), 0)
+            original_dataset = torch.cat((original_dataset, images_s.clone().detach()), 0)
             original_labels = torch.cat((original_labels, labels_real), 0)
 
 #    if args.noise_init:
@@ -196,8 +196,11 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
                 optimizer_s.zero_grad()
                 loss.backward()
                 optimizer_s.step()
+                max_image = torch.max(images_s).clone().detach()
+                min_image = torch.min(images_s).clone().detach()
+                images_s = (images_s - min_image)/(max_image- min_image)
 
-                print(loss,torch.max(images_s),torch.min(images_s))
+                print(f'loss: {loss.cpu().numpy()},max: {torch.max(images_s).cpu().numpy()},min: {torch.min(images_s).cpu().numpy()}')
 
                 # images_s.clamp(0.0, 1.0)
                 gc.collect()
@@ -235,28 +238,28 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
     #         hook.close()
 
 
-        # save_path = os.path.join(save_dir, "admm_"+str(i)+".png")
-        # print("saving image dir to", save_path,torch.min(original_dataset), torch.max(original_dataset))
-        # print("saving image dir to", save_path,torch.min(gen_dataset), torch.max(gen_dataset))
-        # normalized_original_dataset = original_dataset - torch.min(original_dataset) / (torch.max(original_dataset) - torch.min(original_dataset))
-        # normalized_gen_dataset = gen_dataset - torch.min(gen_dataset) / (torch.max(gen_dataset) - torch.min(gen_dataset))
+        save_path = os.path.join(save_dir, "admm_"+str(i)+".png")
+        print("saving image dir to", save_path,torch.min(original_dataset), torch.max(original_dataset))
+        print("saving image dir to", save_path,torch.min(gen_dataset), torch.max(gen_dataset))
+        normalized_original_dataset = original_dataset - torch.min(original_dataset) / (torch.max(original_dataset) - torch.min(original_dataset))
+        normalized_gen_dataset = gen_dataset - torch.min(gen_dataset) / (torch.max(gen_dataset) - torch.min(gen_dataset))
 
-        # print(original_dataset.squeeze(1)[0:20].shape,gen_dataset.squeeze(1)[0:20].shape)
-        # # original_dataset_lost = [normalized_original_dataset.squeeze(1)[i, :, :, :] for i in range(20)]
-        # # gen_dataset_lost = [normalized_gen_dataset.squeeze(1)[i, :, :, :] for i in range(20)]
-        # # print(len(original_dataset_lost+gen_dataset_lost))
-        # vutils.save_image(torch.cat((normalized_original_dataset.squeeze(1)[0:20],normalized_gen_dataset.squeeze(1)[0:20])), save_path ,
-        #                     normalize=True, scale_each=True, nrow=int(10))
-        # plt.style.use('dark_background')
-        # fig = plt.figure()
-        # ax = fig.add_subplot()
-        # image = plt.imread(save_path)
-        # ax.imshow(image)
-        # ax.axis('off')
-        # fig.set_size_inches(4 * 5, 4*10 )
-        # plt.title("ori_labels= "+str(original_labels[0:20])+"\n gen_labels="+str(gen_labels[0:20]), fontweight="bold")
-        # plt.savefig(save_path)
-        # plt.close()
+        print(original_dataset.squeeze(1)[0:20].shape,gen_dataset.squeeze(1)[0:20].shape)
+        # original_dataset_lost = [normalized_original_dataset.squeeze(1)[i, :, :, :] for i in range(20)]
+        # gen_dataset_lost = [normalized_gen_dataset.squeeze(1)[i, :, :, :] for i in range(20)]
+        # print(len(original_dataset_lost+gen_dataset_lost))
+        vutils.save_image(torch.cat((normalized_original_dataset.squeeze(1)[0:20],normalized_gen_dataset.squeeze(1)[0:20])), save_path ,
+                            normalize=True, scale_each=True, nrow=int(10))
+        plt.style.use('dark_background')
+        fig = plt.figure()
+        ax = fig.add_subplot()
+        image = plt.imread(save_path)
+        ax.imshow(image)
+        ax.axis('off')
+        fig.set_size_inches(4 * 5, 4*10 )
+        plt.title("ori_labels= "+str(original_labels[0:20])+"\n gen_labels="+str(gen_labels[0:20]), fontweight="bold")
+        plt.savefig(save_path)
+        plt.close()
 
     return gen_dataset, gen_labels, original_dataset ,original_labels
 
