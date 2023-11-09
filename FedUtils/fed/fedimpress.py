@@ -23,7 +23,7 @@ from matplotlib import pyplot as plt
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
 synthesize_label='cond'
-iters_admm=15
+iters_admm=5
 iters_img=30
 param_gamma=0.001 
 param_admm_rho=0.2
@@ -134,7 +134,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
     for i in range(iters_admm):
         
         #for j in range(5):
-        #    print(gen_dataset[j].cpu().detach().numpy().shape)
+        #print(gen_dataset.cpu().detach().numpy().shape)
         #    im = gen_dataset[j][0].cpu().detach().numpy()
         #    im = (im - np.min(im))/(np.max(im) - np.min(im))
         #    plt.imsave('imgs/pic'+str(j)+'-'+str(i)+'.jpg', im)
@@ -283,6 +283,7 @@ class FedImpress(Server):
                 gen_loader = torch.utils.data.DataLoader(mnist, batch_size=self.batch_size, shuffle=True)
                 gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size)
                 gen_dataset = torch.tensor(gen_dataset)
+                print(gen_dataset.cpu().detach().numpy().shape)
                 gen_labels = torch.tensor(gen_labels)
                 vir_dataset = TensorDataset(gen_dataset, gen_labels)
 
