@@ -96,7 +96,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
 
 
     for batch_idx, (images_s, labels_real) in enumerate(gen_loader):
-        print(batch_idx,len(images_s))
+        print(batch_idx,len(images_s),images_s.shape)
         images_s = images_s.to(device)
         y_s,_ = src_model.forward_emb(images_s)
         labels_s = y_s.argmax(dim=1)
