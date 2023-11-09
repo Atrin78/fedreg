@@ -256,6 +256,17 @@ class Model(nn.Module):
         if self.bottleneck != None:
             out = self.bottleneck(out)
         return out
+    
+    def forward_emb(self, data):
+        if data.device != next(self.parameters()).device:
+            data = data.to(next(self.parameters()).device)
+        data = data.reshape(-1, 3, 32, 32)
+        out = self.net(data)
+        if self.bottleneck != None:
+            out = self.bottleneck(out)
+        pred = self.head(out)
+        return pred, out
+    
     def train_onestep(self, data):
         self.train()
         self.zero_grad()
@@ -276,18 +287,28 @@ class Model(nn.Module):
             func = self.train_onestep
         else:
             func = step_func(self, data)
+            if len(data)!=1:
+                func = [step_func(self, data[0], False), step_func(self, data[0], True)]
+            else:
+                func = step_func(self, data[0])
 
         for _ in range(num_epochs):
             train_iters = []
+            train_w = [1, 1]
+            if len(data)==1:
+                train_w = [1.0]
             for train_loader in data:
                 train_iters.append(iter(train_loader))
             for step in range(len(train_iters[0])):
                 
-                for i, train_iter in enumerate(train_iters[:1]):
+                for i, train_iter in enumerate(train_iters):
                     try:
                         x, y = next(train_iter)
 
-                        c = func([x, y])
+                        if len(data)!=1:
+                            c = func[i]([x, y], train_w[i])
+                        else:
+                            c = func([x, y])
                         comp += c
                         steps += 1.0
                     except Exception as e:

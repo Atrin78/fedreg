@@ -10,6 +10,7 @@ class Server(object):
     def __init__(self, config, Model, data_distributed, active_layers = None,publicdataset=None):
         super(Server, self).__init__()
         self.config = config
+        self.model_type = Model
         self.model_param = config["model_param"]
         self.inner_opt = config["inner_opt"]
         self.clients_per_round = config["clients_per_round"]
