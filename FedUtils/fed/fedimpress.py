@@ -283,7 +283,7 @@ class FedImpress(Server):
                 gen_loader = torch.utils.data.DataLoader(mnist, batch_size=self.batch_size, shuffle=True)
                 gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size)
                 gen_dataset = torch.tensor(gen_dataset)
-                print(gen_dataset.cpu().detach().numpy().shape)
+                gen_dataset = torch.squeeze(torch.swapaxes(gen_dataset, 1, 4), -1)
                 gen_labels = torch.tensor(gen_labels)
                 vir_dataset = TensorDataset(gen_dataset, gen_labels)
 
