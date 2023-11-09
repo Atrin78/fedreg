@@ -48,7 +48,7 @@ def step_func(model, data, synth=False):
         model.zero_grad()
         x, y = d
         pred = model.forward(x)
-        l2_reg = torch.tensor(0.)
+        l2_reg = torch.tensor(0.).to(device)
         for param in model.parameters():
             l2_reg += torch.norm(param)
         loss_reg = param_gamma * l2_reg * w
