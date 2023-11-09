@@ -239,12 +239,14 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
         save_dir = os.path.join(save_dir, "admm_"+str(i)+".png")
         print("saving image dir to", save_dir,torch.min(original_dataset), torch.max(original_dataset))
         print("saving image dir to", save_dir,torch.min(gen_dataset), torch.max(gen_dataset))
+        normalized_original_dataset = original_dataset - torch.min(original_dataset) / (torch.max(original_dataset) - torch.min(original_dataset))
+        normalized_gen_dataset = gen_dataset - torch.min(gen_dataset) / (torch.max(gen_dataset) - torch.min(gen_dataset))
 
         print(original_dataset.squeeze(1)[0:20].shape,gen_dataset.squeeze(1)[0:20].shape)
-        original_dataset_lost = [original_dataset.squeeze(1)[i, :, :, :] for i in range(20)]
-        gen_dataset_lost = [gen_dataset.squeeze(1)[i, :, :, :] for i in range(20)]
-        print(len(original_dataset_lost+gen_dataset_lost))
-        vutils.save_image(original_dataset_lost+gen_dataset_lost, save_dir ,
+        # original_dataset_lost = [normalized_original_dataset.squeeze(1)[i, :, :, :] for i in range(20)]
+        # gen_dataset_lost = [normalized_gen_dataset.squeeze(1)[i, :, :, :] for i in range(20)]
+        # print(len(original_dataset_lost+gen_dataset_lost))
+        vutils.save_image(torch.cat((normalized_original_dataset.squeeze(1)[0:20],normalized_gen_dataset.squeeze(1)[0:20])), save_dir ,
                             normalize=True, scale_each=True, nrow=int(10))
         plt.style.use('dark_background')
         fig = plt.figure()
