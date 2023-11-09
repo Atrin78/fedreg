@@ -12,20 +12,24 @@ from functools import partial
 from torch.utils.data import TensorDataset
 import torchvision.transforms as transforms
 import torchvision
-
+import random
+import matplotlib.pyplot as plt
+import os 
+import torchvision.utils as vutils
 
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
-synthesize_label='cond'
-iters_admm=5
+synthesize_label='real'
+iters_admm=10
 iters_img=30
 param_gamma=0.001 
 param_admm_rho=0.2
-add_bn_normalization = True
-lr_img = 100
+add_bn_normalization = False
+lr_img = 1
 momentum_img = 0.9
-data_size= 200
+data_size= 40
 warmup = 0
+save_dir = "tasks_mine/mnist/FedImpress_e30_lr05/images/"
 
 def step_func(model, data):
     lr = model.learning_rate
@@ -45,8 +49,7 @@ def step_func(model, data):
         for p, g in zip(parameters, grad):
             p.data.add_(-lr*g)
             total_norm += torch.norm(g)**2
-    #    print(w)
-    #    print(total_norm)
+
         return flop*len(x)
     return func
 
@@ -58,7 +61,7 @@ def labels_to_one_hot(labels, num_class, device):
     return labels_one_hot
 
     
-def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, batch_size, add_bn_normalization=True, mode='train'):
+def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, batch_size, add_bn_normalization=False, mode='train'):
 
     src_model.eval()
     LAMB = torch.zeros_like(src_model.head.weight.data).to(device)
@@ -66,11 +69,6 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
     gen_labels = None
     original_dataset = None
     original_labels = None
-    if add_bn_normalization:
-        loss_r_feature_layers = []
-        for module in src_model.modules():
-            if isinstance(module, nn.BatchNorm2d):
-                loss_r_feature_layers.append(DeepInversionFeatureHook(module))
 
 
     for batch_idx, (images_s, labels_real) in enumerate(gen_loader):
@@ -85,7 +83,6 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
             elif synthesize_label == 'pred' or mode == 'test':
                 gen_labels = labels_s
             else:
-                print('hereee')
                 gen_labels = labels_real
             original_dataset = images_s
             original_labels = labels_real
@@ -130,6 +127,8 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
     #        images_s = images_s.to(device)
     #        labels_s = labels_s.to(device)
             images_s = gen_dataset[batch_idx*batch_size:(batch_idx+1)*batch_size].clone().detach().to(device)
+            logger.info("max pixel: {}".format(torch.max(images_s)))
+            logger.info("min pixel: {}".format(torch.min(images_s)))
             labels_s = gen_labels[batch_idx*batch_size:(batch_idx+1)*batch_size].clone().detach().to(device)
 
             # convert labels to one-hot
@@ -142,8 +141,13 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
             
             for iter_i in range(iters_img):
                 y_s, f_s = src_model.forward_emb(images_s)
-                loss = func.cross_entropy(y_s, labels_s)
-                p_s = func.softmax(y_s, dim=1)
+                p_s = func.softmax(y_s)
+
+                labels_s = nn.functional.one_hot(labels_s.long(), class_num).float()
+                assert len(labels_s.shape) == len(p_s.shape)
+                loss = -labels_s*torch.log(p_s+1e-12)
+
+
                 grad_matrix = (p_s - plabel_onehot).t() @ f_s / p_s.size(0)
                 new_matrix = grad_matrix + param_gamma * src_model.head.weight.data
                 grad_loss = torch.norm(new_matrix, p='fro') ** 2
@@ -192,7 +196,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
             plabel_onehot = labels_to_one_hot(labels_s, class_num, device)
 
             y_s, f_s = src_model.forward_emb(images_s)
-            p_s = func.softmax(y_s, dim=1)
+            p_s = func.softmax(y_s)
             grad_matrix += (p_s - plabel_onehot).t() @ f_s
 
         new_matrix = grad_matrix / len(gen_dataset) + param_gamma * src_model.head.weight.data
@@ -200,25 +204,25 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
 
         gc.collect()
         
-    if add_bn_normalization:
-        for hook in loss_r_feature_layers:
-            hook.close()
+    # if add_bn_normalization:
+    #     for hook in loss_r_feature_layers:
+    #         hook.close()
 
 
- #   if (a_iter-1) % args.save_every == 0:
- #       print("saving image dir to", save_dir)
- #       vutils.save_image(torch.cat((original_dataset[0:20],gen_dataset[0:20]),0), save_dir ,
-  #                        normalize=True, scale_each=True, nrow=int(10))
-        # plt.style.use('dark_background')
-        # # fig = plt.figure()
-        # # ax = fig.add_subplot()
-        # image = plt.imread(save_dir)
-        # ax.imshow(image)
-        # ax.axis('off')
-        # fig.set_size_inches(10 * 5, 10*10 )
-        # plt.title("ori_labels= "+str(original_labels[0:20])+"\n gen_labels="+str(gen_labels[0:20]), fontweight="bold")
-        # plt.savefig(save_dir)
-        # plt.close()
+    save_dir = os.path.join(save_dir, "admm_"+str(i)+".png")
+    print("saving image dir to", save_dir)
+    vutils.save_image(torch.cat((original_dataset[0:20],gen_dataset[0:20]),0), save_dir ,
+                        normalize=True, scale_each=True, nrow=int(10))
+    plt.style.use('dark_background')
+    fig = plt.figure()
+    ax = fig.add_subplot()
+    image = plt.imread(save_dir)
+    ax.imshow(image)
+    ax.axis('off')
+    fig.set_size_inches(10 * 5, 10*10 )
+    plt.title("ori_labels= "+str(original_labels[0:20])+"\n gen_labels="+str(gen_labels[0:20]), fontweight="bold")
+    plt.savefig(save_dir)
+    plt.close()
 
     return gen_dataset, gen_labels, original_dataset ,original_labels
 
@@ -247,21 +251,19 @@ class FedImpress(Server):
             csolns = {}
             w = 0
 
-      #      transform_cifar = transforms.Compose(
-      #      [
-      #       torchvision.transforms.functional.rgb_to_grayscale,
-      #       transforms.ToTensor(),
-      #       torchvision.transforms.Resize(28),
-      #       ])
-      #      if r >= warmup:
-      #          cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
-      #                                            download=True, transform=transform_cifar)
-      #          cifar = torch.utils.data.Subset(cifar, list(range(data_size)))
-      #          gen_loader = torch.utils.data.DataLoader(cifar, batch_size=self.batch_size, shuffle=True)
-      #          gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size)
-      #          gen_dataset = torch.tensor(gen_dataset)
-      #          gen_labels = torch.tensor(gen_labels)
-      #          vir_dataset = TensorDataset(gen_dataset, gen_labels)
+            # transform_cifar = transforms.Compose([
+            # torchvision.transforms.functional.rgb_to_grayscale,
+            # transforms.ToTensor(),
+            # torchvision.transforms.Resize(28),])
+            # if r >= warmup:
+            #     cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
+            #                                         download=True, transform=transform_cifar)
+            #     cifar = torch.utils.data.Subset(cifar, list(range(data_size)))
+            #     gen_loader = torch.utils.data.DataLoader(cifar, batch_size=self.batch_size, shuffle=True)
+            #     gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size)
+            #     gen_dataset = torch.tensor(gen_dataset)
+            #     gen_labels = torch.tensor(gen_labels)
+            #     vir_dataset = TensorDataset(gen_dataset, gen_labels)
 
 
             transform_mnist = transforms.Compose(
@@ -273,8 +275,13 @@ class FedImpress(Server):
             if r >= warmup:
                 mnist = torchvision.datasets.MNIST(root='./data', train=True,
                                                   download=True, transform=transform_mnist)
-                mnist = torch.utils.data.Subset(mnist, list(range(data_size)))
-                gen_loader = torch.utils.data.DataLoader(mnist, batch_size=self.batch_size*40, shuffle=True)
+                torch.range(0, mnist.__len__())
+                original_list = list(range(0, mnist.__len__()))
+
+                # Shuffle the list
+                random.shuffle(original_list)
+                mnist = torch.utils.data.Subset(mnist, original_list[0:data_size])
+                gen_loader = torch.utils.data.DataLoader(mnist, batch_size=self.batch_size, shuffle=True)
                 gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size)
                 gen_dataset = torch.tensor(gen_dataset)
                 gen_labels = torch.tensor(gen_labels)
@@ -284,19 +291,10 @@ class FedImpress(Server):
 
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
-    #            c.set_public()
-                #if idx==0:
-                #    c.rotate=True
+
                 if r>= warmup:
                     c.gen_data = vir_dataset 
-                #glob_dataset = None
-                #_, cs = self.select_clients(r+10, num_clients=5)
-                #for cl in cs:
-                #    if glob_dataset is None:
-                #        glob_dataset = cl.train_dataset
-                #    else:
-                #        glob_dataset = torch.utils.data.ConcatDataset([glob_dataset, cl.train_dataset])
-                #c.gen_data = glob_dataset
+
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
 
                 if last_clients is not None:
