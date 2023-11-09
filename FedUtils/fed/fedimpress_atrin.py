@@ -267,7 +267,8 @@ class FedImpress(Server):
     step = 0
 
     def train(self):
-         if os.path.exists(save_dir):
+        
+        if os.path.exists(save_dir):
             print("Directory already exists ...")
 
         logger.info("Train with {} workers...".format(self.clients_per_round))
