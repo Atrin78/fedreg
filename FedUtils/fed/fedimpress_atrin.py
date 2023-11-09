@@ -171,11 +171,10 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
             
             for iter_i in range(iters_img):
                 y_s, f_s = src_model.forward_emb(images_s)
-                p_s = func.softmax(y_s)
+                p_s = func.softmax(y_s, dim=1)
 
-                labels_s = nn.functional.one_hot(labels_s.long(), class_num).float()
-                assert len(labels_s.shape) == len(p_s.shape)
-                loss = -labels_s*torch.log(p_s+1e-12)
+                loss = func.cross_entropy(y_s, labels_s)
+                # loss = -labels_s*torch.log(p_s+1e-12)
 
 
                 grad_matrix = (p_s - plabel_onehot).t() @ f_s / p_s.size(0)
@@ -226,7 +225,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
             plabel_onehot = labels_to_one_hot(labels_s, class_num, device)
 
             y_s, f_s = src_model.forward_emb(images_s)
-            p_s = func.softmax(y_s)
+            p_s = func.softmax(y_s, dim=1)
             grad_matrix += (p_s - plabel_onehot).t() @ f_s
 
         new_matrix = grad_matrix / len(gen_dataset) + param_gamma * src_model.head.linear.weight.data
