@@ -83,7 +83,7 @@ def labels_to_one_hot(labels, num_class, device):
 def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, batch_size, add_bn_normalization=False, mode='train'):
 
     src_model.eval()
-    LAMB = torch.zeros_like(src_model.head.weight.data).to(device)
+    LAMB = torch.zeros_like(src_model.head.linear.weight.data).to(device)
     gen_dataset = None
     gen_labels = None
     original_dataset = None
@@ -179,7 +179,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
 
 
                 grad_matrix = (p_s - plabel_onehot).t() @ f_s / p_s.size(0)
-                new_matrix = grad_matrix + param_gamma * src_model.head.weight.data
+                new_matrix = grad_matrix + param_gamma * src_model.head.linear.weight.data
                 grad_loss = torch.norm(new_matrix, p='fro') ** 2
                 loss += grad_loss * param_admm_rho / 2
                 loss += torch.trace(LAMB.t() @ new_matrix)
@@ -229,7 +229,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
             p_s = func.softmax(y_s)
             grad_matrix += (p_s - plabel_onehot).t() @ f_s
 
-        new_matrix = grad_matrix / len(gen_dataset) + param_gamma * src_model.head.weight.data
+        new_matrix = grad_matrix / len(gen_dataset) + param_gamma * src_model.head.linear.weight.data
         LAMB += new_matrix * param_admm_rho
 
         gc.collect()
