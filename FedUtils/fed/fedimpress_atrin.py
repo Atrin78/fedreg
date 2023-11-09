@@ -28,7 +28,7 @@ device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
 synthesize_label='real'
 iters_admm=10
-iters_img=30
+iters_img=10
 param_gamma=0.001 
 param_admm_rho=0.2
 add_bn_normalization = False
@@ -157,8 +157,6 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
     #        images_s = images_s.to(device)
     #        labels_s = labels_s.to(device)
             images_s = gen_dataset[batch_idx*batch_size:(batch_idx+1)*batch_size].clone().detach().to(device)
-            logger.info("max pixel: {}".format(torch.max(images_s)))
-            logger.info("min pixel: {}".format(torch.min(images_s)))
             labels_s = gen_labels[batch_idx*batch_size:(batch_idx+1)*batch_size].clone().detach().to(device)
 
             # convert labels to one-hot
@@ -200,7 +198,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
                 loss.backward()
                 optimizer_s.step()
 
-                print(loss)
+                print(loss,torch.max(images_s),torch.min(images_s))
 
                 # images_s.clamp(0.0, 1.0)
                 gc.collect()
@@ -240,7 +238,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
 
         save_dir = os.path.join(save_dir, "admm_"+str(i)+".png")
         print("saving image dir to", save_dir)
-        print(original_dataset.shape,gen_dataset.shape)
+        print(original_dataset.squeeze(1)[0:20].shape,gen_dataset.squeeze(1)[0:20].shape)
         vutils.save_image(torch.cat((original_dataset.squeeze(1)[0:20],gen_dataset.squeeze(1)[0:20]),0), save_dir ,
                             normalize=True, scale_each=True, nrow=int(10))
         plt.style.use('dark_background')
