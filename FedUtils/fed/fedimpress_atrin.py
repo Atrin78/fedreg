@@ -36,7 +36,7 @@ lr_img = 0.001
 momentum_img = 0.9
 data_size= 40
 warmup = 0
-save_dir = "/h/sayromlou/ubc/fedreg/tasks_mine/cifar10/FedImpress_e30_lr05/images"
+save_dir = "/h/sayromlou/ubc/fedreg/tasks_mine/cifar10/FedImpress_e30_lr05/images_2"
 
 def step_func(model, data, synth=False):
     lr = model.learning_rate
