@@ -1,7 +1,7 @@
 from FedUtils.models.cifar10.resnet9_mine import Model
 import torch
 from functools import partial
-from FedUtils.fed.fedimpress import FedImpress
+from FedUtils.fed.fedimpress_atrin import FedImpress
 from torchvision import transforms, utils
 
 transform_train = transforms.Compose([

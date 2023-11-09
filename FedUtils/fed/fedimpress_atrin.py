@@ -16,6 +16,13 @@ import random
 import matplotlib.pyplot as plt
 import os 
 import torchvision.utils as vutils
+import itertools
+from FedUtils.models.utils import read_data, CusDataset, ImageDataset
+from torch.utils.data import DataLoader
+import copy
+from collections import OrderedDict
+from torch_cka import CKA
+from matplotlib import pyplot as plt
 
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
@@ -31,9 +38,13 @@ data_size= 40
 warmup = 0
 save_dir = "tasks_mine/mnist/FedImpress_e30_lr05/images"
 
-def step_func(model, data):
+def step_func(model, data, synth=False):
     lr = model.learning_rate
     parameters = list(model.parameters())
+    #if synth:
+    #    parameters = list(model.head.parameters())
+    #else:
+    #    parameters = list(model.parameters())
     flop = model.flop
 
     def func(d, w):
@@ -43,15 +54,23 @@ def step_func(model, data):
         x, y = d
         pred = model.forward(x)
         loss = torch.mul(model.loss(pred, y), w)
+        #print(w)
+        if loss.mean() > 5:
+            print(loss.mean())
+        #print(loss.mean())
         loss = loss.mean()
         grad = torch.autograd.grad(loss, parameters)
         total_norm = 0
         for p, g in zip(parameters, grad):
             p.data.add_(-lr*g)
             total_norm += torch.norm(g)**2
-
+    #    print(w)
+    #    print(total_norm)
         return flop*len(x)
     return func
+
+
+
 
 def labels_to_one_hot(labels, num_class, device):
     # convert labels to one-hot
@@ -69,6 +88,11 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
     gen_labels = None
     original_dataset = None
     original_labels = None
+    if add_bn_normalization:
+        loss_r_feature_layers = []
+        for module in src_model.modules():
+            if isinstance(module, nn.BatchNorm2d):
+                loss_r_feature_layers.append(DeepInversionFeatureHook(module))
 
 
     for batch_idx, (images_s, labels_real) in enumerate(gen_loader):
@@ -83,6 +107,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
             elif synthesize_label == 'pred' or mode == 'test':
                 gen_labels = labels_s
             else:
+                print('hereee')
                 gen_labels = labels_real
             original_dataset = images_s
             original_labels = labels_real
@@ -113,6 +138,11 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
 
     for i in range(iters_admm):
         
+        #for j in range(5):
+        #    print(gen_dataset[j].cpu().detach().numpy().shape)
+        #    im = gen_dataset[j][0].cpu().detach().numpy()
+        #    im = (im - np.min(im))/(np.max(im) - np.min(im))
+        #    plt.imsave('imgs/pic'+str(j)+'-'+str(i)+'.jpg', im)
 
         print(f'admm iter: {i}/{iters_admm}')
 
@@ -226,15 +256,19 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
 
     return gen_dataset, gen_labels, original_dataset ,original_labels
 
+
+
+
 class FedImpress(Server):
     step = 0
 
     def train(self):
+
         logger.info("Train with {} workers...".format(self.clients_per_round))
-        last_clients = None
-        for r in range(self.num_rounds):
+        for r in range(self.start_round+1,self.num_rounds):
             if r % self.eval_every == 0:
                 logger.info("-- Log At Round {} --".format(r))
+                
                 stats = self.test()
                 if self.eval_train:
                     stats_train = self.train_error_and_loss()
@@ -244,27 +278,9 @@ class FedImpress(Server):
                 decode_stat(stats)
                 logger.info("-- TRAIN RESULTS --")
                 decode_stat(stats_train)
+                self.save_model(r)
 
-            indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
-            np.random.seed(r)
-            active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
-            csolns = {}
-            w = 0
-
-            # transform_cifar = transforms.Compose([
-            # torchvision.transforms.functional.rgb_to_grayscale,
-            # transforms.ToTensor(),
-            # torchvision.transforms.Resize(28),])
-            # if r >= warmup:
-            #     cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
-            #                                         download=True, transform=transform_cifar)
-            #     cifar = torch.utils.data.Subset(cifar, list(range(data_size)))
-            #     gen_loader = torch.utils.data.DataLoader(cifar, batch_size=self.batch_size, shuffle=True)
-            #     gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size)
-            #     gen_dataset = torch.tensor(gen_dataset)
-            #     gen_labels = torch.tensor(gen_labels)
-            #     vir_dataset = TensorDataset(gen_dataset, gen_labels)
-
+                global_stats = self.local_acc_loss(self.model)
 
             transform_mnist = transforms.Compose(
             [
@@ -287,41 +303,68 @@ class FedImpress(Server):
                 gen_labels = torch.tensor(gen_labels)
                 vir_dataset = TensorDataset(gen_dataset, gen_labels)
 
-            # gen_data = torch.utils.data.DataLoader(vir_dataset, batch_size=self.batch_size, shuffle=True)
+            #self.model = self.model_type(*self.model_param, self.inner_opt)
+
+            indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
+            np.random.seed(r)
+            active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
+            csolns = {}
+            list_clients = {}
+            w = 0
+            self.global_classifier = list(self.model.head.linear.parameters())
+            if self.model.bottleneck != None:
+                self.global_feature_extractor = list(self.model.net.parameters()) + list(self.model.bottleneck.parameters())
+            else:
+                self.global_feature_extractor = list(self.model.net.parameters())
+            self.local_classifier = [[] for l in self.global_classifier]
+            self.local_feature_extractor = [[] for l in self.global_feature_extractor]
+            self.F_in = []
+            self.F_out = []
+            self.loss_in = []
+            self.loss_out = []
+            self.CKA = []
+            
+
+            
+
+
 
             for idx, c in enumerate(active_clients):
                 c.set_param(self.model.get_param())
-
                 if r>= warmup:
-                    c.gen_data = vir_dataset 
-
+                    c.gen_data = vir_dataset
+                coef=1
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
-
-                if last_clients is not None:
-                    print(c.id)
-                    stats_clients = self.local_train_error_and_loss_clients(c.model, last_clients)
-                    logger.info("-- Last Client RESULTS --")
-                    decode_stat(stats_clients)
-
                 soln = [1.0, soln[1]]
                 w += soln[0]
+                local_stats = self.local_acc_loss(c.model)
                 if len(csolns) == 0:
-                    csolns = {x: soln[1][x].detach()*soln[0] for x in soln[1]}
+                    for x in soln[1]:
+                        csolns[x] = soln[1][x].detach()*soln[0]
+                        list_clients[x] = [soln[1][x].detach()*soln[0]]
                 else:
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
+                        list_clients[x].append(soln[1][x].detach()*soln[0])
+                if r % self.eval_every == 0:
+                    # cka = c.get_cka(self.model)
+                    # if cka != None:
+                    #     self.CKA.append(cka)
+                    #local_stats = self.local_acc_loss(c.model)
+                    self.local_forgetting(c.id , global_stats, local_stats)
                 del c
-            csolns = [[w, {x: csolns[x]/w for x in csolns}]]
 
+            if r % self.eval_every == 0:
+                # pass
+                # self.compute_cka()
+                self.compute_forgetting()
+            
+            csolns = [[w, {x: csolns[x]/w for x in csolns}]]
+            self.compute_divergence(list_clients)
             self.latest_model = self.aggregate(csolns)
-            #if last_clients is not None:
-            #    stats_clients = self.train_error_and_loss_clients(last_clients)
-            #    logger.info("-- Last Client RESULTS --")
-            #    decode_stat(stats_clients)
-            #last_clients = active_clients
-            #stats_clients = self.train_error_and_loss_clients(active_clients)
-            #logger.info("-- Active Client RESULTS --")
-            #decode_stat(stats_clients)
+
+
+            
 
         logger.info("-- Log At Round {} --".format(r))
         stats = self.test()
@@ -333,3 +376,11 @@ class FedImpress(Server):
         decode_stat(stats)
         logger.info("-- TRAIN RESULTS --")
         decode_stat(stats_train)
+
+# for p in model.net.parameters():
+#         p.requires_grad = False
+#     if model.bottleneck != None:
+#         for p in model.bottleneck.parameters():
+#             p.requires_grad = False
+#     for p in model.head.parameters():
+#         p.requires_grad = True
