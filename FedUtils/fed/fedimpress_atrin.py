@@ -200,7 +200,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
                 min_image = torch.min(images_s).clone().detach()
                 images_s = (images_s - min_image)/(max_image- min_image)
 
-                logger.info(f'loss: {loss.cpu().numpy()},max: {torch.max(images_s).cpu().numpy()},min: {torch.min(images_s).cpu().numpy()}')
+                logger.info(f'loss: {loss.cpu().detach().numpy()},max: {torch.max(images_s).cpu().detach().numpy()},min: {torch.min(images_s).cpu().detach().numpy()}')
 
                 # images_s.clamp(0.0, 1.0)
                 gc.collect()
