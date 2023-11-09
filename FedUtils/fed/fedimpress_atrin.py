@@ -238,20 +238,21 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
     #         hook.close()
 
 
-    save_dir = os.path.join(save_dir, "admm_"+str(i)+".png")
-    print("saving image dir to", save_dir)
-    vutils.save_image(torch.cat((original_dataset[0:20],gen_dataset[0:20]),0), save_dir ,
-                        normalize=True, scale_each=True, nrow=int(10))
-    plt.style.use('dark_background')
-    fig = plt.figure()
-    ax = fig.add_subplot()
-    image = plt.imread(save_dir)
-    ax.imshow(image)
-    ax.axis('off')
-    fig.set_size_inches(10 * 5, 10*10 )
-    plt.title("ori_labels= "+str(original_labels[0:20])+"\n gen_labels="+str(gen_labels[0:20]), fontweight="bold")
-    plt.savefig(save_dir)
-    plt.close()
+        save_dir = os.path.join(save_dir, "admm_"+str(i)+".png")
+        print("saving image dir to", save_dir)
+        print(original_dataset.shape,gen_dataset.shape)
+        vutils.save_image(torch.cat((original_dataset[0:20],gen_dataset[0:20]),0), save_dir ,
+                            normalize=True, scale_each=True, nrow=int(10))
+        plt.style.use('dark_background')
+        fig = plt.figure()
+        ax = fig.add_subplot()
+        image = plt.imread(save_dir)
+        ax.imshow(image)
+        ax.axis('off')
+        fig.set_size_inches(10 * 5, 10*10 )
+        plt.title("ori_labels= "+str(original_labels[0:20])+"\n gen_labels="+str(gen_labels[0:20]), fontweight="bold")
+        plt.savefig(save_dir)
+        plt.close()
 
     return gen_dataset, gen_labels, original_dataset ,original_labels
 
