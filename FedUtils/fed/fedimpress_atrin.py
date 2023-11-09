@@ -240,7 +240,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
         print("saving image dir to", save_dir)
 
         print(original_dataset.squeeze(1)[0:20].shape,gen_dataset.squeeze(1)[0:20].shape)
-        original_dataset_lost = [(original_dataset.squeeze(1)[i, :, :, :].to(torch.int) * 255).astype(np.uint8) for i in range(20)]
+        original_dataset_lost = [(original_dataset.squeeze(1)[i, :, :, :] * 255).to(torch.int) for i in range(20)]
         gen_dataset_lost = [(gen_dataset.squeeze(1)[i, :, :, :] * 255).to(torch.int)  for i in range(20)]
         vutils.save_image(original_dataset_lost+gen_dataset_lost, save_dir ,
                             normalize=True, scale_each=True, nrow=int(10))
