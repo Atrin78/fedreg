@@ -267,6 +267,8 @@ class FedImpress(Server):
     step = 0
 
     def train(self):
+         if os.path.exists(save_dir):
+            print("Directory already exists ...")
 
         logger.info("Train with {} workers...".format(self.clients_per_round))
         for r in range(self.start_round+1,self.num_rounds):
@@ -286,8 +288,6 @@ class FedImpress(Server):
 
                 global_stats = self.local_acc_loss(self.model)
 
-            if os.path.exists(save_dir):
-                print("Directory already exists ...")
 
             transform_mnist = transforms.Compose(
             [
