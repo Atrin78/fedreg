@@ -27,8 +27,8 @@ from matplotlib import pyplot as plt
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
 synthesize_label='real'
-iters_admm=10
-iters_img=1000
+iters_admm= 1
+iters_img=1
 param_gamma=0.001 
 param_admm_rho=0.2
 add_bn_normalization = False
@@ -235,28 +235,28 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
     #         hook.close()
 
 
-        save_path = os.path.join(save_dir, "admm_"+str(i)+".png")
-        print("saving image dir to", save_path,torch.min(original_dataset), torch.max(original_dataset))
-        print("saving image dir to", save_path,torch.min(gen_dataset), torch.max(gen_dataset))
-        normalized_original_dataset = original_dataset - torch.min(original_dataset) / (torch.max(original_dataset) - torch.min(original_dataset))
-        normalized_gen_dataset = gen_dataset - torch.min(gen_dataset) / (torch.max(gen_dataset) - torch.min(gen_dataset))
+        # save_path = os.path.join(save_dir, "admm_"+str(i)+".png")
+        # print("saving image dir to", save_path,torch.min(original_dataset), torch.max(original_dataset))
+        # print("saving image dir to", save_path,torch.min(gen_dataset), torch.max(gen_dataset))
+        # normalized_original_dataset = original_dataset - torch.min(original_dataset) / (torch.max(original_dataset) - torch.min(original_dataset))
+        # normalized_gen_dataset = gen_dataset - torch.min(gen_dataset) / (torch.max(gen_dataset) - torch.min(gen_dataset))
 
-        print(original_dataset.squeeze(1)[0:20].shape,gen_dataset.squeeze(1)[0:20].shape)
-        # original_dataset_lost = [normalized_original_dataset.squeeze(1)[i, :, :, :] for i in range(20)]
-        # gen_dataset_lost = [normalized_gen_dataset.squeeze(1)[i, :, :, :] for i in range(20)]
-        # print(len(original_dataset_lost+gen_dataset_lost))
-        vutils.save_image(torch.cat((normalized_original_dataset.squeeze(1)[0:20],normalized_gen_dataset.squeeze(1)[0:20])), save_path ,
-                            normalize=True, scale_each=True, nrow=int(10))
-        plt.style.use('dark_background')
-        fig = plt.figure()
-        ax = fig.add_subplot()
-        image = plt.imread(save_path)
-        ax.imshow(image)
-        ax.axis('off')
-        fig.set_size_inches(4 * 5, 4*10 )
-        plt.title("ori_labels= "+str(original_labels[0:20])+"\n gen_labels="+str(gen_labels[0:20]), fontweight="bold")
-        plt.savefig(save_path)
-        plt.close()
+        # print(original_dataset.squeeze(1)[0:20].shape,gen_dataset.squeeze(1)[0:20].shape)
+        # # original_dataset_lost = [normalized_original_dataset.squeeze(1)[i, :, :, :] for i in range(20)]
+        # # gen_dataset_lost = [normalized_gen_dataset.squeeze(1)[i, :, :, :] for i in range(20)]
+        # # print(len(original_dataset_lost+gen_dataset_lost))
+        # vutils.save_image(torch.cat((normalized_original_dataset.squeeze(1)[0:20],normalized_gen_dataset.squeeze(1)[0:20])), save_path ,
+        #                     normalize=True, scale_each=True, nrow=int(10))
+        # plt.style.use('dark_background')
+        # fig = plt.figure()
+        # ax = fig.add_subplot()
+        # image = plt.imread(save_path)
+        # ax.imshow(image)
+        # ax.axis('off')
+        # fig.set_size_inches(4 * 5, 4*10 )
+        # plt.title("ori_labels= "+str(original_labels[0:20])+"\n gen_labels="+str(gen_labels[0:20]), fontweight="bold")
+        # plt.savefig(save_path)
+        # plt.close()
 
     return gen_dataset, gen_labels, original_dataset ,original_labels
 
@@ -313,6 +313,8 @@ class FedImpress(Server):
 
             #self.model = self.model_type(*self.model_param, self.inner_opt)
 
+            logger.info("generated data now running the algorithm")
+
             indices, selected_clients = self.select_clients(r, num_clients=self.clients_per_round)
             np.random.seed(r)
             active_clients = np.random.choice(selected_clients, round(self.clients_per_round*(1.0-self.drop_percent)), replace=False)
@@ -338,6 +340,7 @@ class FedImpress(Server):
 
 
             for idx, c in enumerate(active_clients):
+                logger.info("Client {} Picked".format(c))
                 c.set_param(self.model.get_param())
                 if r>= warmup:
                     c.gen_data = vir_dataset
