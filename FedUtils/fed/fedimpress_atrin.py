@@ -80,7 +80,7 @@ def labels_to_one_hot(labels, num_class, device):
     return labels_one_hot
 
     
-def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, batch_size, add_bn_normalization=False, mode='train'):
+def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, batch_size, add_bn_normalization=False, mode='train',save_dir=save_dir):
 
     src_model.eval()
     LAMB = torch.zeros_like(src_model.head.linear.weight.data).to(device)
@@ -297,7 +297,7 @@ class FedImpress(Server):
                 random.shuffle(original_list)
                 mnist = torch.utils.data.Subset(mnist, original_list[0:data_size])
                 gen_loader = torch.utils.data.DataLoader(mnist, batch_size=self.batch_size, shuffle=True)
-                gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size)
+                gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size, save_dir=save_dir)
                 gen_dataset = torch.tensor(gen_dataset)
                 gen_labels = torch.tensor(gen_labels)
                 vir_dataset = TensorDataset(gen_dataset, gen_labels)
