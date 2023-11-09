@@ -143,7 +143,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
         #    im = (im - np.min(im))/(np.max(im) - np.min(im))
         #    plt.imsave('imgs/pic'+str(j)+'-'+str(i)+'.jpg', im)
 
-        print(f'admm iter: {i}/{iters_admm}')
+        logger.info(f'admm iter: {i}/{iters_admm}')
 
         # step1: update imgs
         LAMB = LAMB.clone().detach().to(device)
@@ -200,7 +200,7 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
                 min_image = torch.min(images_s).clone().detach()
                 images_s = (images_s - min_image)/(max_image- min_image)
 
-                print(f'loss: {loss.cpu().numpy()},max: {torch.max(images_s).cpu().numpy()},min: {torch.min(images_s).cpu().numpy()}')
+                logger.info(f'loss: {loss.cpu().numpy()},max: {torch.max(images_s).cpu().numpy()},min: {torch.min(images_s).cpu().numpy()}')
 
                 # images_s.clamp(0.0, 1.0)
                 gc.collect()
