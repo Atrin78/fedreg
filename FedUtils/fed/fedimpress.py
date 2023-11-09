@@ -25,7 +25,7 @@ class_num=10
 synthesize_label='cond'
 iters_admm=5
 iters_img=30
-param_gamma=0.001 
+param_gamma=0.01 
 param_admm_rho=0.2
 add_bn_normalization = True
 lr_img = 0.1
@@ -48,12 +48,16 @@ def step_func(model, data, synth=False):
         model.zero_grad()
         x, y = d
         pred = model.forward(x)
+        l2_reg = torch.tensor(0.)
+        for param in model.parameters():
+            l2_reg += torch.norm(param)
+        loss_reg = param_gamma * l2_reg * w
         loss = torch.mul(model.loss(pred, y), w)
         #print(w)
         if loss.mean() > 5:
             print(loss.mean())
         #print(loss.mean())
-        loss = loss.mean()
+        loss = loss.mean() + loss_reg
         grad = torch.autograd.grad(loss, parameters)
         total_norm = 0
         for p, g in zip(parameters, grad):
