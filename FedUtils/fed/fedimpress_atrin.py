@@ -36,7 +36,7 @@ lr_img = 0.01
 momentum_img = 0.9
 data_size= 40
 warmup = 0
-save_dir = "/h/sayromlou/ubc/fedreg/tasks_mine/cifar10/FedImpress_e30_lr05/images_2"
+save_dir = "/h/sayromlou/ubc/fedreg/tasks_mine/cifar10/FedImpress_e30_lr05/images_3"
 
 def step_func(model, data, synth=False):
     lr = model.learning_rate
@@ -96,6 +96,10 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
 
 
     for batch_idx, (images_s, labels_real) in enumerate(gen_loader):
+        random_tensor = torch.rand(images_s.size())
+        images_s = images_s + 0.5 * random_tensor
+        with torch.no_grad():
+            images_s.clamp_(0, 1)
         images_s = images_s.to(device)
         y_s,_ = src_model.forward_emb(images_s)
         labels_s = y_s.argmax(dim=1)
