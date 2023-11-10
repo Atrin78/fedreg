@@ -196,8 +196,8 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
                 optimizer_s.zero_grad()
                 loss.backward()
                 optimizer_s.step()
-                max_image = copy.deepcopy(torch.max(images_s).detach()).numpy()
-                min_image = copy.deepcopy(torch.min(images_s).detach()).numpy()
+                max_image = copy.deepcopy(torch.max(images_s).detach()).cpu().numpy()
+                min_image = copy.deepcopy(torch.min(images_s).detach()).cpu().numpy()
                 print("values",max_image,min_image)
                 images_s = (images_s - min_image)/(max_image- min_image)
 
