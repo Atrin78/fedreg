@@ -27,8 +27,8 @@ from matplotlib import pyplot as plt
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
 synthesize_label='real'
-iters_admm= 3000
-iters_img=10
+iters_admm= 20
+iters_img=3000
 param_gamma=0.001 
 param_admm_rho=0.2
 add_bn_normalization = False
