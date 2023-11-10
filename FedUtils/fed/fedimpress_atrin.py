@@ -27,13 +27,13 @@ from matplotlib import pyplot as plt
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
 synthesize_label='real'
-iters_admm= 0
+iters_admm= 20
 iters_img=3000
 param_gamma=0.1 
 param_admm_rho=0.2
 add_bn_normalization = False
-lr_img = 0.1
-momentum_img = 0.9
+lr_img = 0.01
+momentum_img = 0.5
 data_size= 40
 warmup = 0
 save_dir = "/h/sayromlou/ubc/fedreg/tasks_mine/cifar10/FedImpress_e30_lr05/images_5"
@@ -81,6 +81,14 @@ def labels_to_one_hot(labels, num_class, device):
 
     
 def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, batch_size, add_bn_normalization=False, mode='train',save_dir=save_dir):
+    logger.info('generate admm data')
+    logger.info(f'iters_admm: {iters_admm}')
+    logger.info(f'iters_img: {iters_img}')
+    logger.info(f'param_gamma: {param_gamma}')
+    logger.info(f'param_admm_rho: {param_admm_rho}')
+    logger.info(f'lr_img: {lr_img}')
+    logger.info(f'momentum_img: {momentum_img}')
+
 
     src_model.eval()
     LAMB = torch.zeros_like(src_model.head.linear.weight.data).to(device)
