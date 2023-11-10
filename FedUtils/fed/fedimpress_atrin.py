@@ -200,12 +200,11 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
                     images_s.clamp_(0, 1)
                 
 
-                logger.info(f'loss: {loss.cpu().detach().numpy()},max: {torch.max(images_s).cpu().detach().numpy()},min: {torch.min(images_s).cpu().detach().numpy()}')
 
                 # images_s.clamp(0.0, 1.0)
                 gc.collect()
 
-
+            logger.info(f'loss: {loss.cpu().detach().numpy()},max: {torch.max(images_s).cpu().detach().numpy()},min: {torch.min(images_s).cpu().detach().numpy()}')
             # update src imgs
             gen_dataset[batch_idx*batch_size:(batch_idx+1)*batch_size] = images_s
        #     for img, path in zip(images_s.detach_().cpu(), paths):
