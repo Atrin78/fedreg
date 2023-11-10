@@ -27,7 +27,7 @@ from matplotlib import pyplot as plt
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
 synthesize_label='real'
-iters_admm= 20
+iters_admm= 0
 iters_img=3000
 param_gamma=0.1 
 param_admm_rho=0.2
@@ -36,7 +36,7 @@ lr_img = 0.1
 momentum_img = 0.9
 data_size= 40
 warmup = 0
-save_dir = "/h/sayromlou/ubc/fedreg/tasks_mine/cifar10/FedImpress_e30_lr05/images_4"
+save_dir = "/h/sayromlou/ubc/fedreg/tasks_mine/cifar10/FedImpress_e30_lr05/images_5"
 
 def step_func(model, data, synth=False):
     lr = model.learning_rate
