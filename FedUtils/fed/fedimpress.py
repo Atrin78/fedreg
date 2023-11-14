@@ -298,11 +298,11 @@ class FedImpress(Server):
                 #c.gen_data = glob_dataset
                 soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
 
-                if last_clients is not None:
-                    print(c.id)
-                    stats_clients = self.local_train_error_and_loss_clients(c.model, last_clients)
-                    logger.info("-- Last Client RESULTS --")
-                    decode_stat(stats_clients)
+                #if last_clients is not None:
+                #    print(c.id)
+                #    stats_clients = self.local_train_error_and_loss_clients(c.model, last_clients)
+                #    logger.info("-- Last Client RESULTS --")
+                #    decode_stat(stats_clients)
 
                 soln = [1.0, soln[1]]
                 w += soln[0]
