@@ -12,6 +12,8 @@ from functools import partial
 from torch.utils.data import TensorDataset
 import torchvision.transforms as transforms
 import torchvision
+from torch_cka import CKA
+from matplotlib import pyplot as plt
 
 
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
