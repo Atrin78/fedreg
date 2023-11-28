@@ -154,8 +154,8 @@ def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, it
                 grad_matrix = (p_s - plabel_onehot).t() @ f_s / p_s.size(0)
                 new_matrix = grad_matrix + param_gamma * src_model.head.weight.data
                 grad_loss = torch.norm(new_matrix, p='fro') ** 2
-                #loss += grad_loss * param_admm_rho / 2
-                #loss += torch.trace(LAMB.t() @ new_matrix)
+                loss += grad_loss * param_admm_rho / 2
+                loss += torch.trace(LAMB.t() @ new_matrix)
 #                 if args.add_bn_normalization:
 #                     rescale = [10] + [1. for _ in range(len(loss_r_feature_layers)-1)]
 #                     # if iteration_loc == 0:
