@@ -292,8 +292,14 @@ class FedImpress(Server):
             vis_x = torch.tensor(vis_x)
             _,vis_x = self.model.forward_emb(vis_x)
             _,gen_x = self.model.forward_emb(gen_x)
+            ll = list(np.concatenate((vis_y, gen_y.cpu().detach().numpy())))
+            colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
+
+            ll = [colors[inn] for inn in ll]
             emb = TSNE(n_components=2, perplexity=5).fit_transform(np.concatenate((vis_x.cpu().detach().numpy(), gen_x.cpu().detach().numpy())))
-                
+            x,y = emb.T
+            plt.scatter(x,y, ll)
+            
            
 
        #     transform_mnist = transforms.Compose(
