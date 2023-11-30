@@ -298,6 +298,8 @@ class FedImpress(Server):
             ll = [colors[int(inn)] for inn in ll]
             emb = TSNE(n_components=2, perplexity=5).fit_transform(np.concatenate((vis_x.cpu().detach().numpy(), gen_x.cpu().detach().numpy())))
             x,y = emb.T
+            print(x)
+            print(y)
             plt.scatter(x,y, ll)
             
            
