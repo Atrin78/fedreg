@@ -14,12 +14,13 @@ import torchvision.transforms as transforms
 import torchvision
 from torch_cka import CKA
 from matplotlib import pyplot as plt
-
+from sklearn.manifold import TSNE
+from torch.utils.data import DataLoader
 
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
 synthesize_label='cond'
-iters_admm=5
+iters_admm2
 iters_img=30
 param_gamma=0.001 
 param_admm_rho=0.2
@@ -266,10 +267,31 @@ class FedImpress(Server):
                 cifar = torch.utils.data.Subset(cifar, list(range(data_size)))
                 gen_loader = torch.utils.data.DataLoader(cifar, batch_size=self.batch_size, shuffle=True)
                 gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size)
+                gen_x = gen_dataset
+                gen_y = gen_labels
                 gen_dataset = torch.tensor(gen_dataset)
                 gen_labels = torch.tensor(gen_labels)
                 vir_dataset = TensorDataset(gen_dataset, gen_labels)
 
+            vis_x = None
+            vis_y = None
+            for idx, c in enumerate(active_clients):
+                data = iter(DataLoader(c.train_dataset, batch_size=100))
+                x,y = next(data)
+                if vis_x is None:
+                    vis_x = x.cpu().detach().numpy()
+                    vis_y = y.cpu().detach().numpy()
+                else:
+                    vis_x = np.concatenate((vis_x, x.cpu().detach().numpy()), 0)
+                    vis_y = np.concatenate((vis_y, y.cpu().detach().numpy()), 0)
+            print('dim')
+            print(vis_x.shape)
+            print(vis_y.shape)
+            print(gen_x.shape)
+            print(gen_y.shape)
+            emb = TSNE(n_components=2, perplexity=5).fit_transform(np.concatenate((vis_x, gen_x)))
+                
+           
 
        #     transform_mnist = transforms.Compose(
        #     [
