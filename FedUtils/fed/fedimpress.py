@@ -300,8 +300,8 @@ class FedImpress(Server):
             x,y = emb.T
             print(x)
             print(y)
-            mkr = ['o' if inn<len(vis_x) else 's' for inn in range(len(vis_x)+len(gen_x))]
-            plt.scatter(x,y, c=ll, marker=*mkr)
+            sz = [10 if inn<len(vis_x) else 20 for inn in range(len(vis_x)+len(gen_x))]
+            plt.scatter(x,y, sz, c=ll)
             plt.show()
             plt.savefig('emb.png')
             
