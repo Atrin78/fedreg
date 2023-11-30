@@ -300,7 +300,9 @@ class FedImpress(Server):
             x,y = emb.T
             print(x)
             print(y)
-            plt.scatter(x,y, ll)
+            plt.scatter(x,y, c=ll)
+            plt.show()
+            plt.savefig('emb.png')
             
            
 
