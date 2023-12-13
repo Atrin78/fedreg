@@ -261,11 +261,21 @@ class FedImpress(Server):
              transforms.ToTensor(),
              torchvision.transforms.Resize(28),
              ])
+            transform_usps = transforms.Compose(
+            [
+             transforms.ToTensor(),
+             torchvision.transforms.Resize(28),
+             ])
+
             if r >= warmup:
-                cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
+            #    cifar = torchvision.datasets.CIFAR10(root='./data', train=True,
                                                   download=True, transform=transform_cifar)
-                cifar = torch.utils.data.Subset(cifar, list(range(data_size)))
-                gen_loader = torch.utils.data.DataLoader(cifar, batch_size=self.batch_size, shuffle=True)
+            #    cifar = torch.utils.data.Subset(cifar, list(range(data_size)))
+            #    gen_loader = torch.utils.data.DataLoader(cifar, batch_size=self.batch_size, shuffle=True)
+                usps = torchvision.datasets.USPS(root='./data', train=True,
+                                                  download=True, transform=transform_usps)
+                usps = torch.utils.data.Subset(usps, list(range(data_size)))
+                gen_loader = torch.utils.data.DataLoader(usps, batch_size=self.batch_size, shuffle=True)
                 gen_dataset, gen_labels, original_dataset ,original_labels = generate_admm(gen_loader, self.model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, self.batch_size)
                 gen_x = gen_dataset
                 gen_y = gen_labels
