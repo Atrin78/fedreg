@@ -47,6 +47,7 @@ def step_func(model, data, head):
 
         l2_reg = 0
         for p, q in zip(list(model.head.parameters()), head):
+            q.requires_grad_(False)
             vec = (p-q)**2
             if len(vec.shape) > 1:
                 vec = torch.sum(vec, dim=1)
