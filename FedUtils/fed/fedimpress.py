@@ -312,7 +312,7 @@ class FedImpress(Server):
             fig, ax = plt.subplots()
             ax.scatter(x_vis,y_vis, marker='o', c=ll_vis, label='original')
             ax.scatter(x_gen,y_gen, marker='s', c=ll_gen, label='generated')
-            ax.title('round'+str(r))
+            ax.set_title('round'+str(r))
             ax.legend()
             plt.show()
             plt.savefig('emb/'+'emb'+str(r)+'.png')
