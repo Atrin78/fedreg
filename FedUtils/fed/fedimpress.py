@@ -299,9 +299,11 @@ class FedImpress(Server):
             emb = TSNE(n_components=2, perplexity=5).fit_transform(np.concatenate((vis_x.cpu().detach().numpy(), gen_x.cpu().detach().numpy())))
             x,y = emb.T
             print(x)
+            print(len(x))
             print(y)
             sz = [10 if inn<len(vis_x) else 20 for inn in range(len(vis_x)+len(gen_x))]
-            plt.scatter(x,y, sz, c=ll)
+            fig, ax = plt.subplots()
+            ax.scatter(x,y, sz, c=ll)
             plt.show()
             plt.savefig('emb.png')
             
