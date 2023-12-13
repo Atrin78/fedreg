@@ -29,6 +29,7 @@ lr_img = 100
 momentum_img = 0.9
 data_size= 50
 warmup = 0
+reg_coef=1
 
 def step_func(model, data, head):
     lr = model.learning_rate
