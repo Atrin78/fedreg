@@ -20,7 +20,7 @@ from torch.utils.data import DataLoader
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
 synthesize_label='cond'
-iters_admm= 3
+iters_admm= 0
 iters_img=30
 param_gamma=0.001 
 param_admm_rho=0.2
@@ -365,7 +365,7 @@ class FedImpress(Server):
                 #    else:
                 #        glob_dataset = torch.utils.data.ConcatDataset([glob_dataset, cl.train_dataset])
                 #c.gen_data = glob_dataset
-                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=partial(step_func, list(self.model.head.parameters())))  # stats has (byte w, comp, byte r)
+                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=partial(step_func, head=list(self.model.head.parameters())))  # stats has (byte w, comp, byte r)
 
                 #if last_clients is not None:
                 #    print(c.id)
