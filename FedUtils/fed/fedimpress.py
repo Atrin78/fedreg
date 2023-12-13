@@ -296,15 +296,22 @@ class FedImpress(Server):
             colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
 
             ll = [colors[int(inn)] for inn in ll]
+            ll_vis = ll[:len(vis_y)]
+            ll_gen = ll[len(vis_y):]
             emb = TSNE(n_components=2, perplexity=5).fit_transform(np.concatenate((vis_x.cpu().detach().numpy(), gen_x.cpu().detach().numpy())))
             x,y = emb.T
+            x_vis = x[:len(vis_x)]
+            x_gen = x[len(vis_x):]
+            y_vis = y[:len(vis_x)]
+            y_gen = y[len(vis_x):]
             print(x)
             print(len(x))
             print(y)
           #  sz = [10 if inn<len(vis_x) else 20 for inn in range(len(vis_x)+len(gen_x))]
-            mrk = ['o' if inn<len(vis_x) else 's' for inn in range(len(vis_x)+len(gen_x))]
+         #   mrk = ['o' if inn<len(vis_x) else 's' for inn in range(len(vis_x)+len(gen_x))]
             fig, ax = plt.subplots()
-            ax.scatter(x,y, marker=mrk, c=ll)
+            ax.scatter(x_vis,y_vis, marker='o', c=ll_vis, label='original')
+            ax.scatter(x_gen,y_gen, marker='s', c=ll_gen, label='generated')
             ax.title('round'+str(r))
             ax.legend()
             plt.show()
