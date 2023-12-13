@@ -20,7 +20,7 @@ from torch.utils.data import DataLoader
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
 synthesize_label='cond'
-iters_admm= 3
+iters_admm= 0
 iters_img=30
 param_gamma=0.001 
 param_admm_rho=0.2
@@ -301,11 +301,14 @@ class FedImpress(Server):
             print(x)
             print(len(x))
             print(y)
-            sz = [10 if inn<len(vis_x) else 20 for inn in range(len(vis_x)+len(gen_x))]
+          #  sz = [10 if inn<len(vis_x) else 20 for inn in range(len(vis_x)+len(gen_x))]
+            mrk = ['o' if inn<len(vis_x) else 's' for inn in range(len(vis_x)+len(gen_x))]
             fig, ax = plt.subplots()
-            ax.scatter(x,y, sz, c=ll)
+            ax.scatter(x,y, marker=mrk, c=ll)
+            ax.title('round'+str(r))
+            ax.legend()
             plt.show()
-            plt.savefig('emb.png')
+            plt.savefig('emb/'+'emb'+str(r)+'.png')
             
            
 
