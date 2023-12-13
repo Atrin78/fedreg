@@ -324,7 +324,7 @@ class FedImpress(Server):
             ax.set_title('round '+str(r))
             ax.legend()
             plt.show()
-            plt.savefig('genemb/'+'emb'+str(r)+'.png')
+            plt.savefig('usps/'+'emb'+str(r)+'.png')
             
            
 
