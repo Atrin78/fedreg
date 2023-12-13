@@ -30,7 +30,7 @@ momentum_img = 0.9
 data_size= 50
 warmup = 0
 
-def step_func(model, data):
+def step_func(model, data, head):
     lr = model.learning_rate
     parameters = list(model.parameters())
     flop = model.flop
@@ -43,6 +43,11 @@ def step_func(model, data):
         pred = model.forward(x)
         loss = torch.mul(model.loss(pred, y), w)
         loss = loss.mean()
+
+        for p, q in zip(list(model.head.parameters()), head):
+            vec = (p-q)**2
+            print(vec.shape)
+
         grad = torch.autograd.grad(loss, parameters)
         total_norm = 0
         for p, g in zip(parameters, grad):
@@ -360,7 +365,7 @@ class FedImpress(Server):
                 #    else:
                 #        glob_dataset = torch.utils.data.ConcatDataset([glob_dataset, cl.train_dataset])
                 #c.gen_data = glob_dataset
-                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=step_func)  # stats has (byte w, comp, byte r)
+                soln, stats = c.solve_inner(num_epochs=self.num_epochs, step_func=partial(step_func, list(self.model.head.parameters())))  # stats has (byte w, comp, byte r)
 
                 #if last_clients is not None:
                 #    print(c.id)
