@@ -20,7 +20,7 @@ from torch.utils.data import DataLoader
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
 class_num=10
 synthesize_label='cond'
-iters_admm= 0
+iters_admm= 3
 iters_img=30
 param_gamma=0.001 
 param_admm_rho=0.2
@@ -312,10 +312,10 @@ class FedImpress(Server):
             fig, ax = plt.subplots()
             ax.scatter(x_vis,y_vis, marker='o', c=ll_vis, label='original')
             ax.scatter(x_gen,y_gen, marker='s', c=ll_gen, label='generated')
-            ax.set_title('round'+str(r))
+            ax.set_title('round '+str(r))
             ax.legend()
             plt.show()
-            plt.savefig('emb/'+'emb'+str(r)+'.png')
+            plt.savefig('genemb/'+'emb'+str(r)+'.png')
             
            
 
