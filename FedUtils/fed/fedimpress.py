@@ -44,9 +44,14 @@ def step_func(model, data, head):
         loss = torch.mul(model.loss(pred, y), w)
         loss = loss.mean()
 
+        l2_reg = 0
         for p, q in zip(list(model.head.parameters()), head):
             vec = (p-q)**2
-            print(vec.shape)
+            if len(vec.shape) > 1:
+                vec = torch.sum(vec, dim=1)
+            l2_reg += torch.mean(vec)
+
+        loss = loss + reg_coef*l2_reg
 
         grad = torch.autograd.grad(loss, parameters)
         total_norm = 0
