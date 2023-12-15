@@ -29,7 +29,7 @@ lr_img = 100
 momentum_img = 0.9
 data_size= 50
 warmup = 0
-reg_coef=0.1
+reg_coef=4
 
 def step_func(model, data, head):
     lr = model.learning_rate
@@ -336,7 +336,7 @@ class FedImpress(Server):
             ax.set_title('round '+str(r))
             ax.legend()
             plt.show()
-            plt.savefig('reg1/'+'emb'+str(r)+'.png')
+            plt.savefig('reg2/'+'emb'+str(r)+'.png')
             
            
 
