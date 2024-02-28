@@ -141,9 +141,12 @@ def read_data(train_data_path, test_data_path):
     clients = list(sorted(train_data.keys()))
     print(clients)
     print(groups)
-    print(train_data['x']['item'].shape)
-    print(train_data['y']['item'].shape)
-    print(test_data['x']['item'].shape)
+    train_data_total = {"x": [], "y": []}
+    for t in train_data:
+        train_data_total["x"].extend(train_data[t]["x"])
+        train_data_total["y"].extend(train_data[t]["y"])
+    print(np.array(train_data_total['x']).shape)
+    print(np.array(train_data_total['y']).shape)
     return clients, groups, train_data, test_data
 
 
