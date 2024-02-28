@@ -141,8 +141,9 @@ def read_data(train_data_path, test_data_path):
     clients = list(sorted(train_data.keys()))
     print(clients)
     print(groups)
-    print(train_data.shape)
-    print(test_data.shape)
+    print(train_data['x']['item'].shape)
+    print(train_data['y']['item'].shape)
+    print(test_data['x']['item'].shape)
     return clients, groups, train_data, test_data
 
 
