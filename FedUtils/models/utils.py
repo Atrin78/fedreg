@@ -139,6 +139,10 @@ def read_data(train_data_path, test_data_path):
                 cdata = json.load(inf)
             td.update(cdata["user_data"])
     clients = list(sorted(train_data.keys()))
+    print(clients)
+    print(groups)
+    print(train_data)
+    print(test_data)
     return clients, groups, train_data, test_data
 
 
