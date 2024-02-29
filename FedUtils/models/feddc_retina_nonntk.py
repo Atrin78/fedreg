@@ -465,23 +465,23 @@ def prepare_data(data_size, datasets, public_dataset, im_size):
     train_data = {}
     test_data = {}
 	
-    x, y = next(DataLoader(drishti_trainset, batch_size=len(drishti_trainset)))
+    x, y = next(iter(DataLoader(drishti_trainset, batch_size=len(drishti_trainset))))
     train_data['drishti'] = {'x':x, 'y':y}
-    x, y = next(DataLoader(kaggle_trainset, batch_size=len(drishti_trainset)))
+    x, y = next(iter(DataLoader(kaggle_trainset, batch_size=len(drishti_trainset))))
     train_data['kaggle'] = {'x':x, 'y':y}
-    x, y = next(DataLoader(rim_trainset, batch_size=len(drishti_trainset)))
+    x, y = next(iter(DataLoader(rim_trainset, batch_size=len(drishti_trainset))))
     train_data['rim'] = {'x':x, 'y':y}
-    x, y = next(DataLoader(refuge_rainset, batch_size=len(drishti_trainset)))
+    x, y = next(iter(DataLoader(refuge_rainset, batch_size=len(drishti_trainset))))
     train_data['refuge'] = {'x':x, 'y':y}
 	
 	
-    x, y = next(DataLoader(drishti_testset, batch_size=len(drishti_trainset)))
+    x, y = next(iter(DataLoader(drishti_testset, batch_size=len(drishti_trainset))))
     test_data['drishti'] = {'x':x, 'y':y}
-    x, y = next(DataLoader(kaggle_testset, batch_size=len(drishti_trainset)))
+    x, y = next(iter(DataLoader(kaggle_testset, batch_size=len(drishti_trainset))))
     test_data['kaggle'] = {'x':x, 'y':y}
-    x, y = next(DataLoader(rim_testset, batch_size=len(drishti_trainset)))
+    x, y = next(iter(DataLoader(rim_testset, batch_size=len(drishti_trainset))))
     test_data['rim'] = {'x':x, 'y':y}
-    x, y = next(DataLoader(refuge_testset, batch_size=len(drishti_trainset)))
+    x, y = next(iter(DataLoader(refuge_testset, batch_size=len(drishti_trainset))))
     test_data['refuge'] = {'x':x, 'y':y}
 	
     groups=[]
