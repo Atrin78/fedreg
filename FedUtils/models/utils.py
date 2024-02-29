@@ -1,13 +1,46 @@
 from thop import profile
 import os
 import json
-from torch.utils.data import TensorDataset
+from torch.utils.data import TensorDataset, Dataset
 import numpy as np
 import torch
 from loguru import logger
 from PIL import Image
 import h5py
 import matplotlib.pyplot as plt
+
+class CustomDataset(Dataset):
+    def __init__(self, dataset, data_size, transform=None):
+        images, labels = next(iter(torch.utils.data.DataLoader(dataset, batch_size=data_size)))
+        # print(images)
+        # print(labels)
+        # images, labels = [], []
+        # for i in range(len(dataset)):
+        #     image, label = dataset[i]
+        #     images.append(image)
+        #     labels.append(label)
+        self.synthesized = False
+        self.labels = labels
+        self.images = images
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.labels)
+
+    def __getitem__(self, idx):
+
+        label = self.labels[idx]
+        image = self.images[idx]
+
+        # if len(image.split()) != 3:
+        #     image = transforms.Grayscale(num_output_channels=3)(image)
+
+        if self.transform is not None and not self.synthesized:
+            image = self.transform(image)
+        else:
+            image = torch.tensor(image)
+
+        return image, label
 
 
 def FSGM(model, inp, label, iters, eta):
