@@ -2,52 +2,13 @@ from torch import nn
 from FedUtils.models.utils import Flops, FSGM
 import torch
 import sys
-import torch.nn.functional as F
-
-def init_weights(m):
-    if isinstance(m, nn.Linear):
-        torch.nn.init.xavier_normal(m.weight)
-        m.bias.data.fill_(0.01)
+from typing import Tuple, Optional, List, Dict
 
 
 class Reshape(nn.Module):
     def forward(self, x):
         return x.reshape(-1, 576)
 
-class ReverseReshape(nn.Module):
-    def forward(self, x):
-        return x.reshape(-1, 64, 4, 4)
-
-class FedDecorrLoss(nn.Module):
-
-    def __init__(self):
-        super(FedDecorrLoss, self).__init__()
-        self.eps = 1e-8
-
-    def _off_diagonal(self, mat):
-        # return a flattened view of the off-diagonal elements of a square matrix
-        n, m = mat.shape
-        assert n == m
-        return mat.flatten()[:-1].view(n - 1, n + 1)[:, 1:].flatten()
-
-    def forward(self, x):
-        N, C = x.shape
-        if N == 1:
-            return 0.0
-
-        x = x - x.mean(dim=0, keepdim=True)
-        x = x / (self.eps + x.std(dim=0, keepdim=True))
-
-        corr_mat = torch.matmul(x.t(), x)/(N-1)
-
-       # print(N)
-       # print(corr_mat[:5, :5])
-
-        loss = (self._off_diagonal(corr_mat).pow(2)).mean()
-        #loss = loss / N
-
-
-        return loss.mean()
 
 class Model(nn.Module):
     def __init__(self, num_classes, optimizer=None, learning_rate=None, seed=1, p_iters=10, ps_eta=0.1, pt_eta=0.001):
@@ -56,19 +17,12 @@ class Model(nn.Module):
         self.num_inp = 784*3
         torch.manual_seed(123+seed)
 
-        self.decorr = FedDecorrLoss()
-        self.adaptt = nn.BatchNorm2d(1)
-        self.net = nn.Sequential(*[nn.Conv2d(3, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5),
-                                 nn.MaxPool2d(2), nn.ReLU(), Reshape()])
-        self.bottleneck = nn.Sequential(*[nn.Linear(576, 128), nn.ReLU()])
-        self.head = nn.Sequential(*[nn.Linear(128, self.num_classes)])
-        self.decoder = nn.Sequential(*[nn.Linear(128, 1024), ReverseReshape(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(64, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 32, 5, padding=2), nn.ReLU(), nn.Upsample(scale_factor=2), nn.ConvTranspose2d(32, 3, 5, padding=2), nn.Sigmoid()])
+        self.net = nn.Sequential(*[nn.Conv2d(3, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5), nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(576, 256), nn.ReLU()])
+    #    self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5,padding="same"), nn.ReLU(), nn.Conv2d(32, 32, 5,padding="same"), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5, padding="same"), nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(1024, 256), nn.ReLU()])
+        self.head = nn.Linear(256, self.num_classes)
+  #      self.whole = nn.Sequential(*[self.net, self.head])
         self.size = sys.getsizeof(self.state_dict())
         self.softmax = nn.Softmax(-1)
-      #  mm=1
-      #  for i in range(mm):
-      #      self.net.apply(init_weights)
-
 
         if optimizer is not None:
             self.optimizer = optimizer(self.parameters())
@@ -82,23 +36,32 @@ class Model(nn.Module):
 
         self.flop = Flops(self, torch.tensor([[0.0 for _ in range(self.num_inp)]]))
         if torch.cuda.device_count() > 0:
-            self.adaptt = self.adaptt.cuda()
+   #         self = self.cuda()
             self.net = self.net.cuda()
             self.head = self.head.cuda()
-            self.decoder = self.decoder.cuda()
-            self.bottleneck = self.bottleneck.cuda()
 
     def set_param(self, state_dict):
-        self.load_state_dict(state_dict, strict=False)
+        self.load_state_dict(state_dict)
         return True
 
     def get_param(self):
         return self.state_dict()
 
+ #   def get_parameters(self) -> List[Dict]:
+ #       """A parameter list which decides optimization hyper-parameters,
+ #           such as the relative learning rate of each layer
+ #       """
+ #       params = [
+ #           {"params": self.net.parameters(), "lr_mult": 0.1},
+ #           {"params": self.head.parameters(), "lr_mult": 1.},
+ #       ]
+ #       return params
+
     def predict(self, x):
         self.eval()
         with torch.no_grad():
-            return self.softmax(self.forward(x))
+            pred = self.forward(x)
+            return self.softmax(pred)
 
     def generate_fake(self, x, y):
         self.eval()
@@ -122,82 +85,29 @@ class Model(nn.Module):
         loss = loss.sum(1)
         return loss
 
-    def MSE(self, pred, gt):
-        if gt.device != pred.device:
-            gt = gt.to(pred.device)
-        loss = nn.MSELoss()(pred, gt)
-     #   loss = (pred - gt)**2
-     #   print(loss[0][0][:10,:10])
-     #   print(loss.max())
-     #   print(loss.shape)
-     #   loss = loss.sum([-1, -2, -3])
-        return loss
-
-
     def forward(self, data):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
-    #    data_min = torch.transpose(torch.min(data, 1)[0].repeat((784, 1)),0, 1)
-    #    data_max = torch.transpose(torch.max(data, 1)[0].repeat((784, 1)),0, 1)
-    #    data = (data - data_min)/(data_max-data_min)
         data = data.reshape(-1, 3, 28, 28)
+   #     x = data
+   #     for layer in self.whole:
+   #         pred = x
+   #         x = layer(x)
         out = self.net(data)
-        out = self.bottleneck(out)
-        out = self.head(out)
-        return out
+        pred = self.head(out)
+        return pred
 
-    def forward_adapt(self, data):
+    def forward_emb(self, data):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
-    #    data_min = torch.transpose(torch.min(data, 1)[0].repeat((784, 1)),0, 1)
-    #    data_max = torch.transpose(torch.max(data, 1)[0].repeat((784, 1)),0, 1)
-    #    data = (data - data_min)/(data_max-data_min)
         data = data.reshape(-1, 3, 28, 28)
-        out = self.adaptt(data)
-        out = self.net(out)
-        out = self.bottleneck(out)
-        out = self.head(out)
-        return out
-
-    def forward_decorr(self, data):
-        if data.device != next(self.parameters()).device:
-            data = data.to(next(self.parameters()).device)
-    #    data_min = torch.transpose(torch.min(data, 1)[0].repeat((784, 1)),0, 1)
-    #    data_max = torch.transpose(torch.max(data, 1)[0].repeat((784, 1)),0, 1)
-    #    data = (data - data_min)/(data_max-data_min)
-        data = data.reshape(-1, 3, 28, 28)
+   #     x = data
+   #     for layer in self.whole:
+   #         pred = x
+   #         x = layer(x)
         out = self.net(data)
-        features = self.bottleneck(out)
-        out = self.head(features)
-        return out, features
-
-
-    def AE(self, data):
-        if data.device != next(self.parameters()).device:
-            data = data.to(next(self.parameters()).device)
-    #    data_min = torch.transpose(torch.min(data, 1)[0].repeat((784, 1)),0, 1)
-    #    data_max = torch.transpose(torch.max(data, 1)[0].repeat((784, 1)),0, 1)
-    #    data = (data - data_min)/(data_max-data_min)
-        data = data.reshape(-1, 3, 32, 32)
-        out = self.net(data)
-     #   out = self.head(out)
-        out = self.bottleneck(out)
-        out = self.decoder(out)
-    #    out = out[:, :, 2:-2, 2:-2]
-    #    out = torch.reshape(out, (-1, 784))
-     #   print('oo')
-     #   print(out)
-        return out
-
-    def multi(self, data):
-        if data.device != next(self.parameters()).device:
-            data = data.to(next(self.parameters()).device)
-        data = data.reshape(-1, 3, 32, 32)
-        out = self.net(data)
-        out = self.bottleneck(out)
-        rec = self.decoder(out)
-        logit = self.head(out)
-        return logit, rec
+        pred = self.head(out)
+        return pred, out
 
     def train_onestep(self, data):
         self.train()
@@ -211,24 +121,6 @@ class Model(nn.Module):
 
         return self.flop*len(x)
 
-  #  def solve_inner(self, data, num_epochs=1, step_func=None):
-  #      data = data[0]
-  #      comp = 0.0
-  #      weight = 1.0
-  #      steps = 0
-  #      if step_func is None:
-  #          func = self.train_onestep
-  #      else:
-  #          func = step_func(self, data)
-
-  #      for _ in range(num_epochs):
-  #          for x, y in data:
-  #              c = func([x, y])
-  #              comp += c
-  #              steps += 1.0
-  #      soln = self.get_param()
-  #      return soln, comp, weight
-
     def solve_inner(self, data, num_epochs=1, step_func=None):
         comp = 0.0
         weight = 1.0
@@ -236,32 +128,49 @@ class Model(nn.Module):
         if step_func is None:
             func = self.train_onestep
         else:
-            func = step_func(self, data)
+            func = step_func(self, data[0])
 
         for _ in range(num_epochs):
             train_iters = []
-         #   train_w = [1.0, 0.1]
-         #   if len(data)==1:
-         #       train_w = [1.0]
+            train_w = [1.0, 0.25]
+            if len(data)==1:
+                train_w = [1.0]
             for train_loader in data:
                 train_iters.append(iter(train_loader))
-         #   aux_x,_ = next(train_iters[1])
             for step in range(len(train_iters[0])):
-                
-                for i, train_iter in enumerate(train_iters[:1]):
+           #     xt, yt = None, None
+           #     wt = None
+                for i, train_iter in enumerate(train_iters):
                     try:
                         x, y = next(train_iter)
-
-                        c = func([x, y])
+               #         w = torch.ones((y.shape[0],)).to(device)
+                #        x = x.to(device)
+                #        y = y.to(device)
+               #         print(torch.max(x))
+               #         if xt is None:
+               #            xt, yt = x, y
+               #           wt = w * train_w[i]
+               #         else:
+               #             xt = torch.cat((xt, x), 0)
+               #             yt = torch.cat((yt, y), 0)
+               #             wt = torch.cat((wt, w * train_w[i]), 0)
+                        c = func([x, y], train_w[i])
                         comp += c
                         steps += 1.0
                     except Exception as e:
                         print(e)
-                        pass
+                        
+             #   c = func([xt, yt], wt)
+             #   comp += c
+             #   steps += 1.0
 
+
+         #   for x, y in data:
+         #       c = func([x, y])
+         #       comp += c
+         #       steps += 1.0
         soln = self.get_param()
         return soln, comp, weight
-
 
     def test(self, data):
         tot_correct = 0.0
@@ -279,23 +188,18 @@ class Model(nn.Module):
             tot_correct += (pred_max == y).float().sum()
         return tot_correct, loss
 
-
-    def testAE(self, data):
+    def test_ind(self, data):
         tot_correct = 0.0
-        loss = 0.0
+        loss = []
         self.eval()
         for d in data:
             x, y = d
             with torch.no_grad():
-                pred = self.AE(x)
-         #   data = x
-         #   data_min = torch.transpose(torch.min(data, 1)[0].repeat((784, 1)),0, 1)
-         #   data_max = torch.transpose(torch.max(data, 1)[0].repeat((784, 1)),0, 1)
-         #   data = (data - data_min)/(data_max-data_min)
-            loss += self.MSE(pred, x).mean()
-         #   pred_max = pred.argmax(-1).float()
-          #  assert len(pred_max.shape) == len(y.shape)
-          #  if pred_max.device != y.device:
-          #      pred_max = pred_max.detach().to(y.device)
-          #  tot_correct += (pred_max == y).float().sum()
-        return loss, loss
+                pred = self.forward(x)
+            loss.append(self.loss(pred, y))
+            pred_max = pred.argmax(-1).float()
+            assert len(pred_max.shape) == len(y.shape)
+            if pred_max.device != y.device:
+                pred_max = pred_max.detach().to(y.device)
+            tot_correct += (pred_max == y).float().sum()
+        return tot_correct, loss
