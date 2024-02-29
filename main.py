@@ -58,7 +58,7 @@ def main():
         print(clients)
         print(groups)
         print(train_data[clients[0]]['x'][0])
-        print(train_data[clients[10]]['y'])
+        print(train_data[clients[100]]['y'])
         Dataset = CusDataset
 
     if config["use_fed"]:
