@@ -120,7 +120,7 @@ class RefugeDataset(torch.utils.data.Dataset):
 
 def prepare_data(data_size, datasets, public_dataset, im_size):
     # data_base_path = './data/segmented_retina'
-    data_base_path = '../../../Federated-Learning/data/retina_balanced'
+    data_base_path = '../Federated-Learning/data/retina_balanced'
     # transform_train = transforms.Compose([
     #         transforms.Resize([96, 96]),            
     #         transforms.RandomHorizontalFlip(),
