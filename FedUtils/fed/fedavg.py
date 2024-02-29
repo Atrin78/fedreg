@@ -146,8 +146,8 @@ class FedAvg(Server):
     step = 0
 
     def train(self):
-        indices, selected_clients = self.select_clients(0, num_clients=300)
-        active_clients = np.random.choice(selected_clients, round(300*(1.0-self.drop_percent)), replace=False)
+        indices, selected_clients = self.select_clients(0, num_clients=4)
+        active_clients = np.random.choice(selected_clients, round(4*(1.0-self.drop_percent)), replace=False)
         xx = None
         for idx, c in enumerate(active_clients):
            x, _ = next(iter(c.train_data))

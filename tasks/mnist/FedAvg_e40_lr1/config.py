@@ -25,7 +25,7 @@ config = {
     "inp_size": (784,),
     "train_path": "data/mnist_10000/data/train/",
     "test_path": ["data/mnist_10000/data/valid/", "data/mnist_10000/data/test/"],
-    "clients_per_round": 10,
+    "clients_per_round": 4,
     "num_rounds": 500,
     "eval_every": 1,
     "drop_percent": 0.0,
