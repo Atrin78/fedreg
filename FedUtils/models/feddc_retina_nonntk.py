@@ -471,7 +471,7 @@ def prepare_data(data_size, datasets, public_dataset, im_size):
     train_data['kaggle'] = {'x':x, 'y':y}
     x, y = next(iter(DataLoader(rim_trainset, batch_size=len(drishti_trainset))))
     train_data['rim'] = {'x':x, 'y':y}
-    x, y = next(iter(DataLoader(refuge_rainset, batch_size=len(drishti_trainset))))
+    x, y = next(iter(DataLoader(refuge_trainset, batch_size=len(drishti_trainset))))
     train_data['refuge'] = {'x':x, 'y':y}
 	
 	
