@@ -48,7 +48,7 @@ def main():
         datasets = ['drishti', 'kaggle', 'rim', 'refuge']
         clients, groups, train_data, eval_data = prepare_data(config['data_size'], datasets, 'cifar', (28, 28))
         Dataset = CusDataset
-		print('sdf')
+        print('sdf')
         print(clients)
         print(groups)
         print(type(train_data[clients[0]]['x']))
