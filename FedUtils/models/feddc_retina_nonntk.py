@@ -15,7 +15,7 @@ import numpy as np
 import torchvision
 import torchvision.transforms as transforms
 from torchvision.datasets import ImageFolder, DatasetFolder
-from utils import CustomDataset
+from FedUtils.models.utils import CustomDataset
 
 # import fedbn_data_utils as data_utils
 # from utils import get_network, get_time, TensorDataset, epoch
