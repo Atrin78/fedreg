@@ -50,12 +50,12 @@ def main():
         Dataset = CusDataset
         print(clients)
         print(groups)
-        print(train_data[clients[0]].keys())
+        print(type(train_data[clients[0]]['x']))
     else:  # load other data
         clients, groups, train_data, eval_data = read_data(config["train_path"], config["test_path"])
         print(clients)
         print(groups)
-        print(train_data[clients[0]].keys())
+        print(type(train_data[clients[0]]['x']))
         Dataset = CusDataset
 
     if config["use_fed"]:
