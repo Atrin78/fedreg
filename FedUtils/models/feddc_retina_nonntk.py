@@ -27,7 +27,7 @@ import random
 
 from PIL import Image
 import csv
-from medmnist_dataset import Modified_medmnist
+from FedUtils.models.medmnist_dataset import Modified_medmnist
 import math
 # import pandas as pd
 
