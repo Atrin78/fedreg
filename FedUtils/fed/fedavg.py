@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 
 warmup=0
 data_size = 20
-full = 0
+full = 20
 
 def step_func4(model, data):
     lr = model.learning_rate
