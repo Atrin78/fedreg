@@ -502,7 +502,7 @@ def prepare_data(data_size, datasets, public_dataset, im_size):
     # concated_test_loader = torch.utils.data.DataLoader(concated_test_set, batch_size=args.batch, shuffle=False)
 
     # return train_datasets, test_datasets, train_loaders, test_loaders, concated_test_loader, unnormalized_train_datasets
-    return datasets, groups, train_data, test_data
+    return datasets, groups, train_data, [test_data, test_data]
 
 def train(model, train_loader, optimizer, loss_fun, client_num, device):
     model.train()
