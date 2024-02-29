@@ -128,7 +128,7 @@ class Model(nn.Module):
         if step_func is None:
             func = self.train_onestep
         else:
-            func = step_func(self, data[0])
+            func = step_func(self)
 
         for _ in range(num_epochs):
             train_iters = []
@@ -154,7 +154,7 @@ class Model(nn.Module):
                #             xt = torch.cat((xt, x), 0)
                #             yt = torch.cat((yt, y), 0)
                #             wt = torch.cat((wt, w * train_w[i]), 0)
-                        c = func([x, y], train_w[i])
+                        c = func([x, y])
                         comp += c
                         steps += 1.0
                     except Exception as e:
