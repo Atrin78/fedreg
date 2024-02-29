@@ -5,6 +5,7 @@ import sys, os
 base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(base_path)
 
+from torch.utils.data import DataLoader
 import torch
 from torch import nn, optim
 import time
@@ -464,23 +465,23 @@ def prepare_data(data_size, datasets, public_dataset, im_size):
     train_data = {}
     test_data = {}
 	
-    x, y = drishti_trainset[:]
+    x, y = next(dataLoader(drishti_trainset, batch_size=len(drishti_trainset)))
     train_data['drishti'] = {'x':x, 'y':y}
-    x, y = kaggle_trainset[:]
+    x, y = next(dataLoader(kaggle_trainset, batch_size=len(drishti_trainset)))
     train_data['kaggle'] = {'x':x, 'y':y}
-    x, y = rim_trainset[:]
+    x, y = next(dataLoader(rim_trainset, batch_size=len(drishti_trainset)))
     train_data['rim'] = {'x':x, 'y':y}
-    x, y = refuge_trainset[:]
+    x, y = next(dataLoader(refuge_rainset, batch_size=len(drishti_trainset)))
     train_data['refuge'] = {'x':x, 'y':y}
 	
 	
-    x, y = drishti_testset[:]
+    x, y = next(dataLoader(drishti_testset, batch_size=len(drishti_trainset)))
     test_data['drishti'] = {'x':x, 'y':y}
-    x, y = kaggle_testset[:]
+    x, y = next(dataLoader(kaggle_testset, batch_size=len(drishti_trainset)))
     test_data['kaggle'] = {'x':x, 'y':y}
-    x, y = rim_testset[:]
+    x, y = next(dataLoader(rim_testset, batch_size=len(drishti_trainset)))
     test_data['rim'] = {'x':x, 'y':y}
-    x, y = refuge_testset[:]
+    x, y = next(dataLoader(refuge_testset, batch_size=len(drishti_trainset)))
     test_data['refuge'] = {'x':x, 'y':y}
 	
     groups=[]
