@@ -1,4 +1,4 @@
-from FedUtils.models.mnist.cnn import Model
+from FedUtils.models.mnist.cnn3 import Model
 import torch
 from functools import partial
 from FedUtils.fed.fedavg import FedAvg
@@ -25,7 +25,7 @@ config = {
     "inp_size": (784*3,),
     "train_path": "retina",
     "test_path": ["retina"],
-    "clients_per_round": 10,
+    "clients_per_round": 4,
     "num_rounds": 500,
     "eval_every": 1,
     "drop_percent": 0.0,
