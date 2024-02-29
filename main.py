@@ -46,7 +46,7 @@ def main():
         clients, groups, train_data, eval_data = read_data(config["train_path"], config["test_path"])
     elif "retina" in config["train_path"]:
         datasets = ['drishti', 'kaggle', 'rim', 'refuge']
-        clients, groups, train_data, eval_data = prepare_data(config['data_size'], datasets, 'cifar', 28)
+        clients, groups, train_data, eval_data = prepare_data(config['data_size'], datasets, 'cifar', (28, 28))
     else:  # load other data
         clients, groups, train_data, eval_data = read_data(config["train_path"], config["test_path"])
         Dataset = CusDataset
