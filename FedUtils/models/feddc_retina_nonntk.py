@@ -257,10 +257,10 @@ def prepare_data(data_size, datasets, public_dataset, im_size):
     cifar_testset = CustomDataset(torchvision.datasets.CIFAR10(root='./data', train=False,
                                                  download=True, transform=transform_tensor), data_size, transform=transform_cifar)
 
-   # cifar_generateset = Modified_medmnist(data_path="/home/atrinarya/fed/Federated-Learning/data/VHL/", split='cifar10', chunk='1', mean=(0.5, 0.5, 0.5),
-    #                                 std=(0.5, 0.5, 0.5))
-    #cifar_virtualset = Modified_medmnist(data_path="/home/atrinarya/fed/Federated-Learning/data/VHL/", split='cifar10', chunk='1', mean=(0.5, 0.5, 0.5),
-    #                                 std=(0.5, 0.5, 0.5))
+    cifar_generateset = Modified_medmnist(data_path="/home/atrin/Federated-Learning/data/VHL/", split='cifar10', chunk='1', mean=(0.5, 0.5, 0.5),
+                                     std=(0.5, 0.5, 0.5))
+    cifar_virtualset = Modified_medmnist(data_path="/home/atrin/Federated-Learning/data/VHL/", split='cifar10', chunk='1', mean=(0.5, 0.5, 0.5),
+                                     std=(0.5, 0.5, 0.5))
 
     min_data_len = min(len(drishti_trainset), len(kaggle_trainset), len(rim_trainset), len(refuge_trainset))
 
@@ -284,8 +284,8 @@ def prepare_data(data_size, datasets, public_dataset, im_size):
     self_trainset = torch.utils.data.ConcatDataset([torch.utils.data.Subset(drishti_trainset, shuffled_idxes[0][min_data_len:min_data_len+data_size//4]), torch.utils.data.Subset(kaggle_trainset, shuffled_idxes[1][min_data_len:min_data_len+data_size//4]), torch.utils.data.Subset(rim_trainset, shuffled_idxes[2][min_data_len:min_data_len+data_size//4]), torch.utils.data.Subset(refuge_trainset, shuffled_idxes[3][min_data_len:min_data_len+data_size//4])])
     self_virtualset = torch.utils.data.ConcatDataset([torch.utils.data.Subset(drishti_trainset, shuffled_idxes[0][min_data_len:min_data_len+data_size//4]), torch.utils.data.Subset(kaggle_trainset, shuffled_idxes[1][min_data_len:min_data_len+data_size//4]), torch.utils.data.Subset(rim_trainset, shuffled_idxes[2][min_data_len:min_data_len+data_size//4]), torch.utils.data.Subset(refuge_trainset, shuffled_idxes[3][min_data_len:min_data_len+data_size//4])])
 
-    #VHL_virtualset = Modified_medmnist(data_path="/home/atrinarya/fed/Federated-Learning/data/VHL/", split='VHL', chunk='0')
-    #VHL_generateset = Modified_medmnist(data_path="/home/atrinarya/fed/Federated-Learning/data/VHL/", split='VHL', chunk='0')
+    VHL_virtualset = Modified_medmnist(data_path="/home/atrin/Federated-Learning/data/VHL/", split='VHL', chunk='0')
+    VHL_generateset = Modified_medmnist(data_path="/home/atrin/Federated-Learning/data/VHL/", split='VHL', chunk='0')
     # cifar_trainset = torch.utils.data.Subset(cifar_trainset, shuffled_idxes[4][:min_data_len])
 
 
@@ -453,9 +453,9 @@ def prepare_data(data_size, datasets, public_dataset, im_size):
             generatsets.append(self_trainset)
             virtualsets.append(self_virtualset)
 
-     #   elif public_dataset == 'VHL':
-     #       generatsets.append(VHL_generateset)
-     #       virtualsets.append(VHL_virtualset)
+        elif public_dataset == 'VHL':
+            generatsets.append(VHL_generateset)
+            virtualsets.append(VHL_virtualset)
 			
     train_data = {}
     test_data = {}
