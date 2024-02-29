@@ -458,28 +458,28 @@ def prepare_data(data_size, datasets, public_dataset, im_size):
             virtualsets.append(VHL_virtualset)
 			
     train_data = {}
-	test_data = {}
+    test_data = {}
 	
-	x, y = drishti_trainset[:]
-	train_data['drishti'] = {'x':x, 'y':y}
-	x, y = kaggle_trainset[:]
-	train_data['kaggle'] = {'x':x, 'y':y}
-	x, y = rim_trainset[:]
-	train_data['rim'] = {'x':x, 'y':y}
-	x, y = refuge_trainset[:]
-	train_data['refuge'] = {'x':x, 'y':y}
+    x, y = drishti_trainset[:]
+    train_data['drishti'] = {'x':x, 'y':y}
+    x, y = kaggle_trainset[:]
+    train_data['kaggle'] = {'x':x, 'y':y}
+    x, y = rim_trainset[:]
+    train_data['rim'] = {'x':x, 'y':y}
+    x, y = refuge_trainset[:]
+    train_data['refuge'] = {'x':x, 'y':y}
 	
 	
-	x, y = drishti_testset[:]
-	test_data['drishti'] = {'x':x, 'y':y}
-	x, y = kaggle_testset[:]
-	test_data['kaggle'] = {'x':x, 'y':y}
-	x, y = rim_testset[:]
-	test_data['rim'] = {'x':x, 'y':y}
-	x, y = refuge_testset[:]
-	test_data['refuge'] = {'x':x, 'y':y}
+    x, y = drishti_testset[:]
+    test_data['drishti'] = {'x':x, 'y':y}
+    x, y = kaggle_testset[:]
+    test_data['kaggle'] = {'x':x, 'y':y}
+    x, y = rim_testset[:]
+    test_data['rim'] = {'x':x, 'y':y}
+    x, y = refuge_testset[:]
+    test_data['refuge'] = {'x':x, 'y':y}
 	
-	groups=[]
+    groups=[]
     
     # unnormalized_train_datasets = [unnormalized_drishti_trainset, unnormalized_kaggle_trainset, unnormalized_rim_trainset, unnormalized_refuge_trainset]
     # train_datasets = [drishti_trainset, kaggle_trainset, rim_trainset, refuge_trainset]

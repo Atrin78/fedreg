@@ -33,7 +33,7 @@ config = {
     "batch_size": 10,
     "use_fed": 1,
     "log_path": "tasks/retina/FedAvg_e40_lr1/train.log",
-	"data_size": 400,
+    "data_size": 400,
 
     "train_transform": None,
     "test_transform": None,
