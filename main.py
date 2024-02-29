@@ -52,7 +52,8 @@ def main():
         print(clients)
         print(groups)
         print(train_data[clients[0]]['x'][0])
-        print(train_data[clients[0]]['y'])
+        for i in range(200, 220):
+            print(train_data[clients[i]]['y'])
     else:  # load other data
         clients, groups, train_data, eval_data = read_data(config["train_path"], config["test_path"])
         print(clients)
