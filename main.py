@@ -48,8 +48,14 @@ def main():
         datasets = ['drishti', 'kaggle', 'rim', 'refuge']
         clients, groups, train_data, eval_data = prepare_data(config['data_size'], datasets, 'cifar', (28, 28))
         Dataset = CusDataset
+        print(clients)
+        print(groups)
+        print(train_data[clients[0]].keys())
     else:  # load other data
         clients, groups, train_data, eval_data = read_data(config["train_path"], config["test_path"])
+        print(clients)
+        print(groups)
+        print(train_data[clients[0]].keys())
         Dataset = CusDataset
 
     if config["use_fed"]:
