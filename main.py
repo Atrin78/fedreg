@@ -4,6 +4,7 @@ import importlib
 import random
 import torch
 from FedUtils.models.utils import read_data, CusDataset, ImageDataset
+from FedUtils.models.feddc_retina_nonntk import prepare_data
 from torch.utils.data import DataLoader
 from loguru import logger
 from functools import partial
@@ -43,6 +44,9 @@ def main():
         assert "image_path" in config
         Dataset = partial(ImageDataset, image_path=config["image_path"])
         clients, groups, train_data, eval_data = read_data(config["train_path"], config["test_path"])
+	elif "retina" in config["train_path"]:
+	    datasets = ['drishti', 'kaggle', 'rim', 'refuge']
+	    clients, groups, train_data, eval_data = prepare_data(config['data_size'], datasets, 'cifar', 28)
     else:  # load other data
         clients, groups, train_data, eval_data = read_data(config["train_path"], config["test_path"])
         Dataset = CusDataset
