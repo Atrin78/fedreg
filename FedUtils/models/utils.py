@@ -179,7 +179,7 @@ def read_data(train_data_path, test_data_path):
         train_data_total["x"].extend(train_data[t]["x"])
         train_data_total["y"].extend(train_data[t]["y"])
     print(np.array(train_data_total['x']).shape)
-    print(np.array(train_data_total['y']).shape)
+    print(np.array(train_data_total['y']).max())
     return clients, groups, train_data, test_data
 
 
