@@ -30,7 +30,7 @@ config = {
     "eval_every": 1,
     "drop_percent": 0.0,
     "num_epochs": 5,
-    "batch_size": 10,
+    "batch_size": 30,
     "use_fed": 1,
     "log_path": "tasks/retina/FedAvg_e40_lr1/train.log",
     "data_size": 400,
