@@ -80,8 +80,12 @@ def step_func(model, data):
         grad = torch.autograd.grad(loss, parameters)
     #    print('g')
     #    print(grad[0][0])
+        total_norm=0
         for p, g in zip(parameters, grad):
             p.data.add_(-lr*g)
+            total_norm += torch.norm(lr*g)**2
+        print('total norm')
+        print(total_norm)
         return flop*len(x)
     return func
 
