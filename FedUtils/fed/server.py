@@ -57,7 +57,6 @@ class Server(object):
         for w, st in wstate_dicts:
             wtotal += w
             norm=0
-            print(st)
             for name in state_dict.keys():
                 if name.split('.')[0]=='adapt':
                     continue
