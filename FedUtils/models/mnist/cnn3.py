@@ -204,3 +204,14 @@ class Model(nn.Module):
                 pred_max = pred_max.detach().to(y.device)
             tot_correct += (pred_max == y).float().sum()
         return tot_correct, loss
+		
+		
+    def get_parameters(self) -> List[Dict]:
+        """A parameter list which decides optimization hyper-parameters,
+            such as the relative learning rate of each layer
+        """
+        params = [
+            {"params": self.net.parameters(), "lr_mult": 0.1},
+            {"params": self.head.parameters(), "lr_mult": 1.},
+        ]
+        return params
