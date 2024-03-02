@@ -14,7 +14,7 @@ class Model(nn.Module):
     def __init__(self, num_classes, optimizer=None, learning_rate=None, seed=1, p_iters=10, ps_eta=0.1, pt_eta=0.001):
         super(Model, self).__init__()
         self.num_classes = num_classes
-        self.num_inp = 784*3
+        self.num_inp = 128*128*3
         torch.manual_seed(123+seed)
 
         self.net = nn.Sequential(*[nn.Conv2d(3, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5), nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(576, 256), nn.ReLU()])
@@ -88,7 +88,7 @@ class Model(nn.Module):
     def forward(self, data):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
-        data = data.reshape(-1, 3, 28, 28)
+        data = data.reshape(-1, 3, 128, 128)
    #     x = data
    #     for layer in self.whole:
    #         pred = x
@@ -100,7 +100,7 @@ class Model(nn.Module):
     def forward_emb(self, data):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
-        data = data.reshape(-1, 3, 28, 28)
+        data = data.reshape(-1, 3, 128, 128)
    #     x = data
    #     for layer in self.whole:
    #         pred = x

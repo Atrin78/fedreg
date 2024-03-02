@@ -46,21 +46,10 @@ def main():
         clients, groups, train_data, eval_data = read_data(config["train_path"], config["test_path"])
     elif "retina" in config["train_path"]:
         datasets = ['drishti', 'kaggle', 'rim', 'refuge']
-        clients, groups, train_data, eval_data = prepare_data(config['data_size'], datasets, 'cifar', (28, 28))
+        clients, groups, train_data, eval_data = prepare_data(config['data_size'], datasets, 'cifar', (128, 128))
         Dataset = CusDataset
-        print('sdf')
-        print(clients)
-        print(groups)
-        print(train_data[clients[0]]['x'][0])
-        for i in range(0, 4):
-            print(train_data[clients[i]]['y'])
     else:  # load other data
-        clients, groups, train_data, eval_data = read_data(config["train_path"], config["test_path"])
-        print(clients)
-        print(groups)
-        print(train_data[clients[0]]['x'][0])
-        for i in range(200, 220):
-            print(train_data[clients[i]]['y'])
+        clients, groups, train_data, eval_data = read_data(config["train_path"], config["test_path"]
         Dataset = CusDataset
 
     if config["use_fed"]:
