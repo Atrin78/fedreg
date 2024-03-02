@@ -56,11 +56,15 @@ class Server(object):
         wtotal = 0.0
         for w, st in wstate_dicts:
             wtotal += w
+            norm=0
             for name in state_dict.keys():
                 if name.split('.')[0]=='adapt':
                     continue
                 assert name in state_dict
                 state_dict[name] += st[name]*w
+                norm += (st[name] - old_params[name])**2
+            print('norm')
+            print(norm)
         state_dict = {x: state_dict[x]/wtotal for x in state_dict}
         return state_dict
 
