@@ -228,7 +228,19 @@ class FedAvg(Server):
                 w += soln[0]
                 if len(csolns) == 0:
                     csolns = {x: soln[1][x].detach()*soln[0] for x in soln[1]}
+                    print(c.id)
+                    norm = 0
+                    for x in csolns:
+                        norm += torch.norm(soln[1][x].detach()-self.model.get_param()[x].detach())**2
+                    print('norm')
+                    print(norm)
                 else:
+                    print(c.id)
+                    norm = 0
+                    for x in csolns:
+                        norm += torch.norm(soln[1][x].detach()-self.model.get_param()[x].detach())**2
+                    print('norm')
+                    print(norm)
                     for x in csolns:
                         csolns[x].data.add_(soln[1][x]*soln[0])
                 del c
