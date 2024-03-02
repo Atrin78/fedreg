@@ -66,7 +66,7 @@ def step_func5(model, data):
 
 def step_func(model, data):
     lr = model.learning_rate
-    parameters = list(model.head.parameters())
+    parameters = list(model.net.parameters()) + list(model.head.parameters())
     flop = model.flop
 
     def func(d):
