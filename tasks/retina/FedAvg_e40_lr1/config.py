@@ -22,7 +22,7 @@ config = {
     "inner_opt": None,
     "optimizer": FedAvg,
     "model_param": (2,),
-    "inp_size": (784*3,),
+    "inp_size": (128*128*3,),
     "train_path": "retina",
     "test_path": ["retina"],
     "clients_per_round": 4,
