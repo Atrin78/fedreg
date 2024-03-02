@@ -231,14 +231,14 @@ class FedAvg(Server):
                     print(c.id)
                     norm = 0
                     for x in csolns:
-                        norm += torch.norm(soln[1][x].detach()-self.model.get_param()[x].detach())**2
+                        norm += torch.norm(soln[1][x].detach().cpu()-self.model.get_param()[x].detach().cpu())**2
                     print('norm')
                     print(norm)
                 else:
                     print(c.id)
                     norm = 0
                     for x in csolns:
-                        norm += torch.norm(soln[1][x].detach()-self.model.get_param()[x].detach())**2
+                        norm += torch.norm(soln[1][x].detach().cpu()-self.model.get_param()[x].detach().cpu())**2
                     print('norm')
                     print(norm)
                     for x in csolns:
