@@ -326,9 +326,7 @@ class FedImpress(Server):
             x_gen = x[len(vis_x):]
             y_vis = y[:len(vis_x)]
             y_gen = y[len(vis_x):]
-            print(x)
-            print(len(x))
-            print(y)
+
           #  sz = [10 if inn<len(vis_x) else 20 for inn in range(len(vis_x)+len(gen_x))]
          #   mrk = ['o' if inn<len(vis_x) else 's' for inn in range(len(vis_x)+len(gen_x))]
             fig, ax = plt.subplots()
