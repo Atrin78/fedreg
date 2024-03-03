@@ -73,7 +73,7 @@ def labels_to_one_hot(labels, num_class, device):
     return labels_one_hot
 
     
-def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, batch_size, add_bn_normalization=True, mode='train'):
+def generate_admm(gen_loader, src_model, device, class_num, synthesize_label, iters_admm, iters_img, param_gamma, param_admm_rho, batch_size, add_bn_normalization=False, mode='train'):
 
     src_model.eval()
     LAMB = torch.zeros_like(src_model.head.weight.data).to(device)
