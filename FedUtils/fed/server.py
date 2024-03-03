@@ -62,12 +62,12 @@ class Server(object):
                     continue
                 assert name in state_dict
                 state_dict[name] += st[name]*w
-                surp = torch.norm(st[name].detach().cpu() - old_params[name].detach().cpu())**2
-                if surp > 0.1:
-                    print(name)
-                norm += surp
-            print('norm')
-            print(norm)
+          #      surp = torch.norm(st[name].detach().cpu() - old_params[name].detach().cpu())**2
+          #      if surp > 0.1:
+          #          print(name)
+          #      norm += surp
+          #  print('norm')
+          #  print(norm)
         state_dict = {x: state_dict[x]/wtotal for x in state_dict}
         return state_dict
 
