@@ -277,7 +277,7 @@ class FedImpress(Server):
             [
              torchvision.transforms.Resize(128),
              transforms.ToTensor(),
-             transforms.Lambda(lambda x: torch.stack([x,x,x],0)),
+             transforms.Lambda(lambda x: torch.stack([x,x,x],2)),
              ])
 
             if r >= warmup:
