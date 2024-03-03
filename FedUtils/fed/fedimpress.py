@@ -271,12 +271,12 @@ class FedImpress(Server):
             [
              torchvision.transforms.functional.rgb_to_grayscale,
              transforms.ToTensor(),
-             torchvision.transforms.Resize(28),
+             torchvision.transforms.Resize(128),
              ])
             transform_usps = transforms.Compose(
             [
              transforms.ToTensor(),
-             torchvision.transforms.Resize(28),
+             torchvision.transforms.Resize(128),
              ])
 
             if r >= warmup:
