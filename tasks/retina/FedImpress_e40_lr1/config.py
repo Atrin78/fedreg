@@ -25,7 +25,7 @@ config = {
     "test_path": ["retinal"],
     "clients_per_round": 4,
     "num_rounds": 40,
-    "eval_every": 2,
+    "eval_every": 1,
     "drop_percent": 0.0,
     "num_epochs": 10,
     "batch_size": 60,
