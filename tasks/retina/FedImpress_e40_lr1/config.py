@@ -27,7 +27,7 @@ config = {
     "num_rounds": 40,
     "eval_every": 1,
     "drop_percent": 0.0,
-    "num_epochs": 5,
+    "num_epochs": 10,
     "batch_size": 30,
     "use_fed": 1,
     "log_path": "tasks/retina/FedImpress_e40_lr1/train.log",
