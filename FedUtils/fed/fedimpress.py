@@ -12,7 +12,7 @@ from functools import partial
 from torch.utils.data import TensorDataset
 import torchvision.transforms as transforms
 import torchvision
-from torch_cka import CKA
+#from torch_cka import CKA
 from matplotlib import pyplot as plt
 from sklearn.manifold import TSNE
 from torch.utils.data import DataLoader
