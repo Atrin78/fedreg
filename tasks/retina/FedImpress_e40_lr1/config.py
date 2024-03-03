@@ -31,6 +31,7 @@ config = {
     "batch_size": 60,
     "use_fed": 1,
     "log_path": "tasks/retina/FedImpress_e40_lr1/train.log",
+    "data_size": 400,
 
     "train_transform": None,
     "test_transform": None,
