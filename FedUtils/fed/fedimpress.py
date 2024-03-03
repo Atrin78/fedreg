@@ -18,7 +18,7 @@ from sklearn.manifold import TSNE
 from torch.utils.data import DataLoader
 
 device = torch.device('cuda:' + str(0) if torch.cuda.is_available() else 'cpu')
-class_num=10
+class_num=2
 synthesize_label='cond'
 iters_admm= 3
 iters_img=30
@@ -269,13 +269,13 @@ class FedImpress(Server):
 
             transform_cifar = transforms.Compose(
             [
-             torchvision.transforms.functional.rgb_to_grayscale,
+           #  torchvision.transforms.functional.rgb_to_grayscale,
              transforms.ToTensor(),
              torchvision.transforms.Resize(128),
              ])
             transform_usps = transforms.Compose(
             [
-             transforms.ToTensor(),
+          #   transforms.ToTensor(),
              torchvision.transforms.Resize(128),
              ])
 
