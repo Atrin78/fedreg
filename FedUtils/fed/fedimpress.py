@@ -275,9 +275,9 @@ class FedImpress(Server):
              ])
             transform_usps = transforms.Compose(
             [
+             torchvision.transforms.Resize(128),
              transforms.ToTensor(),
              transforms.Lambda(lambda x: torch.stack([torch.unsqueeze(x, -1),torch.unsqueeze(x, -1),torch.unsqueeze(x, -1)],2)),
-             torchvision.transforms.Resize(128),
              ])
 
             if r >= warmup:
