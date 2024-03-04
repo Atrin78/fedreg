@@ -467,12 +467,15 @@ def prepare_data(data_size, datasets, public_dataset, im_size):
 	
     x, y = next(iter(DataLoader(drishti_trainset, batch_size=len(drishti_trainset))))
     train_data['drishti'] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
+    print(train_data['drishti']['y'].shape[0])
     x, y = next(iter(DataLoader(kaggle_trainset, batch_size=len(kaggle_trainset))))
     train_data['kaggle'] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
+    print(train_data['kaggle']['y'].shape[0])
     x, y = next(iter(DataLoader(rim_trainset, batch_size=len(rim_trainset))))
     train_data['rim'] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
-    x, y = next(iter(DataLoader(refuge_trainset, batch_size=len(refuge_trainset))))
-    train_data['refuge'] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
+    print(train_data['rim']['y'].shape[0])
+    #x, y = next(iter(DataLoader(refuge_trainset, batch_size=len(refuge_trainset))))
+    #train_data['refuge'] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
 	
 	
     x, y = next(iter(DataLoader(drishti_testset, batch_size=len(drishti_testset))))
@@ -481,8 +484,8 @@ def prepare_data(data_size, datasets, public_dataset, im_size):
     test_data['kaggle'] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
     x, y = next(iter(DataLoader(rim_testset, batch_size=len(rim_testset))))
     test_data['rim'] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
-    x, y = next(iter(DataLoader(refuge_testset, batch_size=len(refuge_testset))))
-    test_data['refuge'] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
+    #x, y = next(iter(DataLoader(refuge_testset, batch_size=len(refuge_testset))))
+    #test_data['refuge'] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
 	
     groups=[]
     

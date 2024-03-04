@@ -13,7 +13,7 @@ config = {
     "inp_size": (128*128*3,),
     "train_path": "retina",
     "test_path": ["retina"],
-    "clients_per_round": 4,
+    "clients_per_round": 3,
     "num_rounds": 40,
     "eval_every": 1,
     "drop_percent": 0.0,
