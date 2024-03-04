@@ -29,7 +29,7 @@ def step_func(model, data, fed):
     old_parameters = list(old_model.parameters())
     penal_parameters = list(penal_model.parameters())
 
-    def func(d, _):
+    def func(d):
         nonlocal idx, add_mask, beta, flop, gamma, lr
         model.train()
         median_model.train()
