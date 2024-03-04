@@ -45,7 +45,7 @@ def main():
         Dataset = partial(ImageDataset, image_path=config["image_path"])
         clients, groups, train_data, eval_data = read_data(config["train_path"], config["test_path"])
     elif "retina" in config["train_path"]:
-        datasets = ['drishti', 'kaggle', 'rim', 'refuge']
+        datasets = ['drishti', 'kaggle', 'rim']
         clients, groups, train_data, eval_data = prepare_data(config['data_size'], datasets, 'cifar', (128, 128))
         Dataset = CusDataset
     else:  # load other data
