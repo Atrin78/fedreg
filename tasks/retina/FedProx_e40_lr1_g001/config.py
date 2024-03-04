@@ -6,7 +6,7 @@ from FedUtils.fed.fedprox import FedProx
 config = {
 
     "seed": 1,
-    "model": partial(Model, learning_rate=1e-2),
+    "model": partial(Model, learning_rate=1e-1),
     "inner_opt": None,
     "optimizer": FedProx,
     "model_param": (2,),
@@ -18,9 +18,9 @@ config = {
     "eval_every": 1,
     "drop_percent": 0.0,
     "num_epochs": 10,
-    "batch_size": 60,
+    "batch_size": 40,
     "use_fed": 1,
-    "data_size":400,
+    "data_size":100,
     "log_path": "tasks/retina/FedProx_e40_lr1_g001/train.log",
     "gamma": 0.001,
 
