@@ -20,7 +20,7 @@ config = {
     "num_epochs": 10,
     "batch_size": 60,
     "use_fed": 1,
-    "data_size":50,
+    "data_size":400,
     "log_path": "tasks/retina/FedProx_e40_lr1_g001/train.log",
     "gamma": 0.001,
 
