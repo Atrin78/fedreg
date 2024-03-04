@@ -215,6 +215,6 @@ class Model(nn.Module):
         """
         params = [
             {"params": self.net.parameters(), "lr_mult": 0.1},
-            {"params": self.head.parameters(), "lr_mult": 1},
+            {"params": self.head.parameters(), "lr_mult": 0.1},
         ]
         return params
