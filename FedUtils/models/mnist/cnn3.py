@@ -40,10 +40,10 @@ class Model(nn.Module):
         print(torch.cuda.device_count())
         if torch.cuda.device_count() > 0:
    #         self = self.cuda()
-            device = torch.device("cuda:4" if torch.cuda.is_available() else "cpu")
+            #device = torch.device("cuda:4" if torch.cuda.is_available() else "cpu")
             #self.to(device)
-            self.net = self.net.to(device)
-            self.head = self.head.to(device)
+            self.net = self.net.cuda()
+            self.head = self.head.cuda()
 
     def set_param(self, state_dict):
         self.load_state_dict(state_dict)
