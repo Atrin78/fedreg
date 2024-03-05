@@ -23,9 +23,9 @@ def prepare_bloodmnist(datasets, im_size):
         data_train = Modified_medmnist(split='train', chunk=i, image_size=128)
         data_test = Modified_medmnist(split='test', chunk=i, image_size=128)
         x, y = next(iter(DataLoader(data_train, batch_size=len(data_train))))
-        train_data[string(i)] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
+        train_data[str(i)] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
         x, y = next(iter(DataLoader(data_test, batch_size=len(data_test))))
-        test_data[string(i)] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
+        test_data[str(i)] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
         
    	
     groups=[]
