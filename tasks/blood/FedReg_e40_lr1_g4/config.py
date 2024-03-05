@@ -17,7 +17,7 @@ transform_fun = transforms.Compose(
 config = {
 
     "seed": 1,
-    "model": partial(Model, learning_rate=1e-1, p_iters=10, ps_eta=2e-1, pt_eta=2e-3),
+    "model": partial(Model, learning_rate=1e-3, p_iters=10, ps_eta=2e-1, pt_eta=2e-3),
     "inner_opt": None,
     "optimizer": FedReg,
     "model_param": (8,),
@@ -31,7 +31,7 @@ config = {
     "num_epochs": 10,
     "batch_size": 60,
     "use_fed": 1,
-    "log_path": "tasks/retina/FedReg_e40_lr1_g4/train.log",
+    "log_path": "tasks/blood/FedReg_e40_lr1_g4/train.log",
     "train_transform": None,
     "test_transform": None,
     "eval_train": True,
