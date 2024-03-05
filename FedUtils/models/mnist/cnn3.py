@@ -37,6 +37,7 @@ class Model(nn.Module):
         self.pt_eta = pt_eta
 
         self.flop = Flops(self, torch.tensor([[0.0 for _ in range(self.num_inp)]]))
+        print(torch.cuda.device_count())
         if torch.cuda.device_count() > 0:
    #         self = self.cuda()
             device = torch.device("cuda:4" if torch.cuda.is_available() else "cpu")
