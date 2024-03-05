@@ -159,14 +159,14 @@ class Modified_medmnist(Dataset):
         if mean:
             return transforms.Compose(
                 [
-                 transforms.CenterCrop(256),
+             #    transforms.CenterCrop(256),
                  transforms.ToTensor(),
                  transforms.Normalize(self.mean, self.std)
                 ])
         else:
             return transforms.Compose(
                 [
-                 transforms.CenterCrop(256),
+             #    transforms.CenterCrop(256),
                  transforms.ToTensor()
                 ])
     def get_synthesized_transform(self,mean):
