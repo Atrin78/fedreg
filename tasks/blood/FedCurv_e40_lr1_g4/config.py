@@ -20,7 +20,7 @@ config = {
     "num_epochs": 10,
     "batch_size": 60,
     "use_fed": 1,
-    "log_path": "tasks/blood/FedCurv_e40_lr1_g4/train.log",
+    "log_path": "tasks/retina/FedCurv_e40_lr1_g4/train.log",
     "data_size":100,
     "gamma": 1e-4,
 
