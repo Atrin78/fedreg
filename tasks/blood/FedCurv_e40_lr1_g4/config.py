@@ -6,7 +6,7 @@ from FedUtils.fed.fedcurv import FedCurv
 config = {
 
     "seed": 1,
-    "model": partial(Model, learning_rate=1e-3),
+    "model": partial(Model, learning_rate=1e-1),
     "inner_opt": None,
     "optimizer": FedCurv,
     "model_param": (8,),
