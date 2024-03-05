@@ -16,10 +16,10 @@ def data_split(proportions,indexes,idx_batch,N,n_nets):
     return idx_batch
         
 if __name__  == '__main__':
-    train_dataset = BloodMNIST(split='train', transform=None, download=True,as_rgb= True)
+    train_dataset = BloodMNIST(split='train', transform=None, download=False,as_rgb= True)
     X_train_total = train_dataset.imgs
     Y_train_total = train_dataset.labels
-    test_dataset = BloodMNIST(split='test', transform=None, download=True,as_rgb= True)
+    test_dataset = BloodMNIST(split='test', transform=None, download=False,as_rgb= True)
     X_test_total = test_dataset.imgs
     Y_test_total = test_dataset.labels
     print(X_train_total.shape)
