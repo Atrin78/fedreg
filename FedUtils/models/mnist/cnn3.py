@@ -162,6 +162,7 @@ class Model(nn.Module):
                         comp += c
                         steps += 1.0
                     except Exception as e:
+                        print(x.shape)
                         print(e)
                         
              #   c = func([xt, yt], wt)
