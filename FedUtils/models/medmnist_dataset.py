@@ -12,11 +12,24 @@ import scipy.io as sio
 import random
 import pandas as pd
 import medmnist
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 from numpy import inf
 from medmnist import BloodMNIST
 
-
+def prepare_bloodmnist(datasets, im_size):
+    train_data = {}
+    test_data = {}
+    for i in range(8):
+        data_train = Modified_medmnist(split='train', chunk=i, img_size=128)
+        data_test = Modified_medmnist(split='test', chunk=i, img_size=128)
+        x, y = next(iter(DataLoader(data_train, batch_size=len(data_train))))
+        train_data[string(i)] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
+        x, y = next(iter(DataLoader(data_test, batch_size=len(data_test))))
+        test_data[string(i)] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
+        
+   	
+    groups=[]
+    return datasets, groups, train_data, [test_data, test_data]
 
 class Modified_medmnist(Dataset):
 
@@ -24,7 +37,7 @@ class Modified_medmnist(Dataset):
                  split,
                  transform=None,
                  target_transform=None,
-                 data_path='../Federated-Learning/data/Bloodmnist/',
+                 data_path='./data/Bloodmnist/',
                  chunk= 0,
                  as_rgb=True,
                  root=None,

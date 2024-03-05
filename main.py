@@ -5,6 +5,7 @@ import random
 import torch
 from FedUtils.models.utils import read_data, CusDataset, ImageDataset
 from FedUtils.models.feddc_retina_nonntk import prepare_data
+from FedUtils.models.medmnist_dataset import prepare_bloodmnist
 from torch.utils.data import DataLoader
 from loguru import logger
 from functools import partial
@@ -47,6 +48,10 @@ def main():
     elif "retina" in config["train_path"]:
         datasets = ['drishti', 'kaggle', 'rim']
         clients, groups, train_data, eval_data = prepare_data(config['data_size'], datasets, 'cifar', (128, 128))
+        Dataset = CusDataset
+    elif "bloodmnist"  in config["train_path"]:
+        datasets = [str(i) for i in range(8)]
+        clients, groups, train_data, eval_data = prepare_bloodmnist(datasets, (128, 128))
         Dataset = CusDataset
     else:  # load other data
         clients, groups, train_data, eval_data = read_data(config["train_path"], config["test_path"])
