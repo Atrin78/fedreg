@@ -27,6 +27,9 @@ def prepare_bloodmnist(datasets, im_size):
         print(x.cpu().detach().numpy().shape)
         train_data[str(i)] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
         x, y = next(iter(DataLoader(data_test, batch_size=len(data_test))))
+        print('shape')
+        print(x.cpu().detach().numpy().shape)
+        print(y.cpu().detach().numpy().shape)
         test_data[str(i)] = {'x':x.cpu().detach().numpy(), 'y':y.cpu().detach().numpy()}
         
    	
