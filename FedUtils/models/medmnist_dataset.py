@@ -47,6 +47,7 @@ class Modified_medmnist(Dataset):
         super().__init__()
         npzfile = np.load(data_path+split+'/chunk_'+str(chunk)+'.npz')
         self.images = npzfile['x']
+        self.image_size = image_size
         # print('labels', self.labels.tolist())
         if split == 'cifar10' or split == 'VHL':
             self.labels = npzfile['y']
@@ -159,6 +160,7 @@ class Modified_medmnist(Dataset):
         if mean:
             return transforms.Compose(
                 [
+                 transforms.Resize(self.image_size),
              #    transforms.CenterCrop(256),
                  transforms.ToTensor(),
                  transforms.Normalize(self.mean, self.std)
@@ -166,6 +168,7 @@ class Modified_medmnist(Dataset):
         else:
             return transforms.Compose(
                 [
+                 transforms.Resize(self.image_size),
              #    transforms.CenterCrop(256),
                  transforms.ToTensor()
                 ])
