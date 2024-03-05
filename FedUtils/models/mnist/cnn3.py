@@ -146,9 +146,10 @@ class Model(nn.Module):
            #     wt = None
                 for i, train_iter in enumerate(train_iters):
                     try:
+                        x, y = next(train_iter)
                         if x.shape[0]==1:
                             continue
-                        x, y = next(train_iter)
+                        
                #         w = torch.ones((y.shape[0],)).to(device)
                 #        x = x.to(device)
                 #        y = y.to(device)
