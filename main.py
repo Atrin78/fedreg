@@ -1,5 +1,4 @@
-import os
-os.environ['CUDA_VISIBLE_DEVICES'] = "4"
+
 import numpy as np
 import argparse
 import importlib
@@ -26,7 +25,7 @@ def allocate_memory():
 
 
 def main():
-    torch.cuda.set_device("4")
+    print(torch.cuda.device_count())
     print(torch.cuda.current_device())
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config", help="The config file")
