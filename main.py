@@ -1,3 +1,5 @@
+import os
+os.environ['CUDA_VISIBLE_DEVICES'] = "4"
 import numpy as np
 import argparse
 import importlib
@@ -9,7 +11,6 @@ from FedUtils.models.medmnist_dataset import prepare_bloodmnist
 from torch.utils.data import DataLoader
 from loguru import logger
 from functools import partial
-import os
 torch.backends.cudnn.deterministic = True
 
 def allocate_memory():
