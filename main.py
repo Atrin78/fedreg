@@ -26,7 +26,7 @@ def allocate_memory():
 
 
 def main():
-    torch.cuda.set_device(4)
+    torch.cuda.set_device("4")
     print(torch.cuda.current_device())
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config", help="The config file")
