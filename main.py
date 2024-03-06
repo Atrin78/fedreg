@@ -25,6 +25,7 @@ def allocate_memory():
 
 
 def main():
+    print(torch.cuda.current_device())
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config", help="The config file")
     args = parser.parse_args()
