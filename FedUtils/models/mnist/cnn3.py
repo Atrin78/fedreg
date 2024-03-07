@@ -14,10 +14,10 @@ class Model(nn.Module):
     def __init__(self, num_classes, optimizer=None, learning_rate=None, seed=1, p_iters=10, ps_eta=0.1, pt_eta=0.001):
         super(Model, self).__init__()
         self.num_classes = num_classes
-        self.num_inp = 32*32*3
+        self.num_inp = 128*128*3
         torch.manual_seed(123+seed)
 
-        self.net = nn.Sequential(*[nn.Conv2d(3, 64, 5, 1, 2), nn.BatchNorm2d(64), nn.ReLU(inplace=True), nn.MaxPool2d(2), nn.Conv2d(64, 64, 5, 1, 2), nn.BatchNorm2d(64), nn.ReLU(inplace=True), nn.MaxPool2d(2), nn.Conv2d(64, 128, 5, 1, 2), nn.BatchNorm2d(128), nn.ReLU(inplace=True), nn.MaxPool2d(2), nn.Flatten(), nn.Linear(128 * 4 * 4, 2048), nn.BatchNorm1d(2048), nn.ReLU(inplace=True), nn.Linear(2048, 512), nn.BatchNorm1d(512)])
+        self.net = nn.Sequential(*[nn.Conv2d(3, 64, 5, 1, 2), nn.BatchNorm2d(64), nn.ReLU(inplace=True), nn.MaxPool2d(2), nn.Conv2d(64, 64, 5, 1, 2), nn.BatchNorm2d(64), nn.ReLU(inplace=True), nn.MaxPool2d(2), nn.Conv2d(64, 128, 5, 1, 2), nn.BatchNorm2d(128), nn.ReLU(inplace=True), nn.MaxPool2d(2), nn.Flatten(), nn.Linear(128 * 16 * 16, 2048), nn.BatchNorm1d(2048), nn.ReLU(inplace=True), nn.Linear(2048, 512), nn.BatchNorm1d(512)])
        # self.net = nn.Sequential(*[nn.Conv2d(3, 32, 5), nn.ReLU(), nn.Conv2d(32, 32, 5), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5), nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(50176, 512), nn.ReLU()])
       #  self.net = nn.Sequential(*[nn.Conv2d(3, 64, 11, 4, 2), nn.BatchNorm2d(64), nn.ReLU(inplace=True), nn.MaxPool2d(3, 2), nn.Conv2d(64, 192, 5, 1, 2), nn.BatchNorm2d(192), nn.ReLU(inplace=True), nn.MaxPool2d(3, 2), nn.Conv2d(192, 384, 3, 1, 1), nn.BatchNorm2d(384), nn.ReLU(inplace=True), nn.Conv2d(384, 256, 3, 1, 1), nn.BatchNorm2d(256), nn.ReLU(inplace=True), nn.Conv2d(256, 256, 3, 1, 1), nn.BatchNorm2d(256), nn.ReLU(inplace=True), nn.MaxPool2d(3, 2), nn.AdaptiveAvgPool2d((6, 6)), nn.Flatten(), nn.Linear(256 * 6 * 6, 4096), nn.BatchNorm1d(4096), nn.ReLU(inplace=True), nn.Linear(4096, 4096), nn.BatchNorm1d(4096), nn.ReLU(inplace=True)])
     #    self.net = nn.Sequential(*[nn.Conv2d(1, 32, 5,padding="same"), nn.ReLU(), nn.Conv2d(32, 32, 5,padding="same"), nn.MaxPool2d(2), nn.ReLU(), nn.Conv2d(32, 64, 5, padding="same"), nn.MaxPool2d(2), nn.ReLU(), Reshape(), nn.Linear(1024, 256), nn.ReLU()])
@@ -93,7 +93,7 @@ class Model(nn.Module):
     def forward(self, data):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
-        data = data.reshape(-1, 3, 32, 32)
+        data = data.reshape(-1, 3, 128, 128)
    #     x = data
    #     for layer in self.whole:
    #         pred = x
@@ -105,7 +105,7 @@ class Model(nn.Module):
     def forward_emb(self, data):
         if data.device != next(self.parameters()).device:
             data = data.to(next(self.parameters()).device)
-        data = data.reshape(-1, 3, 32, 32)
+        data = data.reshape(-1, 3, 128, 128)
    #     x = data
    #     for layer in self.whole:
    #         pred = x
