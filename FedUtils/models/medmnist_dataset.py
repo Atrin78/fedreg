@@ -81,8 +81,8 @@ class Modified_medmnist(Dataset):
 
         self.as_rgb = as_rgb
         if split != 'VHL':
-            self.transform = self.get_transform(False)
-            self.transform_synthesized = self.get_synthesized_transform(False)
+            self.transform = self.get_transform(True)
+            self.transform_synthesized = self.get_synthesized_transform(True)
         self.transform_synthesized = None
         self.target_transform = target_transform
 
