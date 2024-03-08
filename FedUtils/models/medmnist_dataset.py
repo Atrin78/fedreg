@@ -42,7 +42,7 @@ class Modified_medmnist(Dataset):
                  split,
                  transform=None,
                  target_transform=None,
-                 data_path='./data/BloodMnist/',
+                 data_path='./data/BloodMnist2/',
                  chunk= 0,
                  as_rgb=True,
                  root=None,
