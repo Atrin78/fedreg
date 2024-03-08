@@ -21,7 +21,7 @@ config = {
     "inner_opt": None,
     "optimizer": FedReg,
     "model_param": (8,),
-    "inp_size": (64*64*3,),
+    "inp_size": (128*128*3,),
     "train_path": "bloodmnist",
     "test_path": ["bloodmnist"],
     "clients_per_round": 8,
