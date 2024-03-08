@@ -36,6 +36,6 @@ config = {
     "test_transform": None,
     "eval_train": True,
     "data_size":100,
-    "gamma": 0.4,
+    "gamma": 0.1,
 
 }
