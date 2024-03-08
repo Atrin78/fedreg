@@ -39,7 +39,7 @@ if __name__  == '__main__':
     N_test = Y_test_total.shape[0]
     net_dataidx_map = {}
     n_nets = len(labels)
-    alpha = 0.1
+    alpha = 0.05
     while min_size < 10:
         idx_batch = [[] for _ in range(n_nets)]
         idx_batch_test = [[] for _ in range(n_nets)]
@@ -52,13 +52,13 @@ if __name__  == '__main__':
                 print(len(idx_j))
             min_size = min([len(idx_j) for idx_j in idx_batch])
     print(np.unique(Y_train_total))
-    outfile = './data/BloodMnist/train/'
+    outfile = './data/BloodMnist2/train/'
     for i,i_s in enumerate(idx_batch):
         print(i,np.unique(Y_train_total[i_s]))
         label_client = Y_train_total[i_s]
         data_client = X_train_total[i_s]
         np.savez(outfile+'chunk_'+str(i), x=data_client, y=label_client)
-    outfile = './data/BloodMnist/test/'
+    outfile = './data/BloodMnist2/test/'
     for i,i_s in enumerate(idx_batch_test):
         print(i,np.unique(Y_test_total[i_s]))
         label_client = Y_test_total[i_s]
