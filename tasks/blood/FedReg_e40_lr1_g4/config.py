@@ -29,7 +29,7 @@ config = {
     "eval_every": 1,
     "drop_percent": 0.0,
     "num_epochs": 5,
-    "batch_size": 256,
+    "batch_size": 150,
     "use_fed": 1,
     "log_path": "tasks/retina/FedReg_e40_lr1_g4/train.log",
     "train_transform": None,
