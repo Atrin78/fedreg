@@ -39,7 +39,7 @@ if __name__  == '__main__':
     N_test = Y_test_total.shape[0]
     net_dataidx_map = {}
     n_nets = len(labels)
-    alpha = 0.05
+    alpha = 0.005
     while min_size < 10:
         idx_batch = [[] for _ in range(n_nets)]
         idx_batch_test = [[] for _ in range(n_nets)]
