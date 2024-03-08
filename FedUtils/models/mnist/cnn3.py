@@ -7,7 +7,7 @@ from typing import Tuple, Optional, List, Dict
 
 class Reshape(nn.Module):
     def forward(self, x):
-        return x.reshape(-1, 12544)
+        return x.reshape(-1, 16384)
 
 
 class Model(nn.Module):
